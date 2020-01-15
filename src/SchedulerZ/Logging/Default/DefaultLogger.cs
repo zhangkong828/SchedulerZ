@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -17,11 +18,21 @@ namespace SchedulerZ.Logging
 
     public class DefaultLogger : ILogger, IDisposable
     {
+        private const int _maxQueuedMessages = 1024;
+
+        private readonly BlockingCollection<DefaultLoggerEntity> _messageQueue = new BlockingCollection<DefaultLoggerEntity>(_maxQueuedMessages);
+        private readonly Thread _outputThread;
+
         private readonly ConsoleColor? DefaultConsoleColor = null;
 
         public DefaultLogger()
         {
-
+            _outputThread = new Thread(ProcessLogQueue)
+            {
+                IsBackground = true,
+                Name = "Console logger queue processing thread"
+            };
+            _outputThread.Start();
         }
 
         public void Trace(string message)
@@ -177,6 +188,64 @@ namespace SchedulerZ.Logging
             public ConsoleColor? Foreground { get; }
 
             public ConsoleColor? Background { get; }
+        }
+        
+
+
+        public void EnqueueLogQueue(DefaultLoggerEntity message)
+        {
+            if (!_messageQueue.IsAddingCompleted)
+            {
+                try
+                {
+                    _messageQueue.Add(message);
+                    return;
+                }
+                catch (InvalidOperationException) { }
+            }
+
+            try
+            {
+                WriteMessageInternal(message);
+            }
+            catch (Exception) { }
+        }
+
+        private void ProcessLogQueue()
+        {
+            try
+            {
+                foreach (var message in _messageQueue.GetConsumingEnumerable())
+                {
+                    WriteMessageInternal(message);
+                }
+            }
+            catch
+            {
+                try
+                {
+                    _messageQueue.CompleteAdding();
+                }
+                catch { }
+            }
+        }
+
+        private void WriteMessageInternal(DefaultLoggerEntity message)
+        {
+            var console = message.LogAsError ? ErrorConsole : Console;
+
+            if (message.TimeStamp != null)
+            {
+                console.Write(message.TimeStamp, message.MessageColor, message.MessageColor);
+            }
+
+            if (message.LevelString != null)
+            {
+                console.Write(message.LevelString, message.LevelBackground, message.LevelForeground);
+            }
+
+            console.Write(message.Message, message.MessageColor, message.MessageColor);
+            console.Flush();
         }
 
         public void Dispose()
