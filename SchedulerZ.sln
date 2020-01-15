@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Logging.Log4Net"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Component.Autofac", "src\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj", "{062836EF-0623-4A4B-90A9-8B0CA4BB902C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Core", "src\SchedulerZ.Core\SchedulerZ.Core.csproj", "{AAEF47A7-4793-443B-8054-5CCE57211B19}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AAEF47A7-4793-443B-8054-5CCE57211B19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAEF47A7-4793-443B-8054-5CCE57211B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AAEF47A7-4793-443B-8054-5CCE57211B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAEF47A7-4793-443B-8054-5CCE57211B19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
