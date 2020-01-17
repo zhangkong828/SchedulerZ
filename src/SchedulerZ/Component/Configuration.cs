@@ -7,7 +7,7 @@ namespace SchedulerZ.Component
 {
     public class Configuration
     {
-        public static ILoggerProvider LoggerProvider { get; private set; } = new DefaultLoggerProvider();
+        public static ILoggerProvider LoggerProvider { get; private set; } = new ConsoleLoggerProvider();
         public static Configuration Instance { get; private set; }
         private Configuration() { }
 
@@ -44,7 +44,7 @@ namespace SchedulerZ.Component
 
         public Configuration RegisterCommonComponents()
         {
-            RegisterComponent<ILoggerProvider, DefaultLoggerProvider>();
+            RegisterComponent<ILoggerProvider, ConsoleLoggerProvider>();
             return this;
         }
 
