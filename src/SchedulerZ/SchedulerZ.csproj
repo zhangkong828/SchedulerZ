@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Logging\Default\ConsoleLoggerProvider.cs~RF9b6672a4.TMP" />
+  </ItemGroup>
+
 </Project>

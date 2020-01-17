@@ -1,38 +1,18 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 
 namespace SchedulerZ.Logging
 {
-    public enum LogLevel
+    public class ConsoleLogger : ILogger, IDisposable
     {
-        Trace = 0,
-        Debug = 1,
-        Info = 2,
-        Warning = 3,
-        Error = 4,
-        Fatal = 5
-    }
-
-    public class DefaultLogger : ILogger, IDisposable
-    {
-        private const int _maxQueuedMessages = 1024;
-
-        private readonly BlockingCollection<DefaultLoggerEntity> _messageQueue = new BlockingCollection<DefaultLoggerEntity>(_maxQueuedMessages);
-        private readonly Thread _outputThread;
-
         private readonly ConsoleColor? DefaultConsoleColor = null;
 
-        public DefaultLogger()
+        private readonly ConsoleLoggerProcessor _queueProcessor;
+        public ConsoleLogger(IConsole console)
         {
-            _outputThread = new Thread(ProcessLogQueue)
-            {
-                IsBackground = true,
-                Name = "Console logger queue processing thread"
-            };
-            _outputThread.Start();
+            _queueProcessor = new ConsoleLoggerProcessor(console);
         }
 
         public void Trace(string message)
@@ -126,19 +106,20 @@ namespace SchedulerZ.Logging
         }
 
 
-
         private void WriteMessage(LogLevel logLevel, string message, Exception ex)
         {
-            var colors = GetLogLevelConsoleColors(logLevel);
-            var colorChanged = SetColor(colors.Background, colors.Foreground);
-            Console.Out.WriteLine($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")} [{Thread.CurrentThread.ManagedThreadId}] {logLevel.ToString().ToUpper()}  {message}");
-            if (ex != null)
-                Console.Out.WriteLine(ex.ToString());
+            var logLevelColors = GetLogLevelConsoleColors(logLevel);
+            var logLevelString = GetLogLevelString(logLevel);
 
-            if (colorChanged)
-            {
-                Console.ResetColor();
-            }
+            var logMessage = new LogMessageEntry(
+                message: message,
+                timeStamp: DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                levelString: logLevelString,
+                levelBackground: logLevelColors.Background,
+                levelForeground: logLevelColors.Foreground,
+                messageColor: DefaultConsoleColor
+                );
+            _queueProcessor.EnqueueMessage(logMessage);
         }
 
         private ConsoleColors GetLogLevelConsoleColors(LogLevel logLevel)
@@ -162,6 +143,27 @@ namespace SchedulerZ.Logging
             }
         }
 
+        private string GetLogLevelString(LogLevel logLevel)
+        {
+            switch (logLevel)
+            {
+                case LogLevel.Trace:
+                    return "trace";
+                case LogLevel.Debug:
+                    return "debug";
+                case LogLevel.Info:
+                    return "info";
+                case LogLevel.Warning:
+                    return "warning";
+                case LogLevel.Error:
+                    return "error";
+                case LogLevel.Fatal:
+                    return "fatal";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(logLevel));
+            }
+        }
+
         private bool SetColor(ConsoleColor? background, ConsoleColor? foreground)
         {
             if (background.HasValue)
@@ -177,6 +179,20 @@ namespace SchedulerZ.Logging
             return background.HasValue || foreground.HasValue;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _queueProcessor.Dispose();
+            }
+        }
+
         private readonly struct ConsoleColors
         {
             public ConsoleColors(ConsoleColor? foreground, ConsoleColor? background)
@@ -189,92 +205,6 @@ namespace SchedulerZ.Logging
 
             public ConsoleColor? Background { get; }
         }
-        
 
-
-        public void EnqueueLogQueue(DefaultLoggerEntity message)
-        {
-            if (!_messageQueue.IsAddingCompleted)
-            {
-                try
-                {
-                    _messageQueue.Add(message);
-                    return;
-                }
-                catch (InvalidOperationException) { }
-            }
-
-            try
-            {
-                WriteMessageInternal(message);
-            }
-            catch (Exception) { }
-        }
-
-        private void ProcessLogQueue()
-        {
-            try
-            {
-                foreach (var message in _messageQueue.GetConsumingEnumerable())
-                {
-                    WriteMessageInternal(message);
-                }
-            }
-            catch
-            {
-                try
-                {
-                    _messageQueue.CompleteAdding();
-                }
-                catch { }
-            }
-        }
-
-        private void WriteMessageInternal(DefaultLoggerEntity message)
-        {
-            var console = message.LogAsError ? ErrorConsole : Console;
-
-            if (message.TimeStamp != null)
-            {
-                console.Write(message.TimeStamp, message.MessageColor, message.MessageColor);
-            }
-
-            if (message.LevelString != null)
-            {
-                console.Write(message.LevelString, message.LevelBackground, message.LevelForeground);
-            }
-
-            console.Write(message.Message, message.MessageColor, message.MessageColor);
-            console.Flush();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-
-            }
-        }
-    }
-
-
-    public class DefaultLoggerEntity
-    {
-        public DefaultLoggerEntity(LogLevel logLevel, string message, Exception ex)
-        {
-            LogLevel = logLevel;
-            Message = message;
-            Ex = ex;
-        }
-
-        public LogLevel LogLevel { get; set; }
-        public string Message { get; set; }
-        public Exception Ex { get; set; }
     }
 }
