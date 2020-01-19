@@ -4,4 +4,16 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Quartz" Version="3.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Transports\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SchedulerZ\SchedulerZ.csproj" />
+  </ItemGroup>
+
 </Project>
