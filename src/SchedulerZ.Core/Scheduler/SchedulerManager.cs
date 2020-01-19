@@ -71,7 +71,7 @@ namespace SchedulerZ.Core.Scheduler
             }
             catch (Exception ex)
             {
-                _logger.Fatal("QuartzSchedulerManager.Shutdown", ex);
+                _logger.Fatal("SchedulerManager.Shutdown", ex);
             }
         }
 
@@ -80,44 +80,91 @@ namespace SchedulerZ.Core.Scheduler
         /// </summary>
         public void StartJob()
         {
+
         }
 
         /// <summary>
         /// 暂停Job
         /// </summary>
-        public void PauseJob()
+        public async Task<bool> PauseJob(string jobId)
         {
+            JobKey jk = new JobKey(jobId);
+            if (await _scheduler.CheckExists(jk))
+            {
+                await _scheduler.PauseJob(jk);
+                //var jobDetail = await _scheduler.GetJobDetail(jk);
+                //if (jobDetail.JobType.GetInterface("IInterruptableJob") != null)
+                //{
+                //    await _scheduler.Interrupt(jk);
+                //}
+                _logger.Info($"Job[{jobId}] is paused");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// 恢复Job
         /// </summary>
-        public void ResumeJob()
+        public async Task<bool> ResumeJob(string jobId)
         {
+            JobKey jk = new JobKey(jobId);
+            if (await _scheduler.CheckExists(jk))
+            {
+                await _scheduler.ResumeJob(jk);
+                _logger.Info($"Job[{jobId}] is resumed");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// 停止Job
         /// </summary>
-        public void StopJob()
+        public async Task<bool> StopJob(string jobId)
         {
-
+            JobKey jk = new JobKey(jobId);
+            if (await _scheduler.CheckExists(jk))
+            {
+                var tk = new TriggerKey(jobId);
+                await _scheduler.UnscheduleJob(tk);
+                _logger.Info($"Job[{jobId}] is stop");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// 删除Job
         /// </summary>
-        public void DeleteJob()
+        public async Task<bool> DeleteJob(string jobId)
         {
+            JobKey jk = new JobKey(jobId);
+            if (await _scheduler.CheckExists(jk))
+            {
+                var tk = new TriggerKey(jobId);
+                await _scheduler.UnscheduleJob(tk);
+                await _scheduler.DeleteJob(jk);
+                //卸载Job  TODO
 
+                _logger.Info($"Job[{jobId}] is delete");
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
         /// 立即运行一次Job
         /// </summary>
-        public void RunJobOnceNow()
+        public async Task<bool> RunJobOnceNow(string jobId)
         {
-
+            JobKey jk = new JobKey(jobId);
+            if (await _scheduler.CheckExists(jk))
+            {
+                await _scheduler.TriggerJob(jk);
+                return true;
+            }
+            return false;
         }
 
 
