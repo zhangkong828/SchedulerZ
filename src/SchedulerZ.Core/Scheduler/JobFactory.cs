@@ -27,5 +27,19 @@ namespace SchedulerZ.Core.Scheduler
         {
             return $"{Directory.GetCurrentDirectory()}\\wwwroot\\plugins\\{sid}\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
+
+        public static void UnLoadAssemblyLoadContext(JobAssemblyLoadContext context)
+        {
+            if (context != null)
+            {
+                context.Unload();
+                //for (int i = 0; context.weakReference.IsAlive && (i < 10); i++)
+                {
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+
+            }
+        }
     }
 }
