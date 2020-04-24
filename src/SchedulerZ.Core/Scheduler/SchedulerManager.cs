@@ -1,5 +1,6 @@
 ﻿using Quartz;
 using Quartz.Impl;
+using Quartz.Impl.Triggers;
 using Quartz.Spi;
 using SchedulerZ.Component;
 using SchedulerZ.Logging;
@@ -79,15 +80,20 @@ namespace SchedulerZ.Core.Scheduler
         /// <summary>
         /// 启动Job
         /// </summary>
-        public async Task<bool> StartJob()
+        public async Task<bool> StartJob(JobView job)
         {
+            if (!job.Validate())
+            {
+                return false;
+            }
+
             JobAssemblyLoadContext jalc = null;
             try
             {
                 jalc = JobFactory.LoadAssemblyContext("assemblyName");
                 try
                 {
-                    await Start(view, lc, callBack);
+                    await Start(job, jalc);
                     return true;
                 }
                 catch (SchedulerException sexp)
@@ -95,7 +101,7 @@ namespace SchedulerZ.Core.Scheduler
                     //_logger.Error($"任务启动失败！开始第{i + 1}次重试...", sexp, view.Schedule.Id);
                 }
                 //最后一次尝试
-                await Start(view, lc, callBack);
+                await Start(job, jalc);
                 return true;
             }
             catch (SchedulerException sex)
@@ -228,16 +234,13 @@ namespace SchedulerZ.Core.Scheduler
             return list;
         }
 
-        private async Task Start(JobAssemblyLoadContext jalc)
+        private async Task Start(JobView jobView, JobAssemblyLoadContext jalc)
         {
-            //throw new SchedulerException("SchedulerException");
-
-            var id = Guid.NewGuid();
             //在应用程序域中创建实例返回并保存在job中，这是最终调用任务执行的实例
-            JobBase instance = JobFactory.CreateJobInstance(jalc, id, "AssemblyName", "ClassName");
+            JobBase instance = JobFactory.CreateJobInstance(jalc, jobView.Id, jobView.AssemblyName, jobView.ClassName);
             if (instance == null)
             {
-                throw new InvalidCastException($"任务实例创建失败，请确认目标任务是否派生自JobBase类型。程序集：AssemblyName，类型：ClassName");
+                throw new InvalidCastException($"Job实例创建失败，请确认目标任务是否派生自JobBase类型。程序集:{jobView.AssemblyName}，类型:{jobView.ClassName}");
             }
             // instance.logger = new LogWriter(); ;
             JobDataMap map = new JobDataMap
@@ -250,53 +253,53 @@ namespace SchedulerZ.Core.Scheduler
                 //new KeyValuePair<string, object> ("children",view.Children)
             };
             IJobDetail job = JobBuilder.Create<JobCommon>()
-                .WithIdentity(id.ToString())
+                .WithIdentity(jobView.Id)
                 .UsingJobData(map)
                 .Build();
 
             //添加触发器
             //_scheduler.ListenerManager.AddJobListener(new JobRunListener(view.Schedule.Id.ToString(), callBack),KeyMatcher<JobKey>.KeyEquals(new JobKey(view.Schedule.Id.ToString())));
 
-            if (view.Schedule.RunLoop)
+            if (!jobView.IsSimple)
             {
-                if (!CronExpression.IsValidExpression(view.Schedule.CronExpression))
+                if (!CronExpression.IsValidExpression(jobView.CronExpression))
                 {
                     throw new Exception("cron表达式验证失败");
                 }
                 CronTriggerImpl trigger = new CronTriggerImpl
                 {
-                    CronExpressionString = view.Schedule.CronExpression,
-                    Name = view.Schedule.Title,
-                    Key = new TriggerKey(view.Schedule.Id.ToString()),
-                    Description = view.Schedule.Remark
+                    CronExpressionString = jobView.CronExpression,
+                    Name = jobView.Name,
+                    Key = new TriggerKey(jobView.Id),
+                    Description = jobView.Remark
                 };
-                if (view.Schedule.StartDate.HasValue)
+                if (jobView.StartTime.HasValue)
                 {
-                    trigger.StartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(view.Schedule.StartDate.Value);
+                    trigger.StartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(jobView.StartTime.Value);
                 }
-                if (view.Schedule.EndDate.HasValue)
+                if (jobView.EndTime.HasValue)
                 {
-                    trigger.EndTimeUtc = TimeZoneInfo.ConvertTimeToUtc(view.Schedule.EndDate.Value);
+                    trigger.EndTimeUtc = TimeZoneInfo.ConvertTimeToUtc(jobView.EndTime.Value);
                 }
                 await _scheduler.ScheduleJob(job, trigger);
             }
             else
             {
                 DateTimeOffset start = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
-                if (view.Schedule.StartDate.HasValue)
+                if (jobView.StartTime.HasValue)
                 {
-                    start = TimeZoneInfo.ConvertTimeToUtc(view.Schedule.StartDate.Value);
+                    start = TimeZoneInfo.ConvertTimeToUtc(jobView.StartTime.Value);
                 }
                 DateTimeOffset end = start.AddMinutes(1);
-                if (view.Schedule.EndDate.HasValue)
+                if (jobView.EndTime.HasValue)
                 {
-                    end = TimeZoneInfo.ConvertTimeToUtc(view.Schedule.EndDate.Value);
+                    end = TimeZoneInfo.ConvertTimeToUtc(jobView.EndTime.Value);
                 }
+
                 ITrigger trigger = TriggerBuilder.Create()
-                    .WithIdentity(view.Schedule.Id.ToString())
+                    .WithIdentity(jobView.Id)
                     .StartAt(start)
-                    .WithSimpleSchedule(x => x
-                    .WithRepeatCount(1).WithIntervalInMinutes(1))
+                    .WithSimpleSchedule(x => x.WithRepeatCount(jobView.RepeatCount).WithInterval(jobView.IntervalTimeSpan))
                     .EndAt(end)
                     .Build();
                 await _scheduler.ScheduleJob(job, trigger);

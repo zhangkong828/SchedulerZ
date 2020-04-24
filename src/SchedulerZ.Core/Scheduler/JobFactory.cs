@@ -8,7 +8,7 @@ namespace SchedulerZ.Core.Scheduler
 {
     public class JobFactory
     {
-        public static JobBase CreateJobInstance(JobAssemblyLoadContext context, Guid sid, string assemblyName, string className)
+        public static JobBase CreateJobInstance(JobAssemblyLoadContext context, string jobId, string assemblyName, string className)
         {
             try
             {
