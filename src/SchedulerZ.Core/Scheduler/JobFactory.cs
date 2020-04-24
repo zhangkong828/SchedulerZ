@@ -12,8 +12,8 @@ namespace SchedulerZ.Core.Scheduler
         {
             try
             {
-                string pluginLocation = GetJobAssemblyPath(sid, assemblyName);
-                var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginLocation)));
+                string jobLocation = GetJobAssemblyPath(assemblyName);
+                var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
                 Type type = assembly.GetType(className, true, true);
                 return Activator.CreateInstance(type) as JobBase;
             }
@@ -23,12 +23,26 @@ namespace SchedulerZ.Core.Scheduler
             }
         }
 
-        public static string GetJobAssemblyPath(Guid sid, string assemblyName)
+        public static string GetJobAssemblyPath(string assemblyName)
         {
-            return $"{Directory.GetCurrentDirectory()}\\wwwroot\\plugins\\{sid}\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            return $"{Directory.GetCurrentDirectory()}\\wwwroot\\plugins\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
 
-        public static void UnLoadAssemblyLoadContext(JobAssemblyLoadContext context)
+
+        /// <summary>
+        /// 加载应用程序域
+        /// </summary>
+        public static JobAssemblyLoadContext LoadAssemblyContext(string assemblyName)
+        {
+            string jobLocation = GetJobAssemblyPath(assemblyName);
+            JobAssemblyLoadContext loadContext = new JobAssemblyLoadContext(jobLocation);
+            return loadContext;
+        }
+
+        /// <summary>
+        /// 卸载应用程序域
+        /// </summary>
+        public static void UnLoadAssemblyContext(JobAssemblyLoadContext context)
         {
             if (context != null)
             {

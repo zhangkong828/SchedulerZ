@@ -6,9 +6,14 @@ using System.Text;
 
 namespace SchedulerZ
 {
+    /// <summary>
+    /// 所有job必须继承此类
+    /// </summary>
     public abstract class JobBase
     {
         public ILogger Logger;
+        private bool _isRunning = false;
+
         public JobBase(string jobKey)
         {
             Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
@@ -22,15 +27,22 @@ namespace SchedulerZ
 
         public void Execute(JobContext context)
         {
-            try
+            if (!_isRunning)
             {
-                Run(context);
+                _isRunning = true;
+                try
+                {
+                    Run(context);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("执行Job异常", ex);
+                }
+                finally
+                {
+                    _isRunning = false;
+                }
             }
-            catch (Exception ex)
-            {
-                Logger.Error("执行Job异常", ex);
-            }
-
         }
 
     }
