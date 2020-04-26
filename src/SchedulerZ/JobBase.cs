@@ -16,8 +16,8 @@ namespace SchedulerZ
 
         public JobBase(string jobKey)
         {
-            Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
-
+            //Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
+            Logger = new ConsoleLoggerProvider().CreateLogger(jobKey);
             JobKey = jobKey;
         }
 

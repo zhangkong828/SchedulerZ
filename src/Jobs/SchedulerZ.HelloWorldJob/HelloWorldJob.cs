@@ -6,6 +6,7 @@ namespace SchedulerZ.HelloWorldJob
     {
         public HelloWorldJob() : base("HelloWorldJob")
         {
+            var a = 1;
         }
 
         public override void Run(JobContext context)

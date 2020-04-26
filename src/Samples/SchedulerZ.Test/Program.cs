@@ -1,4 +1,5 @@
 ﻿using SchedulerZ.Component;
+using SchedulerZ.Core.Scheduler;
 using SchedulerZ.Logging;
 using System;
 
@@ -8,6 +9,9 @@ namespace SchedulerZ.Test
     {
         static Configuration _configuration;
         static ILogger _logger;
+
+        static SchedulerManager _schedulerManager;
+
         static void Main(string[] args)
         {
             _configuration = Configuration.Create().UseAutofac().BuildContainer();
@@ -15,14 +19,21 @@ namespace SchedulerZ.Test
             _logger = Configuration.LoggerProvider.CreateLogger(typeof(Program).Name);
 
 
-            _logger.Trace("trace1111");
-            _logger.Debug("debug22222222222");
-            _logger.Info("info333333333");
-            _logger.Warning("warning444444");
-            _logger.Error("error55555",new Exception("aaa"));
-            _logger.Fatal("fatal6666");
+            _schedulerManager=SchedulerManager.Scheduler;
+            _schedulerManager.StartScheduler();
 
-            //Console.WriteLine("over!");
+
+            var jobView = new JobView() { 
+                Name="HelloWorldJob",
+                Remark="这是一个测试Job",
+                CronExpression= "0/5 * * * * ? ",
+                AssemblyName= "SchedulerZ.HelloWorldJob",
+                ClassName= "SchedulerZ.HelloWorldJob.HelloWorldJob",
+            };
+
+            _schedulerManager.StartJob(jobView);
+
+            Console.WriteLine("over!");
             Console.ReadKey();
         }
     }

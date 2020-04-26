@@ -15,7 +15,8 @@ namespace SchedulerZ.Core.Scheduler
                 string jobLocation = GetJobAssemblyPath(assemblyName);
                 var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
                 Type type = assembly.GetType(className, true, true);
-                return Activator.CreateInstance(type) as JobBase;
+                var instance= Activator.CreateInstance(type) ;
+                return instance as JobBase;
             }
             catch (Exception ex)
             {
@@ -25,7 +26,7 @@ namespace SchedulerZ.Core.Scheduler
 
         public static string GetJobAssemblyPath(string assemblyName)
         {
-            return $"{Directory.GetCurrentDirectory()}\\wwwroot\\plugins\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            return $"{Directory.GetCurrentDirectory()}\\Jobs\\test\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
 
 

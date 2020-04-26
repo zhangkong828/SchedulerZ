@@ -11,4 +11,22 @@
     <ProjectReference Include="..\..\SchedulerZ\SchedulerZ.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Jobs\test\SchedulerZ.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Jobs\test\SchedulerZ.HelloWorldJob.deps.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Jobs\test\SchedulerZ.HelloWorldJob.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Jobs\test\SchedulerZ.HelloWorldJob.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Jobs\test\SchedulerZ.pdb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

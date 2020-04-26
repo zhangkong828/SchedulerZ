@@ -30,6 +30,7 @@ namespace SchedulerZ.Core.Scheduler
                     {
                         if (_schedulerManager == null)
                         {
+                            _schedulerManager = new SchedulerManager();
                             InitScheduler();
                         }
                     }
@@ -90,7 +91,7 @@ namespace SchedulerZ.Core.Scheduler
             JobAssemblyLoadContext jalc = null;
             try
             {
-                jalc = JobFactory.LoadAssemblyContext("assemblyName");
+                jalc = JobFactory.LoadAssemblyContext(job.AssemblyName);
                 try
                 {
                     await Start(job, jalc);
