@@ -9,9 +9,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Logging.Log4Net"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Component.Autofac", "src\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj", "{062836EF-0623-4A4B-90A9-8B0CA4BB902C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Worker", "src\SchedulerZ.Worker\SchedulerZ.Worker.csproj", "{B984EEAB-CFC6-467C-8E59-426EFADB023F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Worker", "src\SchedulerZ.Worker\SchedulerZ.Worker.csproj", "{B984EEAB-CFC6-467C-8E59-426EFADB023F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Core", "src\SchedulerZ.Core\SchedulerZ.Core.csproj", "{8DD2F1E7-A5E7-417C-B034-1339332B6CFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{CE84D4B9-4B88-4CDB-A1B2-5AC04F9A8CDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.HelloWorldJob", "src\Jobs\SchedulerZ.HelloWorldJob\SchedulerZ.HelloWorldJob.csproj", "{989A7095-C76B-4E8E-AB57-F79C294414E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Simple", "Simple", "{40817258-C355-41EA-8780-AA90782A33D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Test", "src\Simple\SchedulerZ.Test\SchedulerZ.Test.csproj", "{9EA7C951-397B-4F8B-9D0C-5F2751A8ED97}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +47,21 @@ Global
 		{8DD2F1E7-A5E7-417C-B034-1339332B6CFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8DD2F1E7-A5E7-417C-B034-1339332B6CFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8DD2F1E7-A5E7-417C-B034-1339332B6CFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989A7095-C76B-4E8E-AB57-F79C294414E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989A7095-C76B-4E8E-AB57-F79C294414E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989A7095-C76B-4E8E-AB57-F79C294414E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989A7095-C76B-4E8E-AB57-F79C294414E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EA7C951-397B-4F8B-9D0C-5F2751A8ED97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EA7C951-397B-4F8B-9D0C-5F2751A8ED97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EA7C951-397B-4F8B-9D0C-5F2751A8ED97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EA7C951-397B-4F8B-9D0C-5F2751A8ED97}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{989A7095-C76B-4E8E-AB57-F79C294414E8} = {CE84D4B9-4B88-4CDB-A1B2-5AC04F9A8CDA}
+		{9EA7C951-397B-4F8B-9D0C-5F2751A8ED97} = {40817258-C355-41EA-8780-AA90782A33D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65504834-0038-42F2-9846-6115F45CC269}

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace SchedulerZ
+namespace SchedulerZ.HelloWorldJob
 {
     public class HelloWorldJob : JobBase
     {
         public HelloWorldJob() : base("HelloWorldJob")
         {
-
         }
 
         public override void Run(JobContext context)
