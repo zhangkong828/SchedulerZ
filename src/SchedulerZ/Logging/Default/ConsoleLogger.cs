@@ -10,6 +10,21 @@ namespace SchedulerZ.Logging
         private readonly ConsoleColor? DefaultConsoleColor = null;
 
         private readonly ConsoleLoggerProcessor _queueProcessor;
+
+        private static readonly string _loglevelPadding = "  ";
+        private static readonly string _messagePadding;
+        private static readonly string _newLineWithMessagePadding;
+
+        [ThreadStatic]
+        private static StringBuilder _logBuilder;
+
+        static ConsoleLogger()
+        {
+            var logLevelString = GetLogLevelString(LogLevel.Warning);
+            _messagePadding = new string(' ', logLevelString.Length + _loglevelPadding.Length);
+            _newLineWithMessagePadding = Environment.NewLine + _messagePadding;
+        }
+
         public ConsoleLogger(IConsole console)
         {
             _queueProcessor = new ConsoleLoggerProcessor(console);
@@ -108,18 +123,51 @@ namespace SchedulerZ.Logging
 
         private void WriteMessage(LogLevel logLevel, string message, Exception ex)
         {
+            var logBuilder = _logBuilder;
+            _logBuilder = null;
+
+            if (logBuilder == null)
+            {
+                logBuilder = new StringBuilder();
+            }
+
             var logLevelColors = GetLogLevelConsoleColors(logLevel);
             var logLevelString = GetLogLevelString(logLevel);
 
+            logBuilder.Append(_loglevelPadding);
+
+            if (!string.IsNullOrEmpty(message))
+            {
+                // message
+                logBuilder.Append(_loglevelPadding);
+
+                var len = logBuilder.Length;
+                logBuilder.AppendLine(message);
+                logBuilder.Replace(Environment.NewLine, _newLineWithMessagePadding, len, message.Length);
+            }
+
+            if (ex != null)
+            {
+                logBuilder.AppendLine(ex.ToString());
+            }
+
+            var messagePadding= new string(' ', _messagePadding.Length - logLevelString.Length);
             var logMessage = new LogMessageEntry(
-                message: message,
-                timeStamp: DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                message: logBuilder.ToString(),
+                timeStamp: string.Concat(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), messagePadding),
                 levelString: logLevelString,
                 levelBackground: logLevelColors.Background,
                 levelForeground: logLevelColors.Foreground,
                 messageColor: DefaultConsoleColor
                 );
             _queueProcessor.EnqueueMessage(logMessage);
+
+            logBuilder.Clear();
+            if (logBuilder.Capacity > 1024)
+            {
+                logBuilder.Capacity = 1024;
+            }
+            _logBuilder = logBuilder;
         }
 
         private ConsoleColors GetLogLevelConsoleColors(LogLevel logLevel)
@@ -143,7 +191,7 @@ namespace SchedulerZ.Logging
             }
         }
 
-        private string GetLogLevelString(LogLevel logLevel)
+        private static string GetLogLevelString(LogLevel logLevel)
         {
             switch (logLevel)
             {

@@ -7,7 +7,7 @@ namespace SchedulerZ.Component
 {
     public class Configuration
     {
-        public static ILoggerProvider LoggerProvider { get; private set; } = new ConsoleLoggerProvider();
+        public static ILoggerProvider LoggerProvider { get; private set; }
         public static Configuration Instance { get; private set; }
         private Configuration() { }
 
@@ -16,12 +16,17 @@ namespace SchedulerZ.Component
             Instance = new Configuration();
             return Instance;
         }
-        public Configuration Build()
+
+        public Configuration BuildContainer()
         {
             ObjectContainer.Build();
             if (ObjectContainer.TryResolve<ILoggerProvider>(out ILoggerProvider loggerProvider))
             {
                 LoggerProvider = loggerProvider;
+            }
+            else
+            {
+                LoggerProvider = new ConsoleLoggerProvider();
             }
             return this;
         }
