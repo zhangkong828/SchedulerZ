@@ -15,8 +15,9 @@ namespace SchedulerZ.Core.Scheduler
                 string jobLocation = GetJobAssemblyPath(assemblyName);
                 var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
                 Type type = assembly.GetType(className, true, true);
-                var instance= Activator.CreateInstance(type) ;
-                return instance as JobBase;
+                var instance = Activator.CreateInstance(type);
+                var j = instance as JobBase;
+                return j;
             }
             catch (Exception ex)
             {

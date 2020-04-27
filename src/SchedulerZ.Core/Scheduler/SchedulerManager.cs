@@ -253,10 +253,12 @@ namespace SchedulerZ.Core.Scheduler
                 //new KeyValuePair<string, object> ("keepers",view.Keepers),
                 //new KeyValuePair<string, object> ("children",view.Children)
             };
-            IJobDetail job = JobBuilder.Create<JobCommon>()
-                .WithIdentity(jobView.Id)
-                .UsingJobData(map)
-                .Build();
+            //IJobDetail job = JobBuilder.Create<JobCommon>()
+            //    .WithIdentity(jobView.Id)
+            //    .UsingJobData(map)
+            //    .Build();
+
+            IJobDetail job = JobBuilder.Create().OfType(typeof(JobCommon)).WithIdentity(jobView.Id).UsingJobData(map).Build();
 
             //添加触发器
             //_scheduler.ListenerManager.AddJobListener(new JobRunListener(view.Schedule.Id.ToString(), callBack),KeyMatcher<JobKey>.KeyEquals(new JobKey(view.Schedule.Id.ToString())));

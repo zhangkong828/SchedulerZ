@@ -14,12 +14,12 @@ namespace SchedulerZ
         public ILogger Logger;
         private bool _isRunning = false;
 
-        public JobBase(string jobKey)
-        {
-            //Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
-            Logger = new ConsoleLoggerProvider().CreateLogger(jobKey);
-            JobKey = jobKey;
-        }
+        //public JobBase(string jobKey)
+        //{
+        //    //Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
+        //    Logger = new ConsoleLoggerProvider().CreateLogger(jobKey);
+        //    JobKey = jobKey;
+        //}
 
         public string JobKey { get; set; }
 
@@ -36,7 +36,7 @@ namespace SchedulerZ
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error("执行Job异常", ex);
+                    Logger?.Error("执行Job异常", ex);
                 }
                 finally
                 {

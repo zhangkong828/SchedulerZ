@@ -1,7 +1,10 @@
 ﻿using SchedulerZ.Component;
+using SchedulerZ.Core.Domain;
 using SchedulerZ.Core.Scheduler;
 using SchedulerZ.Logging;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace SchedulerZ.Test
 {
@@ -28,10 +31,23 @@ namespace SchedulerZ.Test
                 Remark="这是一个测试Job",
                 CronExpression= "0/5 * * * * ? ",
                 AssemblyName= "SchedulerZ.HelloWorldJob",
-                ClassName= "SchedulerZ.HelloWorldJob.HelloWorldJob",
+                ClassName= "SchedulerZ.HelloWorldJob.HelloWorld",
             };
 
-            _schedulerManager.StartJob(jobView);
+            //_schedulerManager.StartJob(jobView);
+
+
+            var domain = DomainManager.Create(jobView.AssemblyName);
+            string jobLocation = JobFactory.GetJobAssemblyPath(jobView.AssemblyName);
+            //var assembly = domain.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
+            var assembly = domain.LoadFile(jobLocation);
+            Type type = assembly.GetType(jobView.ClassName, true, true);
+            var instance = Activator.CreateInstance(type);
+            var j = instance as JobBase;
+
+            //domain.RemoveDll(jobLocation);
+            //domain.RemoveAssembly(assembly);
+            DomainManager.Remove(jobView.AssemblyName);
 
             Console.WriteLine("over!");
             Console.ReadKey();
