@@ -4,10 +4,6 @@ namespace SchedulerZ.HelloWorldJob
 {
     public class HelloWorld : JobBase
     {
-        public HelloWorld()
-        {
-            var a = 1;
-        }
 
         public override void Run(JobContext context)
         {

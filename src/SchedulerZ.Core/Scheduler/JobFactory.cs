@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchedulerZ.Core.Domain;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -12,11 +13,20 @@ namespace SchedulerZ.Core.Scheduler
         {
             try
             {
-                string jobLocation = GetJobAssemblyPath(assemblyName);
-                var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
+                //string jobLocation = GetJobAssemblyPath(assemblyName);
+                //var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
+                //Type type = assembly.GetType(className, true, true);
+                //var instance = Activator.CreateInstance(type);
+                //var j = instance as JobBase;
+
+                var domain = DomainManager.Create(assemblyName);
+                string jobLocation = JobFactory.GetJobAssemblyPath(assemblyName);
+                //var assembly = domain.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
+                var assembly = domain.LoadFile(jobLocation);
                 Type type = assembly.GetType(className, true, true);
                 var instance = Activator.CreateInstance(type);
                 var j = instance as JobBase;
+
                 return j;
             }
             catch (Exception ex)

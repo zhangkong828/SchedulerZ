@@ -9,7 +9,7 @@ namespace SchedulerZ
     /// <summary>
     /// 所有job必须继承此类
     /// </summary>
-    public abstract class JobBase
+    public abstract class JobBase: MarshalByRefObject
     {
         public ILogger Logger;
         private bool _isRunning = false;
