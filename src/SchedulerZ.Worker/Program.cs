@@ -1,4 +1,7 @@
-﻿using System;
+﻿using SchedulerZ.Worker.Domain;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace SchedulerZ.Worker
 {
@@ -6,7 +9,12 @@ namespace SchedulerZ.Worker
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+
+            
+
+            Console.WriteLine("over!");
+            Console.ReadKey();
         }
+
     }
 }

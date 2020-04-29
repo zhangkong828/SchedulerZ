@@ -34,26 +34,17 @@ namespace SchedulerZ.Test
                 ClassName= "SchedulerZ.HelloWorldJob.HelloWorld",
             };
 
-            //_schedulerManager.StartJob(jobView);
+            _schedulerManager.StartJob(jobView);
 
-            var t = typeof(HelloWorld);
-            var i= Activator.CreateInstance(t);
-            var j1 = i as JobBase;
+          
 
-            var domain = DomainManager.Create(jobView.AssemblyName);
-            using (DomainManager.Lock(jobView.AssemblyName))
-            {
-                string jobLocation = JobFactory.GetJobAssemblyPath(jobView.AssemblyName);
-                //var assembly = domain.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
-                var assembly = domain.LoadStream(jobLocation);
-                Type type = assembly.GetType(jobView.ClassName, true, true);
-                var instance = Activator.CreateInstance(type);
-                var j = instance as JobBase;
-            }
-           
-
-            //domain.RemoveDll(jobLocation);
-            //domain.RemoveAssembly(assembly);
+            //var domain = DomainManager.Create(jobView.AssemblyName);
+            //var jobAssemblyLocation = JobFactory.GetJobAssemblyPath(jobView.AssemblyName);
+            //var assembly = domain.LoadFile(jobAssemblyLocation);
+            //Type type = assembly.GetType(jobView.ClassName, true, true);
+            //var instance = Activator.CreateInstance(type);
+            //var j = instance as JobBase;
+            //Console.WriteLine(j);
             //DomainManager.Remove(jobView.AssemblyName);
 
             Console.WriteLine("over!");

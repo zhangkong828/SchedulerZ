@@ -3,16 +3,20 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
+    <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Jobs\**" />
+    <EmbeddedResource Remove="Jobs\**" />
+    <None Remove="Jobs\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj" />
     <ProjectReference Include="..\..\SchedulerZ.Core\SchedulerZ.Core.csproj" />
     <ProjectReference Include="..\..\SchedulerZ\SchedulerZ.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Jobs\test\" />
   </ItemGroup>
 
 </Project>

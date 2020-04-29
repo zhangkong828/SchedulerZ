@@ -58,13 +58,13 @@ namespace SchedulerZ.Core.Scheduler
         {
             if (context != null)
             {
-                context.Unload();
-                //for (int i = 0; context.weakReference.IsAlive && (i < 10); i++)
+                try
                 {
+                    context.Unload();
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
                 }
-
+                catch { }
             }
         }
     }

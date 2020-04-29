@@ -167,13 +167,21 @@ namespace SchedulerZ.Core.Domain
 
         public void Dispose()
         {
-            _load_resolver = null;
-            ShortReferenceMappings.Clear();
-            ReferencesCache.Clear();
-            OutfileMapping.Clear();
-            AssemblyMappings.Clear();
-            PathMapping.Clear();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _load_resolver = null;
+                ShortReferenceMappings.Clear();
+                ReferencesCache.Clear();
+                OutfileMapping.Clear();
+                AssemblyMappings.Clear();
+                PathMapping.Clear();
+            }
         }
 
 
