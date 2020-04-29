@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
+    <SatelliteResourceLanguages>xxx</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +17,14 @@
   <ItemGroup>
     <ProjectReference Include="..\..\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj" />
     <ProjectReference Include="..\..\SchedulerZ.Core\SchedulerZ.Core.csproj" />
+    <ProjectReference Include="..\..\SchedulerZ.Logging.Log4Net\SchedulerZ.Logging.Log4Net.csproj" />
     <ProjectReference Include="..\..\SchedulerZ\SchedulerZ.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

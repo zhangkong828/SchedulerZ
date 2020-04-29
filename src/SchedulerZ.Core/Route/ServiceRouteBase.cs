@@ -15,7 +15,7 @@ namespace SchedulerZ.Core.Route
         public abstract Task<IEnumerable<ServiceRouteDescriptor>> GetServices(string key);
 
         public abstract Task<bool> RegisterService(ServiceRouteDescriptor service);
-        public abstract Task<bool> DeregisterService(ServiceRouteDescriptor service);
+        public abstract Task<bool> UnregisterService(ServiceRouteDescriptor service);
 
 
         /// <summary>

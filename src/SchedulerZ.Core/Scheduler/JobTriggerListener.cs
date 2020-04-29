@@ -1,4 +1,6 @@
 ﻿using Quartz;
+using SchedulerZ.Component;
+using SchedulerZ.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +11,8 @@ namespace SchedulerZ.Core.Scheduler
 {
     public class JobTriggerListener : ITriggerListener
     {
+        private readonly ILogger _logger = Configuration.LoggerProvider.CreateLogger("SchedulerManager");
+
         public string Name { get { return "SchedulerZ.JobTriggerListener"; } }
 
 
@@ -21,7 +25,8 @@ namespace SchedulerZ.Core.Scheduler
         /// <returns></returns>
         public Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("开始");
+            var jobId = trigger.JobKey.Name;
+            _logger.Debug($"{jobId}开始");
             return Task.CompletedTask;
         }
 
@@ -35,7 +40,8 @@ namespace SchedulerZ.Core.Scheduler
         /// <returns></returns>
         public Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("执行");
+            var jobId = trigger.JobKey.Name;
+            _logger.Debug($"{jobId}执行前");
             return Task.FromResult(false);
         }
 
@@ -49,7 +55,8 @@ namespace SchedulerZ.Core.Scheduler
         /// <returns></returns>
         public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("完成");
+            var jobId = trigger.JobKey.Name;
+            _logger.Debug($"{jobId}完成");
             return Task.CompletedTask;
         }
 
@@ -62,7 +69,8 @@ namespace SchedulerZ.Core.Scheduler
         /// <returns></returns>
         public Task TriggerMisfired(ITrigger trigger, CancellationToken cancellationToken = default)
         {
-            Console.WriteLine("错过");
+            var jobId = trigger.JobKey.Name;
+            _logger.Debug($"{jobId}错过");
             return Task.CompletedTask;
         }
 

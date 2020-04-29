@@ -20,7 +20,7 @@ namespace SchedulerZ.Core.Route
         /// <summary>
         /// 移除服务
         /// </summary>
-        Task<bool> DeregisterService(ServiceRouteDescriptor service);
+        Task<bool> UnregisterService(ServiceRouteDescriptor service);
 
     }
 }

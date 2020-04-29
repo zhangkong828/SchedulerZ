@@ -12,5 +12,10 @@ namespace SchedulerZ.Core.Scheduler
         public AssemblyDomain Domain { get; set; }
 
         public JobBase Instance { get; set; }
+
+        public void Execute(JobContext jobContext)
+        {
+            Instance.Execute(jobContext);
+        }
     }
 }

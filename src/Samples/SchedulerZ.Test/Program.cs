@@ -27,6 +27,7 @@ namespace SchedulerZ.Test
 
 
             var jobView = new JobView() { 
+                Id="test",
                 Name="HelloWorldJob",
                 Remark="这是一个测试Job",
                 CronExpression= "0/5 * * * * ? ",
@@ -36,7 +37,7 @@ namespace SchedulerZ.Test
 
             _schedulerManager.StartJob(jobView);
 
-          
+
 
             //var domain = DomainManager.Create(jobView.AssemblyName);
             //var jobAssemblyLocation = JobFactory.GetJobAssemblyPath(jobView.AssemblyName);
@@ -46,7 +47,7 @@ namespace SchedulerZ.Test
             //var j = instance as JobBase;
             //Console.WriteLine(j);
             //DomainManager.Remove(jobView.AssemblyName);
-
+            
             Console.WriteLine("over!");
             Console.ReadKey();
         }

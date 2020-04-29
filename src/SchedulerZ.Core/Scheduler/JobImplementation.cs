@@ -19,11 +19,11 @@ namespace SchedulerZ.Core.Scheduler
             IJobDetail job = context.JobDetail;
             try
             {
-                if (job.JobDataMap["Instance"] is JobBase instance)
+                if (job.JobDataMap["JobRuntime"] is JobRuntime jobRuntime)
                 {
                     //Guid traceId = GreateRunTrace();
                     Stopwatch stopwatch = new Stopwatch();
-                    JobContext jobContext = new JobContext(instance);
+                    JobContext jobContext = new JobContext(jobRuntime.Instance);
                     //tctx.Node = node;
                     //tctx.TaskId = _sid;
                     //tctx.TraceId = traceId;
@@ -35,7 +35,7 @@ namespace SchedulerZ.Core.Scheduler
                     try
                     {
                         stopwatch.Restart();
-                        instance.Execute(jobContext);
+                        jobRuntime.Execute(jobContext);
                         stopwatch.Stop();
                         //UpdateRunTrace(traceId, Math.Round(stopwatch.Elapsed.TotalSeconds, 3), ScheduleRunResult.Success);
                         //LogHelper.Info($"任务[{job.JobDataMap["name"]}]运行成功！用时{stopwatch.Elapsed.TotalMilliseconds.ToString()}ms", _sid, traceId);

@@ -14,14 +14,11 @@ namespace SchedulerZ
         public ILogger Logger;
         private bool _isRunning = false;
 
-        //public JobBase(string jobKey)
-        //{
-        //    //Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
-        //    Logger = new ConsoleLoggerProvider().CreateLogger(jobKey);
-        //    JobKey = jobKey;
-        //}
-
-        public string JobKey { get; set; }
+        public JobBase()
+        {
+            //Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
+            Logger = Configuration.LoggerProvider.CreateLogger("SchedulerZ");
+        }
 
         public abstract void Run(JobContext context);
 
