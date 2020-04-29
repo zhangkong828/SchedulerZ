@@ -8,9 +8,9 @@ namespace SchedulerZ.Core.Scheduler
 {
     [PersistJobDataAfterExecution]
     [DisallowConcurrentExecution]
-    public class JobCommon : IJob
+    public class JobImplementation : IJob
     {
-        public JobCommon()
+        public JobImplementation()
         {
         }
 

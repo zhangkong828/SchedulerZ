@@ -9,63 +9,46 @@ namespace SchedulerZ.Core.Scheduler
 {
     public class JobFactory
     {
-        public static JobBase CreateJobInstance(JobAssemblyLoadContext context, string jobId, string assemblyName, string className)
+        private const string DefaultJobBaseAssemblyName = "SchedulerZ";
+
+        public static JobRuntime CreateJobRuntime(JobView jobView)
         {
-            try
+            var domain = DomainManager.Create(jobView.Id);
+
+            DeleteJobBaseAssemblyFromOutput(jobView.Id);
+            var assemblyPath = JobFactory.GetJobAssemblyPath(jobView.Id, jobView.AssemblyName);
+            var assembly = domain.LoadFile(assemblyPath);
+
+            Type type = assembly.GetType(jobView.ClassName, true, true);
+            var instance = Activator.CreateInstance(type) as JobBase;
+            if (instance == null)
             {
-                //string jobLocation = GetJobAssemblyPath(assemblyName);
-                //var assembly = context.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
-                //Type type = assembly.GetType(className, true, true);
-                //var instance = Activator.CreateInstance(type);
-                //var j = instance as JobBase;
-
-                var domain = DomainManager.Create(assemblyName);
-                string jobLocation = JobFactory.GetJobAssemblyPath(assemblyName);
-                //var assembly = domain.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(jobLocation)));
-                var assembly = domain.LoadFile(jobLocation);
-                Type type = assembly.GetType(className, true, true);
-                var instance = Activator.CreateInstance(type);
-                var j = instance as JobBase;
-
-                return j;
+                throw new InvalidCastException($"程序集: {jobView.AssemblyName} 创建Job实例失败,请确认 {jobView.ClassName} 是否派生自JobBase");
             }
-            catch (Exception ex)
+
+            return new JobRuntime()
             {
-                throw ex;
-            }
+                JobView = jobView,
+                Domain = domain,
+                Instance = instance
+            };
         }
 
-        public static string GetJobAssemblyPath(string assemblyName)
+        private static void DeleteJobBaseAssemblyFromOutput(string jobId)
         {
-            return $"{Directory.GetCurrentDirectory()}\\Jobs\\test\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            var dllPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\{jobId}\\{DefaultJobBaseAssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            if (File.Exists(dllPath))
+                File.Delete(dllPath);
+
+            var pdbPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\{jobId}\\{DefaultJobBaseAssemblyName}.pdb".Replace('\\', Path.DirectorySeparatorChar);
+            if (File.Exists(pdbPath))
+                File.Delete(pdbPath);
         }
 
-
-        /// <summary>
-        /// 加载应用程序域
-        /// </summary>
-        public static JobAssemblyLoadContext LoadAssemblyContext(string assemblyName)
+        public static string GetJobAssemblyPath(string jobId, string assemblyName)
         {
-            string jobLocation = GetJobAssemblyPath(assemblyName);
-            JobAssemblyLoadContext loadContext = new JobAssemblyLoadContext(jobLocation);
-            return loadContext;
+            return $"{Directory.GetCurrentDirectory()}\\Jobs\\{jobId}\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
 
-        /// <summary>
-        /// 卸载应用程序域
-        /// </summary>
-        public static void UnLoadAssemblyContext(JobAssemblyLoadContext context)
-        {
-            if (context != null)
-            {
-                try
-                {
-                    context.Unload();
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                }
-                catch { }
-            }
-        }
     }
 }

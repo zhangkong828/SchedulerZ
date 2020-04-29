@@ -15,7 +15,7 @@ namespace SchedulerZ.Core.Domain
         public readonly static string CurrentPath;
         static DomainManager()
         {
-            CurrentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "dynamiclib");
+            CurrentPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DynamicLib");
             if (!Directory.Exists(CurrentPath))
             {
                 Directory.CreateDirectory(CurrentPath);
@@ -114,7 +114,7 @@ namespace SchedulerZ.Core.Domain
                 }
                 return result;
             }
-            throw new Exception($"Can't find key : {key}!");
+            return null;
 
         }
 

@@ -88,33 +88,14 @@ namespace SchedulerZ.Core.Scheduler
                 return false;
             }
 
-            JobAssemblyLoadContext jalc = null;
             try
             {
-                jalc = JobFactory.LoadAssemblyContext(job.AssemblyName);
-                try
-                {
-                    await Start(job, jalc);
-                    return true;
-                }
-                catch (SchedulerException sexp)
-                {
-                    //_logger.Error($"任务启动失败！开始第{i + 1}次重试...", sexp, view.Schedule.Id);
-                }
-                //最后一次尝试
-                await Start(job, jalc);
+                await Start(job);
                 return true;
             }
-            catch (SchedulerException sex)
+            catch (Exception ex)
             {
-                JobFactory.UnLoadAssemblyContext(jalc);
-                //LogHelper.Error($"任务所有重试都失败了，已放弃启动！", sexp, view.Schedule.Id);
-                return false;
-            }
-            catch (Exception exp)
-            {
-                JobFactory.UnLoadAssemblyContext(jalc);
-                //LogHelper.Error($"任务启动失败！", exp, view.Schedule.Id);
+                _logger.Error($"Start Job Fail", ex);
                 return false;
             }
         }
@@ -235,41 +216,29 @@ namespace SchedulerZ.Core.Scheduler
             return list;
         }
 
-        private async Task Start(JobView jobView, JobAssemblyLoadContext jalc)
+
+
+        private async Task Start(JobView jobView)
         {
-            //在应用程序域中创建实例返回并保存在job中，这是最终调用任务执行的实例
-            JobBase instance = JobFactory.CreateJobInstance(jalc, jobView.Id, jobView.AssemblyName, jobView.ClassName);
-            if (instance == null)
-            {
-                throw new InvalidCastException($"Job实例创建失败，请确认目标任务是否派生自JobBase类型。程序集:{jobView.AssemblyName}，类型:{jobView.ClassName}");
-            }
-            // instance.logger = new LogWriter(); ;
+            var jobRuntime = JobFactory.CreateJobRuntime(jobView);
+
             JobDataMap map = new JobDataMap
             {
-                new KeyValuePair<string, object> ("Domain",jalc),
-                new KeyValuePair<string, object> ("Instance",instance),
-                //new KeyValuePair<string, object> ("name",view.Schedule.Title),
-                //new KeyValuePair<string, object> ("Params",ConvertParamsJson(view.Schedule.CustomParamsJson)),
-                //new KeyValuePair<string, object> ("keepers",view.Keepers),
-                //new KeyValuePair<string, object> ("children",view.Children)
+                new KeyValuePair<string, object> ("JobRuntime",jobRuntime)
             };
-            //IJobDetail job = JobBuilder.Create<JobCommon>()
-            //    .WithIdentity(jobView.Id)
-            //    .UsingJobData(map)
-            //    .Build();
 
-            IJobDetail job = JobBuilder.Create().OfType(typeof(JobCommon)).WithIdentity(jobView.Id).UsingJobData(map).Build();
+            IJobDetail job = JobBuilder.Create().OfType(typeof(JobImplementation)).WithIdentity(jobView.Id).UsingJobData(map).Build();
 
             //添加触发器
             //_scheduler.ListenerManager.AddJobListener(new JobRunListener(view.Schedule.Id.ToString(), callBack),KeyMatcher<JobKey>.KeyEquals(new JobKey(view.Schedule.Id.ToString())));
 
             if (!jobView.IsSimple)
             {
-                if (!CronExpression.IsValidExpression(jobView.CronExpression))
+                if (!ValidExpression(jobView.CronExpression))
                 {
                     throw new Exception("cron表达式验证失败");
                 }
-                CronTriggerImpl trigger = new CronTriggerImpl
+                var trigger = new CronTriggerImpl
                 {
                     CronExpressionString = jobView.CronExpression,
                     Name = jobView.Name,
@@ -288,27 +257,24 @@ namespace SchedulerZ.Core.Scheduler
             }
             else
             {
-                DateTimeOffset start = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+                var triggerBuilder = TriggerBuilder.Create().WithIdentity(jobView.Id).WithSimpleSchedule(x => x.WithRepeatCount(jobView.RepeatCount).WithInterval(jobView.IntervalTimeSpan));
+
                 if (jobView.StartTime.HasValue)
                 {
-                    start = TimeZoneInfo.ConvertTimeToUtc(jobView.StartTime.Value);
+                    var start = TimeZoneInfo.ConvertTimeToUtc(jobView.StartTime.Value);
+                    triggerBuilder = triggerBuilder.StartAt(start);
                 }
-                DateTimeOffset end = start.AddMinutes(1);
                 if (jobView.EndTime.HasValue)
                 {
-                    end = TimeZoneInfo.ConvertTimeToUtc(jobView.EndTime.Value);
+                    var end = TimeZoneInfo.ConvertTimeToUtc(jobView.EndTime.Value);
+                    triggerBuilder = triggerBuilder.EndAt(end);
                 }
 
-                ITrigger trigger = TriggerBuilder.Create()
-                    .WithIdentity(jobView.Id)
-                    .StartAt(start)
-                    .WithSimpleSchedule(x => x.WithRepeatCount(jobView.RepeatCount).WithInterval(jobView.IntervalTimeSpan))
-                    .EndAt(end)
-                    .Build();
+                var trigger = triggerBuilder.Build();
                 await _scheduler.ScheduleJob(job, trigger);
             }
 
-            //LogHelper.Info($"任务[{view.Schedule.Title}]启动成功！", view.Schedule.Id);
+            _logger.Info($"job [{jobView.Id}]{jobView.Name} start success");
 
         }
     }
