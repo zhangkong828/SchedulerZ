@@ -6,7 +6,6 @@ namespace SchedulerZ.Core.Scheduler
         public JobView()
         {
             this.Id = Guid.NewGuid().ToString();
-            this.CreateTime = DateTime.Now;
         }
 
         public string Id { get; set; }
@@ -20,7 +19,7 @@ namespace SchedulerZ.Core.Scheduler
         public string ClassName { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
-        public DateTime CreateTime { get; private set; }
+        public DateTime CreateTime { get; set; }
 
         public bool Validate()
         {
