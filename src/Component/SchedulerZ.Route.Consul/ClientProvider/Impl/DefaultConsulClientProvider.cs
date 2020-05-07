@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,19 +13,21 @@ namespace SchedulerZ.Route.Consul.ClientProvider.Impl
     public class DefaultConsulClientProvider : IConsulClientProvider, IDisposable
     {
         private readonly ConsulServiceRouteConfig _config;
-        private readonly int _timeout = 30000;
+        private readonly int _timeout;
         private readonly Timer _timer;
         private readonly ConcurrentDictionary<string, ClientEntry> _consulClients = new ConcurrentDictionary<string, ClientEntry>();
         public DefaultConsulClientProvider(ConsulServiceRouteConfig config)
         {
             _config = config;
 
+            _timeout = _config.NodeCheckTimeOut;
+
             Initialize();
 
-            var timeSpan = TimeSpan.FromSeconds(60);
+            var timeSpan = _config.NodeCheckInterval;
             _timer = new Timer(async s =>
             {
-                await CheckHealth();
+                await NodeCheckHealth();
             }, null, timeSpan, timeSpan);
 
         }
@@ -49,7 +52,7 @@ namespace SchedulerZ.Route.Consul.ClientProvider.Impl
             }
         }
 
-        private Task CheckHealth()
+        private Task NodeCheckHealth()
         {
             foreach (var item in _consulClients)
             {
@@ -84,12 +87,23 @@ namespace SchedulerZ.Route.Consul.ClientProvider.Impl
 
         public bool IsHealth(string host, int port)
         {
-            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp) { SendTimeout = _timeout })
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 try
                 {
-                    socket.Connect(host, port);
-                    return true;
+                    IAsyncResult connResult = socket.BeginConnect(host, port, null, null);
+
+                    connResult.AsyncWaitHandle.WaitOne(_timeout, true);
+
+                    if (!connResult.IsCompleted)
+                    {
+                        socket.Close();
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 catch
                 {
@@ -100,7 +114,17 @@ namespace SchedulerZ.Route.Consul.ClientProvider.Impl
 
         public void Dispose()
         {
-            _timer.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _timer.Dispose();
+            }
         }
     }
 }

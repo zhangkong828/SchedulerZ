@@ -18,10 +18,12 @@ namespace SchedulerZ.Route.Consul
             _consulClientProvider = consulClientProvider;
         }
 
+
         public async Task<IEnumerable<ServiceRouteDescriptor>> DiscoverServices(string name)
         {
             var services = new List<ServiceRouteDescriptor>();
             var client = _consulClientProvider.GetClient();
+            if (client == null) return services;
             var queryResult = await client.Health.Service(name);
             if (queryResult.StatusCode == HttpStatusCode.OK)
             {
@@ -43,14 +45,15 @@ namespace SchedulerZ.Route.Consul
         public async Task<bool> RegisterService(ServiceRouteDescriptor service)
         {
             var client = _consulClientProvider.GetClient();
+            if (client == null) return false;
             var agentCheck = new AgentCheckRegistration
             {
                 ID = $"CheckHealth{service.Id}",
                 Name = $"CheckHealth{service.Name}",
                 TCP = $"",
-                Interval = _config.CheckInterval,
+                Interval = _config.ServiceCheckInterval,
                 Status = HealthStatus.Passing,
-                DeregisterCriticalServiceAfter = _config.CriticalInterval,
+                DeregisterCriticalServiceAfter = _config.ServiceCriticalInterval,
             };
 
             var agentService = new AgentServiceRegistration
@@ -64,6 +67,30 @@ namespace SchedulerZ.Route.Consul
             };
             var response = await client.Agent.ServiceRegister(agentService);
             return response.StatusCode == HttpStatusCode.OK;
+        }
+
+
+        public async Task<bool> DeregisterService(ServiceRouteDescriptor service)
+        {
+            var client = _consulClientProvider.GetClient();
+            if (client == null) return false;
+            var response = await client.Agent.ServiceDeregister(service.Id);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        private string GenServiceId(ServiceRouteDescriptor service)
+        {
+            return $"{service.Name}-{service.Address}:{service.Port}";
+        }
+
+        private string GenCheckId(ServiceRouteDescriptor service)
+        {
+            return $"{serviceName}-{service.Address}:{service.Port}";
+        }
+
+        private string GenCheckName(ServiceRouteDescriptor service)
+        {
+            return $"{serviceName}-{service.Address}:{service.Port}";
         }
     }
 }

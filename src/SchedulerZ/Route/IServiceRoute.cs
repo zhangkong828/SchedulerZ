@@ -16,5 +16,10 @@ namespace SchedulerZ.Route
         /// 注册服务
         /// </summary>
         Task<bool> RegisterService(ServiceRouteDescriptor service);
+
+        /// <summary>
+        /// 移除服务
+        /// </summary>
+        Task<bool> DeregisterService(ServiceRouteDescriptor service);
     }
 }

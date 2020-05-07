@@ -13,13 +13,24 @@ namespace SchedulerZ.Route.Consul
         public int HealthCheckTimeOut { get; set; } = 60;
 
         /// <summary>
-        /// 健康检测时间
+        /// 服务健康检测时间
         /// </summary>
-        public TimeSpan CheckInterval { get; set; } = TimeSpan.FromSeconds(10);
+        public TimeSpan ServiceCheckInterval { get; set; } = TimeSpan.FromSeconds(10);
 
         /// <summary>
         /// 移除服务时间
         /// </summary>
-        public TimeSpan CriticalInterval { get; set; } = TimeSpan.FromSeconds(20);
+        public TimeSpan ServiceCriticalInterval { get; set; } = TimeSpan.FromSeconds(20);
+
+
+        /// <summary>
+        /// 节点检测间隔时间
+        /// </summary>
+        public TimeSpan NodeCheckInterval { get; set; } = TimeSpan.FromMinutes(2);
+
+        /// <summary>
+        /// 节点检测超时时间 毫秒
+        /// </summary>
+        public int NodeCheckTimeOut { get; set; } = 10000;
     }
 }
