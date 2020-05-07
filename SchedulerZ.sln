@@ -5,21 +5,25 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ", "src\SchedulerZ\SchedulerZ.csproj", "{9057E648-9C51-4F82-BA5D-6405BF269D3B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Logging.Log4Net", "src\SchedulerZ.Logging.Log4Net\SchedulerZ.Logging.Log4Net.csproj", "{786DDC16-3D92-493D-85E9-F3A1F2BCB0D6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Component.Autofac", "src\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj", "{062836EF-0623-4A4B-90A9-8B0CA4BB902C}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Worker", "src\SchedulerZ.Worker\SchedulerZ.Worker.csproj", "{B984EEAB-CFC6-467C-8E59-426EFADB023F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Core", "src\SchedulerZ.Core\SchedulerZ.Core.csproj", "{8DD2F1E7-A5E7-417C-B034-1339332B6CFD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{CE84D4B9-4B88-4CDB-A1B2-5AC04F9A8CDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.HelloWorldJob", "src\Jobs\SchedulerZ.HelloWorldJob\SchedulerZ.HelloWorldJob.csproj", "{989A7095-C76B-4E8E-AB57-F79C294414E8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.HelloWorldJob", "src\Jobs\SchedulerZ.HelloWorldJob\SchedulerZ.HelloWorldJob.csproj", "{989A7095-C76B-4E8E-AB57-F79C294414E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{40817258-C355-41EA-8780-AA90782A33D6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Test", "src\Samples\SchedulerZ.Test\SchedulerZ.Test.csproj", "{9A7885C1-6CA5-46E6-9EA2-C377855657BA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Component", "Component", "{B4AD6BF4-3BCD-42A9-9D47-74402473D453}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Route.Consul", "src\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj", "{1F9BFD47-C3F1-4004-961F-D8BE703243DF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Component.Autofac", "src\Component\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj", "{D4D3E291-D88E-4725-9428-0041F82BB5A6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Logging.Log4Net", "src\Component\SchedulerZ.Logging.Log4Net\SchedulerZ.Logging.Log4Net.csproj", "{5021B292-F48B-4781-8C68-AA1FD693A71D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +35,6 @@ Global
 		{9057E648-9C51-4F82-BA5D-6405BF269D3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9057E648-9C51-4F82-BA5D-6405BF269D3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9057E648-9C51-4F82-BA5D-6405BF269D3B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{786DDC16-3D92-493D-85E9-F3A1F2BCB0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{786DDC16-3D92-493D-85E9-F3A1F2BCB0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{786DDC16-3D92-493D-85E9-F3A1F2BCB0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{786DDC16-3D92-493D-85E9-F3A1F2BCB0D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{062836EF-0623-4A4B-90A9-8B0CA4BB902C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B984EEAB-CFC6-467C-8E59-426EFADB023F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B984EEAB-CFC6-467C-8E59-426EFADB023F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B984EEAB-CFC6-467C-8E59-426EFADB023F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -55,6 +51,18 @@ Global
 		{9A7885C1-6CA5-46E6-9EA2-C377855657BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A7885C1-6CA5-46E6-9EA2-C377855657BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A7885C1-6CA5-46E6-9EA2-C377855657BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D3E291-D88E-4725-9428-0041F82BB5A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4D3E291-D88E-4725-9428-0041F82BB5A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4D3E291-D88E-4725-9428-0041F82BB5A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4D3E291-D88E-4725-9428-0041F82BB5A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +70,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{989A7095-C76B-4E8E-AB57-F79C294414E8} = {CE84D4B9-4B88-4CDB-A1B2-5AC04F9A8CDA}
 		{9A7885C1-6CA5-46E6-9EA2-C377855657BA} = {40817258-C355-41EA-8780-AA90782A33D6}
+		{1F9BFD47-C3F1-4004-961F-D8BE703243DF} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
+		{D4D3E291-D88E-4725-9428-0041F82BB5A6} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
+		{5021B292-F48B-4781-8C68-AA1FD693A71D} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65504834-0038-42F2-9846-6115F45CC269}
