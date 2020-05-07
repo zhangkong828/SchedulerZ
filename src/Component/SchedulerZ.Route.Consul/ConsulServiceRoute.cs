@@ -85,12 +85,12 @@ namespace SchedulerZ.Route.Consul
 
         private string GenCheckId(ServiceRouteDescriptor service)
         {
-            return $"{serviceName}-{service.Address}:{service.Port}";
+            return $"{service.Name}-{service.Address}:{service.Port}";
         }
 
         private string GenCheckName(ServiceRouteDescriptor service)
         {
-            return $"{serviceName}-{service.Address}:{service.Port}";
+            return $"{service.Name}-{service.Address}:{service.Port}";
         }
     }
 }
