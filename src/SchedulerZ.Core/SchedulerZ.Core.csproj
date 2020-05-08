@@ -7,13 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.5.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.3" />
-    <PackageReference Include="Quartz" Version="3.0.7" />
+    <Compile Remove="Transports\**" />
+    <EmbeddedResource Remove="Transports\**" />
+    <None Remove="Transports\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Transports\" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.5.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.3" />
+    <PackageReference Include="Quartz" Version="3.0.7" />
   </ItemGroup>
 
   <ItemGroup>
