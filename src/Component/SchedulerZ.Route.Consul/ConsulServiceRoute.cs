@@ -46,11 +46,15 @@ namespace SchedulerZ.Route.Consul
         {
             var client = _consulClientProvider.GetClient();
             if (client == null) return false;
+
+            var serviceId = GenServiceId(service);
+            var checkId = GenCheckId(service);
+            var checkName = GenCheckName(service);
             var agentCheck = new AgentCheckRegistration
             {
-                ID = $"CheckHealth{service.Id}",
-                Name = $"CheckHealth{service.Name}",
-                TCP = $"",
+                ID = checkId,
+                Name = checkName,
+                TCP = $"{service.Address}:{service.Port}",
                 Interval = _config.ServiceCheckInterval,
                 Status = HealthStatus.Passing,
                 DeregisterCriticalServiceAfter = _config.ServiceCriticalInterval,
@@ -58,12 +62,12 @@ namespace SchedulerZ.Route.Consul
 
             var agentService = new AgentServiceRegistration
             {
-                ID = service.Id,
+                ID = serviceId,
                 Name = service.Name,
                 Address = service.Address,
                 Port = service.Port,
-                Tags = service.Tags
-                //Check = agentCheck
+                Tags = service.Tags,
+                Check = agentCheck
             };
             var response = await client.Agent.ServiceRegister(agentService);
             return response.StatusCode == HttpStatusCode.OK;
