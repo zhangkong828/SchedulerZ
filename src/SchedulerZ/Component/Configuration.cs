@@ -17,7 +17,7 @@ namespace SchedulerZ.Component
             return Instance;
         }
 
-        public Configuration BuildContainer()
+        public Configuration Build()
         {
             ObjectContainer.Build();
             if (ObjectContainer.TryResolve<ILoggerProvider>(out ILoggerProvider loggerProvider))
