@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Test", "src\Samp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Component", "Component", "{B4AD6BF4-3BCD-42A9-9D47-74402473D453}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Route.Consul", "src\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj", "{1F9BFD47-C3F1-4004-961F-D8BE703243DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Route.Consul", "src\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj", "{1F9BFD47-C3F1-4004-961F-D8BE703243DF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Component.Autofac", "src\Component\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj", "{D4D3E291-D88E-4725-9428-0041F82BB5A6}"
 EndProject

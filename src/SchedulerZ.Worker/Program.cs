@@ -1,5 +1,4 @@
-﻿using SchedulerZ.Worker.Domain;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 

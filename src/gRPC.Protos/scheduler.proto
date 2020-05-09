@@ -1,0 +1,33 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "SchedulerZ.gRPC";
+
+import "google/protobuf/empty.proto";
+package Scheduler;
+
+service SchedulerService{
+	rpc StartJob(JobView) returns(SchedulerResult);
+	rpc PauseJob(JobView) returns(SchedulerResult);
+	rpc ResumeJob(JobView) returns(SchedulerResult);
+	rpc StopJob(JobView) returns(SchedulerResult);
+	rpc DeleteJob(JobView) returns(SchedulerResult);
+	rpc RunJobOnceNow(JobView) returns(SchedulerResult);
+}
+
+message JobView{
+	string Id=1;
+	string Name=2;
+	string Remark=3;
+	bool IsSimple=4;
+	string CronExpression=5;
+	int32 RepeatCount=6;
+	int64 IntervalTimeSpan=7;
+	string AssemblyName=8;
+	string ClassName=9;
+	int64 StartTime=10;
+	int64 EndTime=11;
+}
+
+message SchedulerResult{
+	bool Success=1;
+}
