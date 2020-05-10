@@ -8,8 +8,4 @@
     <None Remove="Logging\Default\ConsoleLoggerProvider.cs~RF9b6672a4.TMP" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Route\" />
-  </ItemGroup>
-
 </Project>

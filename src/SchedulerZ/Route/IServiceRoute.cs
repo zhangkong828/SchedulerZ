@@ -8,7 +8,7 @@ namespace SchedulerZ.Route
     public interface IServiceRoute
     {
         /// <summary>
-        /// 获取服务
+        /// 发现服务
         /// </summary>
         Task<IEnumerable<ServiceRouteDescriptor>> DiscoverServices(string name);
 
