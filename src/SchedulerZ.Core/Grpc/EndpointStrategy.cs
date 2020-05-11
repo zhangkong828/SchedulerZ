@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SchedulerZ.Route
+namespace SchedulerZ.Core.Grpc
 {
-    public interface IServiceLoadBalancer
+    public class EndpointStrategy: IEndpointStrategy
     {
     }
 }
