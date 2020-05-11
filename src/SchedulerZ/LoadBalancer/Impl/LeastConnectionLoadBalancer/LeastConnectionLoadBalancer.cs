@@ -36,6 +36,14 @@ namespace SchedulerZ.LoadBalancer.Impl.LeastConnectionLoadBalancer
 
         public void Release(ServiceRouteDescriptor serviceRouteDescriptor)
         {
+            lock (_syncLock)
+            {
+                if (_dic.ContainsKey(serviceRouteDescriptor))
+                {
+                    var count = _dic[serviceRouteDescriptor];
+                    _dic.TryUpdate(serviceRouteDescriptor, count - 1, count);
+                }
+            }
         }
 
 
