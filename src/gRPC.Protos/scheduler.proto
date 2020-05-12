@@ -6,15 +6,15 @@ import "google/protobuf/empty.proto";
 package Scheduler;
 
 service SchedulerService{
-	rpc StartJob(JobView) returns(SchedulerResult);
-	rpc PauseJob(JobView) returns(SchedulerResult);
-	rpc ResumeJob(JobView) returns(SchedulerResult);
-	rpc StopJob(JobView) returns(SchedulerResult);
-	rpc DeleteJob(JobView) returns(SchedulerResult);
-	rpc RunJobOnceNow(JobView) returns(SchedulerResult);
+	rpc StartJob(Job) returns(SchedulerResult);
+	rpc PauseJob(Job) returns(SchedulerResult);
+	rpc ResumeJob(Job) returns(SchedulerResult);
+	rpc StopJob(Job) returns(SchedulerResult);
+	rpc DeleteJob(Job) returns(SchedulerResult);
+	rpc RunJobOnceNow(Job) returns(SchedulerResult);
 }
 
-message JobView{
+message Job{
 	string Id=1;
 	string Name=2;
 	string Remark=3;
