@@ -21,22 +21,7 @@ namespace SchedulerZ.Core.Grpc
 
         public ServerCallInvoker Get(string serviceName)
         {
-            if (_invokers.TryGetValue(serviceName, out List<ServerCallInvoker> callInvokers) &&
-                callInvokers?.Count > 0)
-                return ServicePollingPlicy.Random(callInvokers);
-
-            lock (_lock)
-            {
-                if (_invokers.TryGetValue(serviceName, out callInvokers) &&
-                    callInvokers?.Count > 0)
-                    return ServicePollingPlicy.Random(callInvokers);
-
-                callInvokers = SetCallInvokers(serviceName);
-                if ((callInvokers?.Count ?? 0) <= 0 && ServiceBlackPlicy.Exist(serviceName))
-                    callInvokers = SetCallInvokers(serviceName, false);
-
-                return ServicePollingPlicy.Random(callInvokers);
-            }
+            throw new NotImplementedException();
         }
 
         public void Revoke(string serviceName, ServerCallInvoker failedCallInvoker)
