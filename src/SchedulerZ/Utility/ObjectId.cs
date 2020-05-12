@@ -51,25 +51,6 @@ namespace SchedulerZ.Utility
             internal set { _sequence = value; }
         }
 
-        public ObjectId(long workerId, long datacenterId, long sequence = 0L)
-        {
-            // 如果超出范围就抛出异常
-            if (workerId > MaxWorkerId || workerId < 0)
-            {
-                throw new ArgumentException(string.Format("worker Id 必须大于0，且不能大于MaxWorkerId： {0}", MaxWorkerId));
-            }
-
-            if (datacenterId > MaxDatacenterId || datacenterId < 0)
-            {
-                throw new ArgumentException(string.Format("region Id 必须大于0，且不能大于MaxWorkerId： {0}", MaxDatacenterId));
-            }
-
-            //先检验再赋值
-            WorkerId = workerId;
-            DatacenterId = datacenterId;
-            _sequence = sequence;
-        }
-
         private static ObjectId _snowflakeId;
         private static readonly object SLock = new object();
         public static ObjectId Default()
@@ -96,6 +77,26 @@ namespace SchedulerZ.Utility
                 return _snowflakeId = new ObjectId(workerId, datacenterId);
             }
         }
+
+        public ObjectId(long workerId, long datacenterId, long sequence = 0L)
+        {
+            // 如果超出范围就抛出异常
+            if (workerId > MaxWorkerId || workerId < 0)
+            {
+                throw new ArgumentException(string.Format("worker Id 必须大于0，且不能大于MaxWorkerId： {0}", MaxWorkerId));
+            }
+
+            if (datacenterId > MaxDatacenterId || datacenterId < 0)
+            {
+                throw new ArgumentException(string.Format("region Id 必须大于0，且不能大于MaxWorkerId： {0}", MaxDatacenterId));
+            }
+
+            //先检验再赋值
+            WorkerId = workerId;
+            DatacenterId = datacenterId;
+            _sequence = sequence;
+        }
+
 
         readonly object _lock = new object();
         public virtual long NextId()

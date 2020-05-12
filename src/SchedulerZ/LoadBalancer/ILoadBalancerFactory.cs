@@ -5,7 +5,7 @@ using System.Text;
 
 namespace SchedulerZ.LoadBalancer
 {
-    interface ILoadBalancerFactory
+    public interface ILoadBalancerFactory
     {
         ILoadBalancer Get();
     }
