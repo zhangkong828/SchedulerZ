@@ -4,29 +4,6 @@ using System.Text;
 
 namespace SchedulerZ.Utility
 {
-    public static class ObjectId
-    {
-        private static readonly IdWorker _idWorker;
-        static ObjectId()
-        {
-            var workerId = 1;// AppConnection.GetValue<int>("WorkerId");
-            var dataCenterId = 1;// AppConnection.GetValue<int>("DataCenterId");
-            _idWorker = new IdWorker(workerId, dataCenterId);//机器标识  数据中心标识
-        }
-
-        public static long NextId()
-        {
-            return _idWorker.NextId();
-        }
-
-        public static string NextNumber()
-        {
-            return $"{DateTime.Now.ToString("yyyyMMddHHmmss")}{_idWorker.NextId().ToString()}";
-        }
-    }
-
-
-
     //Twitter_Snowflake算法
     //SnowFlake的结构如下(每部分用-分开)
     //0 - 0000000000 0000000000 0000000000 0000000000 0 - 00000 - 00000 - 000000000000 
@@ -37,7 +14,7 @@ namespace SchedulerZ.Utility
     //12位序列，毫秒内的计数，12位的计数顺序号支持每个节点每毫秒(同一机器，同一时间截)产生4096个ID序号
     //加起来刚好64位，为一个Long型。
     //SnowFlake的优点是，整体上按照时间自增排序，并且整个分布式系统内不会产生ID碰撞(由数据中心ID和机器ID作区分)，并且效率较高，经测试，SnowFlake每秒能够产生26万ID左右。
-    public class IdWorker
+    public class ObjectId
     {
         //开始时间截 (2020-04-24 10:15:03) 
         public const long Twepoch = 1587694503000L;
@@ -74,7 +51,7 @@ namespace SchedulerZ.Utility
             internal set { _sequence = value; }
         }
 
-        public IdWorker(long workerId, long datacenterId, long sequence = 0L)
+        public ObjectId(long workerId, long datacenterId, long sequence = 0L)
         {
             // 如果超出范围就抛出异常
             if (workerId > MaxWorkerId || workerId < 0)
@@ -93,7 +70,34 @@ namespace SchedulerZ.Utility
             _sequence = sequence;
         }
 
-        readonly object _lock = new Object();
+        private static ObjectId _snowflakeId;
+        private static readonly object SLock = new object();
+        public static ObjectId Default()
+        {
+            lock (SLock)
+            {
+                if (_snowflakeId != null)
+                {
+                    return _snowflakeId;
+                }
+
+                var random = new Random();
+
+                if (!int.TryParse(Environment.GetEnvironmentVariable("SchedulerZ_WORKERID", EnvironmentVariableTarget.Machine), out var workerId))
+                {
+                    workerId = random.Next((int)MaxWorkerId);
+                }
+
+                if (!int.TryParse(Environment.GetEnvironmentVariable("SchedulerZ_DATACENTERID", EnvironmentVariableTarget.Machine), out var datacenterId))
+                {
+                    datacenterId = random.Next((int)MaxDatacenterId);
+                }
+
+                return _snowflakeId = new ObjectId(workerId, datacenterId);
+            }
+        }
+
+        readonly object _lock = new object();
         public virtual long NextId()
         {
             lock (_lock)
@@ -142,60 +146,10 @@ namespace SchedulerZ.Utility
         // 获取当前的时间戳
         protected virtual long TimeGen()
         {
-            return TimeExtensions.CurrentTimeMillis();
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
     }
 
 
 
-    public static class TimeExtensions
-    {
-        public static Func<long> currentTimeFunc = InternalCurrentTimeMillis;
-
-        public static long CurrentTimeMillis()
-        {
-            return currentTimeFunc();
-        }
-
-        public static IDisposable StubCurrentTime(Func<long> func)
-        {
-            currentTimeFunc = func;
-            return new DisposableAction(() =>
-            {
-                currentTimeFunc = InternalCurrentTimeMillis;
-            });
-        }
-
-        public static IDisposable StubCurrentTime(long millis)
-        {
-            currentTimeFunc = () => millis;
-            return new DisposableAction(() =>
-            {
-                currentTimeFunc = InternalCurrentTimeMillis;
-            });
-        }
-
-        private static readonly DateTime Jan1st1970 = new DateTime
-           (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-        private static long InternalCurrentTimeMillis()
-        {
-            return (long)(DateTime.UtcNow - Jan1st1970).TotalMilliseconds;
-        }
-    }
-
-    public class DisposableAction : IDisposable
-    {
-        readonly Action _action;
-
-        public DisposableAction(Action action)
-        {
-            _action = action ?? throw new ArgumentNullException("action");
-        }
-
-        public void Dispose()
-        {
-            _action();
-        }
-    }
 }
