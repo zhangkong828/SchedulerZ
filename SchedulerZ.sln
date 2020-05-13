@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Component.Autofa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Logging.Log4Net", "src\Component\SchedulerZ.Logging.Log4Net\SchedulerZ.Logging.Log4Net.csproj", "{5021B292-F48B-4781-8C68-AA1FD693A71D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Remoting.gRPC", "src\Component\SchedulerZ.Remoting.gRPC\SchedulerZ.Remoting.gRPC.csproj", "{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +79,7 @@ Global
 		{1F9BFD47-C3F1-4004-961F-D8BE703243DF} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{D4D3E291-D88E-4725-9428-0041F82BB5A6} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{5021B292-F48B-4781-8C68-AA1FD693A71D} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
+		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65504834-0038-42F2-9846-6115F45CC269}
