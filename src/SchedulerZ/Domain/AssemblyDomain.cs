@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
 
-namespace SchedulerZ.Core.Domain
+namespace SchedulerZ.Domain
 {
     public class AssemblyDomain : AssemblyLoadContext, IDisposable
     {

@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using static System.Runtime.Loader.AssemblyLoadContext;
 
-namespace SchedulerZ.Core.Domain
+namespace SchedulerZ.Domain
 {
     public class DomainManager
     {

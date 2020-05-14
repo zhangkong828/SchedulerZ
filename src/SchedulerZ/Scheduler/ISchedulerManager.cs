@@ -19,5 +19,7 @@ namespace SchedulerZ.Scheduler
         Task<bool> DeleteJob(string jobId);
 
         Task<bool> RunJobOnceNow(string jobId);
+
+        bool ValidExpression(string cronExpression);
     }
 }

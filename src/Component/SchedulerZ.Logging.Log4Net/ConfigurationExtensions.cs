@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SchedulerZ.Component.Log4Net
+namespace SchedulerZ.Logging.Log4Net
 {
     public static class ConfigurationExtensions
     {
