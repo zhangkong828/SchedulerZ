@@ -1,4 +1,4 @@
-﻿using SchedulerZ.Component;
+﻿using Microsoft.Extensions.DependencyInjection;
 using SchedulerZ.LoadBalancer.Impl.FirstLoadBalancer;
 using SchedulerZ.LoadBalancer.Impl.LastLoadBalancer;
 using SchedulerZ.LoadBalancer.Impl.LeastConnectionLoadBalancer;
@@ -12,21 +12,23 @@ namespace SchedulerZ.LoadBalancer
 {
     public static class ConfigurationExtensions
     {
-        public static Configuration UseLoadBalancer(this Configuration configuration, Action<LoadBalancerConfig> loadBalancerConfig = null)
+        public static IServiceCollection UseLoadBalancer(this IServiceCollection services, Action<LoadBalancerConfig> loadBalancerConfig = null)
         {
             var config = new LoadBalancerConfig();
             loadBalancerConfig?.Invoke(config);
 
-            ObjectContainer.RegisterSingleInstance(config);
+            services.AddSingleton(config);
 
-            ObjectContainer.RegisterSingle<ILoadBalancerCreator, FirstLoadBalancerCreator>(); //第一个
-            ObjectContainer.RegisterSingle<ILoadBalancerCreator, LastLoadBalancerCreator>();//最后一个
-            ObjectContainer.RegisterSingle<ILoadBalancerCreator, RandomLoadBalancerCreator>();//随机
-            ObjectContainer.RegisterSingle<ILoadBalancerCreator, RoundRobinLoadBalancerCreator>();//轮训
-            ObjectContainer.RegisterSingle<ILoadBalancerCreator, LeastConnectionLoadBalancerCreator>();//最小连接
+            services.AddSingleton<ILoadBalancerCreator, FirstLoadBalancerCreator>(); //第一个
+            services.AddSingleton<ILoadBalancerCreator, LastLoadBalancerCreator>();//最后一个
+            services.AddSingleton<ILoadBalancerCreator, RandomLoadBalancerCreator>();//随机
+            services.AddSingleton<ILoadBalancerCreator, RoundRobinLoadBalancerCreator>();//轮训
+            services.AddSingleton<ILoadBalancerCreator, LeastConnectionLoadBalancerCreator>();//最小连接
 
-            ObjectContainer.RegisterSingle<ILoadBalancerFactory, LoadBalancerFactory>();
-            return configuration;
+            services.AddSingleton<ILoadBalancerFactory, LoadBalancerFactory>();
+
+            return services;
         }
+
     }
 }

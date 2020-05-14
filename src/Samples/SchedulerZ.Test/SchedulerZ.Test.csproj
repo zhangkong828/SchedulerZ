@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Component\SchedulerZ.Component.Autofac\SchedulerZ.Component.Autofac.csproj" />
     <ProjectReference Include="..\..\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj" />
     <ProjectReference Include="..\..\SchedulerZ.Core\SchedulerZ.Core.csproj" />
     <ProjectReference Include="..\..\SchedulerZ\SchedulerZ.csproj" />

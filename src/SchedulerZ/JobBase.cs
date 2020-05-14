@@ -1,5 +1,4 @@
-﻿using SchedulerZ.Component;
-using SchedulerZ.Logging;
+﻿using SchedulerZ.Logging;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +16,7 @@ namespace SchedulerZ
         public JobBase()
         {
             //Logger = Configuration.LoggerProvider.CreateLogger(jobKey);
-            Logger = Configuration.LoggerProvider.CreateLogger("SchedulerZ");
+           // Logger = Configuration.LoggerProvider.CreateLogger("SchedulerZ");
         }
 
         public abstract void Run(JobContext context);
