@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SchedulerZ.Core.Grpc
+namespace SchedulerZ.Remoting.gRPC.Client
 {
     public class ServerCallInvoker : CallInvoker
     {

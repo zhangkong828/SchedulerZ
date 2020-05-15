@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using SchedulerZ.gRPC;
-using SchedulerZ.Remoting.gRPC.HostedService;
-using SchedulerZ.Remoting.gRPC.Impl;
 using System;
 using System.Collections.Generic;
 using System.Text;

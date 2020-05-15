@@ -5,8 +5,15 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SchedulerZ.Core.Grpc
+namespace SchedulerZ.Remoting.gRPC.Client
 {
+    public interface IEndpointStrategy
+    {
+        ServerCallInvoker Get(string serviceName);
+        void Revoke(string serviceName, ServerCallInvoker failedCallInvoker);
+    }
+
+
     public class EndpointStrategy : IEndpointStrategy
     {
         private readonly object _lock = new object();

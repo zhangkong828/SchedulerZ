@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using SchedulerZ.LoadBalancer;
 using SchedulerZ.Logging;
 using SchedulerZ.Models;
+using SchedulerZ.Remoting;
 using SchedulerZ.Route;
 using SchedulerZ.Route.Consul;
 using SchedulerZ.Scheduler;
@@ -35,13 +36,13 @@ namespace SchedulerZ.Test
 
             _logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger("Main");
 
-
+            //通过 负载 拿到可用service
             var loadBalancer = serviceProvider.GetService<ILoadBalancerFactory>().Get();
-
             var service = loadBalancer.Lease("test").GetAwaiter().GetResult();
-
             Console.WriteLine($"{service.Name}|{service.Address}:{service.Port}");
 
+            //远程调用
+            var remoting = serviceProvider.GetService<ISchedulerRemoting>();
             var job = new JobEntity()
             {
                 Id = "test",
@@ -52,6 +53,7 @@ namespace SchedulerZ.Test
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
             };
 
+            remoting.StartJob(job);
 
 
             Console.ReadKey();

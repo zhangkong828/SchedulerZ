@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SchedulerZ.Remoting.gRPC.Impl
+namespace SchedulerZ.Remoting.gRPC
 {
     public class SchedulerServiceImpl : SchedulerZ.gRPC.SchedulerService.SchedulerServiceBase
     {

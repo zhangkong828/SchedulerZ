@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SchedulerZ.Remoting.gRPC.HostedService
+namespace SchedulerZ.Remoting.gRPC
 {
     public class GrpcHostedService : IHostedService
     {
