@@ -26,10 +26,6 @@ namespace SchedulerZ.Worker
                         .ConfigureServices((context, services) =>
                         {
                             services.UseDefaultLogging();
-                            services.UseLoadBalancer(config =>
-                            {
-                                config.Type = "RoundRobinLoadBalancer";
-                            });
                             services.UseConsulServiceRoute(config =>
                             {
                                 config.Host = "192.168.1.203";
@@ -43,7 +39,7 @@ namespace SchedulerZ.Worker
                         })
                         .Build();
 
-
+            //注册
             var serviceRoute = host.Services.GetService<IServiceRoute>();
             var service = new ServiceRouteDescriptor()
             {
