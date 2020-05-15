@@ -15,8 +15,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Component\SchedulerZ.Remoting.gRPC\SchedulerZ.Remoting.gRPC.csproj" />
     <ProjectReference Include="..\..\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj" />
-    <ProjectReference Include="..\..\SchedulerZ.Core\SchedulerZ.Core.csproj" />
+    <ProjectReference Include="..\..\Component\SchedulerZ.Scheduler.QuartzNet\SchedulerZ.Scheduler.QuartzNet.csproj" />
     <ProjectReference Include="..\..\SchedulerZ\SchedulerZ.csproj" />
   </ItemGroup>
 
