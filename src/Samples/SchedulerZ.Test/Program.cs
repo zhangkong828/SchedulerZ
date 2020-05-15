@@ -10,6 +10,7 @@ using SchedulerZ.Scheduler;
 using SchedulerZ.Scheduler.QuartzNet;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace SchedulerZ.Test
@@ -17,71 +18,31 @@ namespace SchedulerZ.Test
     class Program
     {
         static ILogger _logger;
-
-        static ISchedulerManager _schedulerManager;
-
+        
         static void Main(string[] args)
         {
-            var host = new HostBuilder()
-                       .UseConsoleLifetime()
-                       .ConfigureAppConfiguration((context, configurationBuilder) =>
-                       {
-                           configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-                       })
-                       .ConfigureServices((context, services) =>
-                       {
-                           services.UseDefaultLogging();
-                           services.UseLoadBalancer(config =>
-                           {
-                               config.Type = "RoundRobinLoadBalancer";
-                           });
-                           services.UseConsulServiceRoute(config =>
-                           {
-                               config.Host = "192.168.1.203";
-                           });
-                           services.UseQuartzNetScheduler();
-                       })
-                       .Build();
-
-            var serviceProvider = host.Services;
-
-            //var serviceProvider = new ServiceCollection()
-            //                        .UseDefaultLogging()
-            //                        .UseLoadBalancer(config =>
-            //                        {
-            //                            config.Type = "RoundRobinLoadBalancer";
-            //                        })
-            //                        .UseConsulServiceRoute(config =>
-            //                        {
-            //                            config.Host = "192.168.1.203";
-            //                        })
-            //                        .BuildServiceProvider();
+            var serviceProvider = new ServiceCollection()
+                                    .UseDefaultLogging()
+                                    .UseLoadBalancer(config =>
+                                    {
+                                        config.Type = "RoundRobinLoadBalancer";
+                                    })
+                                    .UseConsulServiceRoute(config =>
+                                    {
+                                        config.Host = "192.168.1.203";
+                                    })
+                                    .BuildServiceProvider();
 
             _logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger("Main");
 
 
-            var serviceRoute = serviceProvider.GetService<IServiceRoute>();
+            var loadBalancer = serviceProvider.GetService<ILoadBalancerFactory>().Get();
 
-            var service = new ServiceRouteDescriptor()
-            {
-                Id = Guid.NewGuid().ToString("n"),
-                Name = "test",
-                Address = "192.168.1.202",
-                Port = 10004
-            };
+            var service = loadBalancer.Lease("test").GetAwaiter().GetResult();
 
-            serviceRoute.RegisterService(service).GetAwaiter().GetResult();
+            Console.WriteLine($"{service.Name}|{service.Address}:{service.Port}");
 
-            var result = serviceRoute.DiscoverServices("test").GetAwaiter().GetResult();
-            foreach (var item in result)
-            {
-                Console.WriteLine($"{item.Id}|{item.Name} {item.Address}:{item.Port}");
-            }
-
-
-            _schedulerManager = serviceProvider.GetService<ISchedulerManager>();
-
-            var jobView = new JobEntity()
+            var job = new JobEntity()
             {
                 Id = "test",
                 Name = "HelloWorldJob",
@@ -91,11 +52,9 @@ namespace SchedulerZ.Test
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
             };
 
-            _schedulerManager.StartJob(jobView);
 
 
-
-            host.Run();
+            Console.ReadKey();
         }
     }
 }

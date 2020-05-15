@@ -9,6 +9,7 @@ using SchedulerZ.Scheduler.QuartzNet;
 using System;
 using System.IO;
 using System.Reflection;
+using SchedulerZ.Remoting.gRPC;
 
 namespace SchedulerZ.Worker
 {
@@ -33,18 +34,23 @@ namespace SchedulerZ.Worker
                             {
                                 config.Host = "192.168.1.203";
                             });
+                            services.UseGrpcRemoting(config =>
+                            {
+                                config.Host = "0.0.0.0";
+                                config.Port = 10001;
+                            });
                             services.UseQuartzNetScheduler();
                         })
                         .Build();
 
-            
+
             var serviceRoute = host.Services.GetService<IServiceRoute>();
             var service = new ServiceRouteDescriptor()
             {
                 Id = Guid.NewGuid().ToString("n"),
                 Name = "test",
                 Address = "192.168.1.202",
-                Port = 10004
+                Port = 10001
             };
             serviceRoute.RegisterService(service).GetAwaiter().GetResult();
             host.Run();
