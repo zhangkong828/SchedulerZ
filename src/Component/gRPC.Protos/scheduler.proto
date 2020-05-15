@@ -6,12 +6,12 @@ import "google/protobuf/empty.proto";
 package Scheduler;
 
 service SchedulerService{
-	rpc StartJob(Job) returns(SchedulerResult);
-	rpc PauseJob(Job) returns(SchedulerResult);
-	rpc ResumeJob(Job) returns(SchedulerResult);
-	rpc StopJob(Job) returns(SchedulerResult);
-	rpc DeleteJob(Job) returns(SchedulerResult);
-	rpc RunJobOnceNow(Job) returns(SchedulerResult);
+	rpc StartJob(Job) returns(SchedulerResponse);
+	rpc PauseJob(Job) returns(SchedulerResponse);
+	rpc ResumeJob(Job) returns(SchedulerResponse);
+	rpc StopJob(Job) returns(SchedulerResponse);
+	rpc DeleteJob(Job) returns(SchedulerResponse);
+	rpc RunJobOnceNow(Job) returns(SchedulerResponse);
 }
 
 message Job{
@@ -21,13 +21,13 @@ message Job{
 	bool IsSimple=4;
 	string CronExpression=5;
 	int32 RepeatCount=6;
-	int64 IntervalTimeSpan=7;
+	int64 IntervalSeconds=7;
 	string AssemblyName=8;
 	string ClassName=9;
 	int64 StartTime=10;
 	int64 EndTime=11;
 }
 
-message SchedulerResult{
+message SchedulerResponse{
 	bool Success=1;
 }
