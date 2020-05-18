@@ -1,5 +1,6 @@
-﻿ using Grpc.Core;
+﻿using Grpc.Core;
 using SchedulerZ.LoadBalancer;
+using SchedulerZ.Route;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -9,8 +10,8 @@ namespace SchedulerZ.Remoting.gRPC.Client
 {
     public interface IEndpointStrategy
     {
-        ServerCallInvoker Get(string serviceName);
-        void Revoke(string serviceName, ServerCallInvoker failedCallInvoker);
+        ServerCallInvoker Get(ServiceRouteDescriptor service);
+        void Revoke(ServiceRouteDescriptor service, ServerCallInvoker failedCallInvoker);
     }
 
 
@@ -19,20 +20,15 @@ namespace SchedulerZ.Remoting.gRPC.Client
         private readonly object _lock = new object();
         private readonly ConcurrentDictionary<string, Channel> _channels = new ConcurrentDictionary<string, Channel>();
 
-        private readonly ILoadBalancerFactory _loadBalancerFactory;
-        public EndpointStrategy(ILoadBalancerFactory loadBalancerFactory)
+        public EndpointStrategy()
         {
-            _loadBalancerFactory = loadBalancerFactory;
+
         }
 
 
-        public ServerCallInvoker Get(string serviceName)
+        public ServerCallInvoker Get(ServiceRouteDescriptor service)
         {
-            var service = _loadBalancerFactory.Get().Lease(serviceName).GetAwaiter().GetResult();
-            if (service == null)
-                return null;
-
-            var target = $"{service.Address}:{service.Port}";
+            var target = GetTarget(service);
 
             if (_channels.TryGetValue(target, out Channel channel))
                 return new ServerCallInvoker(channel);
@@ -55,7 +51,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
             }
         }
 
-        public void Revoke(string serviceName, ServerCallInvoker failedCallInvoker)
+        public void Revoke(ServiceRouteDescriptor service, ServerCallInvoker failedCallInvoker)
         {
             lock (_lock)
             {
@@ -63,7 +59,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
                     return;
 
                 var failedChannel = failedCallInvoker.Channel;
-                if (!_channels.TryGetValue(serviceName, out Channel channel))
+                if (!_channels.TryGetValue(GetTarget(service), out Channel channel))
                     return;
 
                 _channels.TryRemove(failedChannel.Target, out failedChannel);
@@ -74,6 +70,12 @@ namespace SchedulerZ.Remoting.gRPC.Client
                 failedChannel.ShutdownAsync();
 
             }
+        }
+
+
+        private string GetTarget(ServiceRouteDescriptor service)
+        {
+            return $"{service.Address}:{service.Port}";
         }
     }
 }

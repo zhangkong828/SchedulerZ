@@ -25,7 +25,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    callInvoker = _strategy.Get(_service.Name);
+                    callInvoker = _strategy.Get(_service);
                     if (callInvoker == null)
                     {
                         throw new ArgumentNullException($"{_service.Name}无可用节点");
@@ -47,7 +47,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
                 catch (RpcException ex)
                 {
                     if (ex.Status.StatusCode == StatusCode.Unavailable)
-                        _strategy.Revoke(_service.Name, callInvoker);
+                        _strategy.Revoke(_service, callInvoker);
 
                     if (0 > --retryLeft)
                     {

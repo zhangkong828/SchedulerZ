@@ -17,41 +17,52 @@ namespace SchedulerZ.Remoting.gRPC.Client
             _clientFactory = clientFactory;
         }
 
-        public Task<bool> StartJob(JobEntity job)
+        public Task<bool> StartJob(JobEntity job, ServiceRouteDescriptor service)
         {
-            var service = new ServiceRouteDescriptor()
-            {
-                Name = "test"
-            };
+            var client = _clientFactory.Get(service);
 
             var jobRequest = Utils.MapperPropertyValue<JobEntity, Job>(job);
-            var client = _clientFactory.Get(service);
             var response = client.StartJob(jobRequest);
             return Task.FromResult(response.Success);
         }
 
-        public Task<bool> PauseJob(string jobId)
+        public Task<bool> PauseJob(string jobId, ServiceRouteDescriptor service)
         {
-            throw new NotImplementedException();
+            var client = _clientFactory.Get(service);
+
+            var response = client.PauseJob(new Job() { Id = jobId });
+            return Task.FromResult(response.Success);
         }
 
-        public Task<bool> ResumeJob(string jobId)
+        public Task<bool> ResumeJob(string jobId, ServiceRouteDescriptor service)
         {
-            throw new NotImplementedException();
+            var client = _clientFactory.Get(service);
+
+            var response = client.ResumeJob(new Job() { Id = jobId });
+            return Task.FromResult(response.Success);
         }
 
-        public Task<bool> StopJob(string jobId)
+        public Task<bool> StopJob(string jobId, ServiceRouteDescriptor service)
         {
-            throw new NotImplementedException();
+            var client = _clientFactory.Get(service);
+
+            var response = client.StopJob(new Job() { Id = jobId });
+            return Task.FromResult(response.Success);
         }
-        public Task<bool> DeleteJob(string jobId)
+        public Task<bool> DeleteJob(string jobId, ServiceRouteDescriptor service)
         {
-            throw new NotImplementedException();
+            var client = _clientFactory.Get(service);
+
+            var response = client.DeleteJob(new Job() { Id = jobId });
+            return Task.FromResult(response.Success);
         }
 
-        public Task<bool> RunJobOnceNow(string jobId)
+        public Task<bool> RunJobOnceNow(string jobId, ServiceRouteDescriptor service)
         {
-            throw new NotImplementedException();
+            var client = _clientFactory.Get(service);
+
+            var response = client.RunJobOnceNow(new Job() { Id = jobId });
+            return Task.FromResult(response.Success);
         }
     }
 }
