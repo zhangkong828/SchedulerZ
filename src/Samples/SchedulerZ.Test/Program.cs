@@ -5,6 +5,7 @@ using SchedulerZ.LoadBalancer;
 using SchedulerZ.Logging;
 using SchedulerZ.Models;
 using SchedulerZ.Remoting;
+using SchedulerZ.Remoting.gRPC.Client;
 using SchedulerZ.Route;
 using SchedulerZ.Route.Consul;
 using SchedulerZ.Scheduler;
@@ -19,7 +20,7 @@ namespace SchedulerZ.Test
     class Program
     {
         static ILogger _logger;
-        
+
         static void Main(string[] args)
         {
             var serviceProvider = new ServiceCollection()
@@ -30,8 +31,9 @@ namespace SchedulerZ.Test
                                     })
                                     .UseConsulServiceRoute(config =>
                                     {
-                                        config.Host = "192.168.1.203";
+                                        config.Host = "192.168.31.101";
                                     })
+                                    .UseGrpcRemotingClient()
                                     .BuildServiceProvider();
 
             _logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger("Main");
@@ -53,7 +55,7 @@ namespace SchedulerZ.Test
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
             };
 
-            remoting.StartJob(job);
+            //remoting.StartJob(job);
 
 
             Console.ReadKey();

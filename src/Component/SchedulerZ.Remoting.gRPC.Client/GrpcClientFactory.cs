@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using SchedulerZ.Route;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +8,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
 {
     public interface IGrpcClientFactory<T> where T : ClientBase
     {
-        T Get();
+        T Get(ServiceRouteDescriptor service);
     }
 
     public class GrpcClientFactory<T> : IGrpcClientFactory<T> where T : ClientBase
@@ -21,9 +22,9 @@ namespace SchedulerZ.Remoting.gRPC.Client
         }
 
 
-        public T Get()
+        public T Get(ServiceRouteDescriptor service)
         {
-            var callInvoker = new ClientCallInvoker(_endpointStrategy, _config.MaxRetry);
+            var callInvoker = new ClientCallInvoker(service, _endpointStrategy, _config.MaxRetry);
             var client = (T)Activator.CreateInstance(typeof(T), callInvoker);
             return client;
         }

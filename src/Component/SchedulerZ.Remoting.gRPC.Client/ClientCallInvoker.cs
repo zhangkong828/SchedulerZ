@@ -1,4 +1,5 @@
 ﻿using Grpc.Core;
+using SchedulerZ.Route;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,25 +8,27 @@ namespace SchedulerZ.Remoting.gRPC.Client
 {
     internal sealed class ClientCallInvoker : CallInvoker
     {
+        private readonly ServiceRouteDescriptor _service;
         private readonly int _maxRetry;
         private readonly IEndpointStrategy _strategy;
-        public ClientCallInvoker(IEndpointStrategy endpointStrategy, int maxRetry = 0)
+        public ClientCallInvoker(ServiceRouteDescriptor service, IEndpointStrategy endpointStrategy, int maxRetry = 0)
         {
+            _service = service;
             _strategy = endpointStrategy;
             _maxRetry = maxRetry;
         }
 
-        private TResponse Call<TResponse>(string serviceName, Func<CallInvoker, TResponse> call, int retryLeft)
+        private TResponse Call<TResponse>(Func<CallInvoker, TResponse> call, int retryLeft)
         {
             while (true)
             {
                 var callInvoker = default(ServerCallInvoker);
                 try
                 {
-                    callInvoker = _strategy.Get(serviceName);
+                    callInvoker = _strategy.Get(_service.Name);
                     if (callInvoker == null)
                     {
-                        throw new ArgumentNullException($"{serviceName}无可用节点");
+                        throw new ArgumentNullException($"{_service.Name}无可用节点");
                     }
 
                     var channel = callInvoker.Channel;
@@ -44,7 +47,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
                 catch (RpcException ex)
                 {
                     if (ex.Status.StatusCode == StatusCode.Unavailable)
-                        _strategy.Revoke(serviceName, callInvoker);
+                        _strategy.Revoke(_service.Name, callInvoker);
 
                     if (0 > --retryLeft)
                     {
@@ -56,27 +59,27 @@ namespace SchedulerZ.Remoting.gRPC.Client
 
         public override AsyncClientStreamingCall<TRequest, TResponse> AsyncClientStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
         {
-            return Call(method.ServiceName, ci => ci.AsyncClientStreamingCall(method, host, options), _maxRetry);
+            return Call(ci => ci.AsyncClientStreamingCall(method, host, options), _maxRetry);
         }
 
         public override AsyncDuplexStreamingCall<TRequest, TResponse> AsyncDuplexStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options)
         {
-            return Call(method.ServiceName, ci => ci.AsyncDuplexStreamingCall(method, host, options), _maxRetry);
+            return Call(ci => ci.AsyncDuplexStreamingCall(method, host, options), _maxRetry);
         }
 
         public override AsyncServerStreamingCall<TResponse> AsyncServerStreamingCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
-            return Call(method.ServiceName, ci => ci.AsyncServerStreamingCall(method, host, options, request), _maxRetry);
+            return Call(ci => ci.AsyncServerStreamingCall(method, host, options, request), _maxRetry);
         }
 
         public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
-            return Call(method.ServiceName, ci => ci.AsyncUnaryCall(method, host, options, request), _maxRetry);
+            return Call(ci => ci.AsyncUnaryCall(method, host, options, request), _maxRetry);
         }
 
         public override TResponse BlockingUnaryCall<TRequest, TResponse>(Method<TRequest, TResponse> method, string host, CallOptions options, TRequest request)
         {
-            return Call(method.ServiceName, ci => ci.BlockingUnaryCall(method, host, options, request), _maxRetry);
+            return Call(ci => ci.BlockingUnaryCall(method, host, options, request), _maxRetry);
         }
     }
 }

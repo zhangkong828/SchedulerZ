@@ -28,7 +28,7 @@ namespace SchedulerZ.Worker
                             services.UseDefaultLogging();
                             services.UseConsulServiceRoute(config =>
                             {
-                                config.Host = "192.168.1.203";
+                                config.Host = "192.168.31.101";
                             });
                             services.UseGrpcRemoting(config =>
                             {
@@ -45,7 +45,7 @@ namespace SchedulerZ.Worker
             {
                 Id = Guid.NewGuid().ToString("n"),
                 Name = "test",
-                Address = "192.168.1.202",
+                Address = "192.168.31.200",
                 Port = 10001
             };
             serviceRoute.RegisterService(service).GetAwaiter().GetResult();
