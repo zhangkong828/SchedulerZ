@@ -55,7 +55,7 @@ namespace SchedulerZ.Test
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
             };
 
-            //remoting.StartJob(job);
+            remoting.StartJob(job, service);
 
 
             Console.ReadKey();
