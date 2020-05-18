@@ -8,10 +8,10 @@ namespace SchedulerZ.Remoting.gRPC
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseGrpcRemoting(this IServiceCollection services, Action<GrpcServiceConfig> grpcServiceConfig = null)
+        public static IServiceCollection UseGrpcRemoting(this IServiceCollection services, Action<GrpcServiceConfig> configDelegate = null)
         {
             var config = new GrpcServiceConfig();
-            grpcServiceConfig?.Invoke(config);
+            configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.Host, "主机");
             Check.Positive(config.Port, "端口");

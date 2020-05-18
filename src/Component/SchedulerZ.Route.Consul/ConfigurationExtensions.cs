@@ -9,10 +9,10 @@ namespace SchedulerZ.Route.Consul
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> consulServiceRouteConfig = null)
+        public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> configDelegate = null)
         {
             var config = new ConsulServiceRouteConfig();
-            consulServiceRouteConfig?.Invoke(config);
+            configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.Scheme, "协议");
             Check.NotNullOrEmpty(config.Host, "主机");

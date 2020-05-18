@@ -12,10 +12,10 @@ namespace SchedulerZ.LoadBalancer
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseLoadBalancer(this IServiceCollection services, Action<LoadBalancerConfig> loadBalancerConfig = null)
+        public static IServiceCollection UseLoadBalancer(this IServiceCollection services, Action<LoadBalancerConfig> configDelegate = null)
         {
             var config = new LoadBalancerConfig();
-            loadBalancerConfig?.Invoke(config);
+            configDelegate?.Invoke(config);
 
             services.AddSingleton(config);
 

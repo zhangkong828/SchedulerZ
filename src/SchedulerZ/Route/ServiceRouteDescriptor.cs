@@ -9,6 +9,7 @@ namespace SchedulerZ.Route
     {
         public ServiceRouteDescriptor()
         {
+            Id = Guid.NewGuid().ToString("n");
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 

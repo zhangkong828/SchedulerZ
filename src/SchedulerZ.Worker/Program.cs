@@ -25,17 +25,17 @@ namespace SchedulerZ.Worker
                         })
                         .ConfigureServices((context, services) =>
                         {
-                            services.UseDefaultLogging();
-                            services.UseConsulServiceRoute(config =>
-                            {
-                                config.Host = "192.168.31.101";
-                            });
-                            services.UseGrpcRemoting(config =>
-                            {
-                                config.Host = "0.0.0.0";
-                                config.Port = 10001;
-                            });
-                            services.UseQuartzNetScheduler();
+                            services.UseDefaultLogging()
+                                    .UseConsulServiceRoute(config =>
+                                    {
+                                        config.Host = "192.168.31.101";
+                                    })
+                                    .UseGrpcRemoting(config =>
+                                    {
+                                        config.Host = "0.0.0.0";
+                                        config.Port = 10001;
+                                    })
+                                    .UseQuartzNetScheduler();
                         })
                         .Build();
 
@@ -43,7 +43,6 @@ namespace SchedulerZ.Worker
             var serviceRoute = host.Services.GetService<IServiceRoute>();
             var service = new ServiceRouteDescriptor()
             {
-                Id = Guid.NewGuid().ToString("n"),
                 Name = "test",
                 Address = "192.168.31.200",
                 Port = 10001

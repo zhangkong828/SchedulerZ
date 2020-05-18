@@ -47,7 +47,6 @@ namespace SchedulerZ.Route.Consul
             var client = _consulClientProvider.GetClient();
             if (client == null) return false;
 
-            var serviceId = GenServiceId(service);
             var checkId = GenCheckId(service);
             var checkName = GenCheckName(service);
             var agentCheck = new AgentCheckRegistration
@@ -62,7 +61,7 @@ namespace SchedulerZ.Route.Consul
 
             var agentService = new AgentServiceRegistration
             {
-                ID = serviceId,
+                ID = service.Id,
                 Name = service.Name,
                 Address = service.Address,
                 Port = service.Port,
@@ -82,10 +81,6 @@ namespace SchedulerZ.Route.Consul
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        private string GenServiceId(ServiceRouteDescriptor service)
-        {
-            return $"{service.Id}";
-        }
 
         private string GenCheckId(ServiceRouteDescriptor service)
         {

@@ -7,10 +7,10 @@ namespace SchedulerZ.Remoting.gRPC.Client
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseGrpcRemotingClient(this IServiceCollection services, Action<GrpcClientConfig> grpcClientConfig = null)
+        public static IServiceCollection UseGrpcRemotingClient(this IServiceCollection services, Action<GrpcClientConfig> configDelegate = null)
         {
             var config = new GrpcClientConfig();
-            grpcClientConfig?.Invoke(config);
+            configDelegate?.Invoke(config);
 
 
             services.AddSingleton(config);

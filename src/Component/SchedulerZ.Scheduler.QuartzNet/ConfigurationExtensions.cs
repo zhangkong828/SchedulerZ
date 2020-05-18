@@ -10,10 +10,10 @@ namespace SchedulerZ.Scheduler.QuartzNet
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseQuartzNetScheduler(this IServiceCollection services, Action<QuartzNetConfig> quartzNetConfig = null)
+        public static IServiceCollection UseQuartzNetScheduler(this IServiceCollection services, Action<QuartzNetConfig> configDelegate = null)
         {
             var config = new QuartzNetConfig();
-            quartzNetConfig?.Invoke(config);
+            configDelegate?.Invoke(config);
 
             services.AddSingleton(config);
 
