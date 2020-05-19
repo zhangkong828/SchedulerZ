@@ -8,5 +8,7 @@ namespace SchedulerZ.LoadBalancer
     public interface ILoadBalancerFactory
     {
         ILoadBalancer Get();
+
+        ILoadBalancer Get(string loadBalancerType);
     }
 }

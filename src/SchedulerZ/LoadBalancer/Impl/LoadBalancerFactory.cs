@@ -24,7 +24,12 @@ namespace SchedulerZ.LoadBalancer
         public ILoadBalancer Get()
         {
             var loadBalancerType = _loadBalancerConfig.Type ?? nameof(FirstLoadBalancer);
-            var loadBalancerCreator = _loadBalancerCreators.SingleOrDefault(c => c.Type == loadBalancerType);
+            return Get(loadBalancerType);
+        }
+
+        public ILoadBalancer Get(string loadBalancerType)
+        {
+            var loadBalancerCreator = _loadBalancerCreators.SingleOrDefault(c => string.Equals(c.Type, loadBalancerType, StringComparison.CurrentCultureIgnoreCase));
 
             if (loadBalancerCreator == null)
             {
