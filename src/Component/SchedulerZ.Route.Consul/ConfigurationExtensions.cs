@@ -9,7 +9,7 @@ namespace SchedulerZ.Route.Consul
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> configDelegate = null)
+        public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> configDelegate = null, Action<ServiceRouteDescriptor> registerServiceDelegate = null)
         {
             var config = new ConsulServiceRouteConfig();
             configDelegate?.Invoke(config);
@@ -21,6 +21,20 @@ namespace SchedulerZ.Route.Consul
             services.AddSingleton(config);
             services.AddSingleton<IConsulClientProvider, DefaultConsulClientProvider>();
             services.AddSingleton<IServiceRoute, ConsulServiceRoute>();
+
+            if (registerServiceDelegate != null)
+            {
+                var serviceRouteDescriptor = new ServiceRouteDescriptor();
+                registerServiceDelegate.Invoke(serviceRouteDescriptor);
+
+                Check.NotNullOrEmpty(serviceRouteDescriptor.Id, "服务Id");
+                Check.NotNullOrEmpty(serviceRouteDescriptor.Name, "服务名称");
+                Check.NotNullOrEmpty(serviceRouteDescriptor.Address, "地址");
+                Check.Positive(serviceRouteDescriptor.Port, "端口");
+
+                services.AddSingleton(serviceRouteDescriptor);
+                services.AddHostedService<ConsulHostedService>();
+            }
 
             return services;
         }

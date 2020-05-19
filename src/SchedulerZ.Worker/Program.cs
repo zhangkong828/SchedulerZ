@@ -29,6 +29,13 @@ namespace SchedulerZ.Worker
                                     .UseConsulServiceRoute(config =>
                                     {
                                         config.Host = "192.168.31.101";
+                                        config.Port = 8500;
+
+                                    }, registerService =>
+                                    {
+                                        registerService.Name = "test";
+                                        registerService.Address = "192.168.31.200";
+                                        registerService.Port = 10001;
                                     })
                                     .UseGrpcRemoting(config =>
                                     {
@@ -39,15 +46,6 @@ namespace SchedulerZ.Worker
                         })
                         .Build();
 
-            //注册
-            var serviceRoute = host.Services.GetService<IServiceRoute>();
-            var service = new ServiceRouteDescriptor()
-            {
-                Name = "test",
-                Address = "192.168.31.200",
-                Port = 10001
-            };
-            serviceRoute.RegisterService(service).GetAwaiter().GetResult();
             host.Run();
         }
 
