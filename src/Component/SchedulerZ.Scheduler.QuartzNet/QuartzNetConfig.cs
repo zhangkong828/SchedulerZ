@@ -6,5 +6,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 {
     public class QuartzNetConfig
     {
+        public string JobDirectory { get; set; } = "Jobs";
+        public int ThreadPoolCount { get; set; } = 20;
     }
 }

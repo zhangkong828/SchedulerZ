@@ -15,6 +15,9 @@ namespace SchedulerZ.Scheduler.QuartzNet
             var config = new QuartzNetConfig();
             configDelegate?.Invoke(config);
 
+            Check.NotNullOrEmpty(config.JobDirectory, "Job目录");
+            Check.Positive(config.ThreadPoolCount, "线程池线程数量");
+
             services.AddSingleton(config);
 
             services.AddSingleton(provider =>
@@ -22,7 +25,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
                 NameValueCollection properties = new NameValueCollection();
                 properties["quartz.scheduler.instanceName"] = "SchedulerZ.SchedulerManager";
                 properties["quartz.threadPool.type"] = "Quartz.Simpl.SimpleThreadPool, Quartz";
-                properties["quartz.threadPool.threadCount"] = "50";
+                properties["quartz.threadPool.threadCount"] = config.ThreadPoolCount.ToString();
                 properties["quartz.threadPool.threadPriority"] = "Normal";
 
                 ISchedulerFactory factory = new StdSchedulerFactory(properties);

@@ -13,9 +13,11 @@ namespace SchedulerZ.Scheduler.QuartzNet
     public class QuartzNetHostedService : IHostedService
     {
         private readonly ILogger _logger;
+        private readonly QuartzNetConfig _config;
         private readonly IScheduler _scheduler;
-        public QuartzNetHostedService(IScheduler scheduler, ILoggerProvider loggerProvider)
+        public QuartzNetHostedService(QuartzNetConfig config, IScheduler scheduler, ILoggerProvider loggerProvider)
         {
+            _config = config;
             _scheduler = scheduler;
             _logger = loggerProvider.CreateLogger("QuartzNetHostedService");
         }

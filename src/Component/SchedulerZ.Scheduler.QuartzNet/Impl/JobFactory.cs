@@ -11,12 +11,12 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
     {
         private const string DefaultJobBaseAssemblyName = "SchedulerZ";
 
-        public static JobRuntime CreateJobRuntime(JobEntity jobView)
+        public static JobRuntime CreateJobRuntime(string jobDirectory, JobEntity jobView)
         {
             var domain = DomainManager.Create(jobView.Id);
 
-            DeleteJobBaseAssemblyFromOutput(jobView.Id);
-            var assemblyPath = JobFactory.GetJobAssemblyPath(jobView.Id, jobView.AssemblyName);
+            DeleteJobBaseAssemblyFromOutput(jobDirectory, jobView);
+            var assemblyPath = JobFactory.GetJobAssemblyPath(jobDirectory, jobView);
             var assembly = domain.LoadFile(assemblyPath);
 
             Type type = assembly.GetType(jobView.ClassName, true, true);
@@ -34,20 +34,20 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
             };
         }
 
-        private static void DeleteJobBaseAssemblyFromOutput(string jobId)
+        private static void DeleteJobBaseAssemblyFromOutput(string jobDirectory, JobEntity jobView)
         {
-            var dllPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\{jobId}\\{DefaultJobBaseAssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            var dllPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
             if (File.Exists(dllPath))
                 File.Delete(dllPath);
 
-            var pdbPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\{jobId}\\{DefaultJobBaseAssemblyName}.pdb".Replace('\\', Path.DirectorySeparatorChar);
+            var pdbPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.pdb".Replace('\\', Path.DirectorySeparatorChar);
             if (File.Exists(pdbPath))
                 File.Delete(pdbPath);
         }
 
-        public static string GetJobAssemblyPath(string jobId, string assemblyName)
+        public static string GetJobAssemblyPath(string jobDirectory, JobEntity jobView)
         {
-            return $"{Directory.GetCurrentDirectory()}\\Jobs\\{jobId}\\{assemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            return $"{Directory.GetCurrentDirectory()}\\Jobs\\src\\{jobView.AssemblyName}\\{jobView.AssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
 
     }

@@ -13,9 +13,11 @@ namespace SchedulerZ.Scheduler.QuartzNet
     public class SchedulerManager : ISchedulerManager
     {
         private readonly ILogger _logger;
+        private readonly QuartzNetConfig _config;
         private readonly IScheduler _scheduler;
-        public SchedulerManager(IScheduler scheduler, ILoggerProvider loggerProvider)
+        public SchedulerManager(QuartzNetConfig config, IScheduler scheduler, ILoggerProvider loggerProvider)
         {
+            _config = config;
             _scheduler = scheduler;
             _logger = loggerProvider.CreateLogger("SchedulerManager");
         }
@@ -143,7 +145,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         private async Task Start(JobEntity jobView)
         {
-            var jobRuntime = JobFactory.CreateJobRuntime(jobView);
+            var jobRuntime = JobFactory.CreateJobRuntime(_config.JobDirectory, jobView);
 
             JobDataMap map = new JobDataMap
             {
