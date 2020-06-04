@@ -9,16 +9,16 @@ import {
   TOGGLE_LAYOUT, TOGGLE_NAV_THEME, TOGGLE_WEAK,
   TOGGLE_COLOR, TOGGLE_MULTI_TAB
 } from '@/store/mutation-types'
-import { printANSI } from '@/utils/screenLog'
+// import { printANSI } from '@/utils/screenLog'
 import defaultSettings from '@/config/defaultSettings'
 
 export default function Initializer () {
-  printANSI() // 请自行一处改行.  please remove this line
+  // printANSI() // 请自行一处改行.  please remove this line
 
   store.commit(TOGGLE_LAYOUT, storage.get(TOGGLE_LAYOUT, defaultSettings.layout))
   store.commit(TOGGLE_FIXED_HEADER, storage.get(TOGGLE_FIXED_HEADER, defaultSettings.fixedHeader))
   store.commit(TOGGLE_FIXED_SIDEBAR, storage.get(TOGGLE_FIXED_SIDEBAR, defaultSettings.fixSiderbar))
-  store.commit(TOGGLE_CONTENT_WIDTH, storage.get(TOGGLE_CONTENT_WIDTH, defaultSettings.contentWidth))
+  store.commit(TOGGLE_CONTENT_WIDTH, storage.get(TOGGLE_CONTENT_WIDTH, defaultSettings.layout === 'sidemenu' ? false : defaultSettings.contentWidth === 'Fixed'))
   store.commit(TOGGLE_HIDE_HEADER, storage.get(TOGGLE_HIDE_HEADER, defaultSettings.autoHideHeader))
   store.commit(TOGGLE_NAV_THEME, storage.get(TOGGLE_NAV_THEME, defaultSettings.navTheme))
   store.commit(TOGGLE_WEAK, storage.get(TOGGLE_WEAK, defaultSettings.colorWeak))

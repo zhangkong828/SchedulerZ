@@ -26,7 +26,7 @@
 import { SettingDrawer, updateTheme } from '@ant-design-vue/pro-layout'
 import { i18nRender } from '@/locales'
 import { mapState } from 'vuex'
-import { SIDEBAR_TYPE, TOGGLE_MOBILE_TYPE } from '@/store/mutation-types'
+import { SIDEBAR_TYPE, TOGGLE_MOBILE_TYPE, TOGGLE_NAV_THEME, TOGGLE_COLOR, TOGGLE_LAYOUT, TOGGLE_CONTENT_WIDTH, TOGGLE_FIXED_SIDEBAR, TOGGLE_FIXED_HEADER, TOGGLE_WEAK } from '@/store/mutation-types'
 
 import defaultSettings from '@/config/defaultSettings'
 import RightContent from '@/components/GlobalHeader/RightContent'
@@ -45,20 +45,20 @@ export default {
       // base
       menus: [],
       // 侧栏收起状态
-      collapsed: false,
+      collapsed: this.$store.getters.sideCollapsed,
       title: defaultSettings.title,
       settings: {
-        // 布局类型
-        layout: defaultSettings.layout, // 'sidemenu', 'topmenu'
+        // 布局类型 'sidemenu', 'topmenu'
+        layout: this.$store.getters.layout,
         // 定宽: true / 流式: false
-        contentWidth: defaultSettings.layout === 'sidemenu' ? false : defaultSettings.contentWidth === 'Fixed',
+        contentWidth: this.$store.getters.contentWidth,
         // 主题 'dark' | 'light'
-        theme: defaultSettings.navTheme,
+        theme: this.$store.getters.theme,
         // 主色调
-        primaryColor: defaultSettings.primaryColor,
-        fixedHeader: defaultSettings.fixedHeader,
-        fixSiderbar: defaultSettings.fixSiderbar,
-        colorWeak: defaultSettings.colorWeak,
+        primaryColor: this.$store.getters.color,
+        fixedHeader: this.$store.getters.fixedHeader,
+        fixSiderbar: this.$store.getters.fixedSidebar,
+        colorWeak: this.$store.getters.weak,
 
         hideHintAlert: false,
         hideCopyButton: false
@@ -121,12 +121,41 @@ export default {
     },
     handleSettingChange ({ type, value }) {
       console.log('type', type, value)
-      type && (this.settings[type] = value)
+      // type && (this.settings[type] = value)
       switch (type) {
-        case 'contentWidth':
-          this.settings[type] = value === 'Fixed'
+        case 'theme':
+          this.$store.commit(TOGGLE_NAV_THEME, value)
+          break
+        case 'primaryColor':
+          this.$store.commit(TOGGLE_COLOR, value)
           break
         case 'layout':
+          this.$store.commit(TOGGLE_LAYOUT, value)
+          if (value === 'sidemenu') {
+            this.settings.contentWidth = false
+            this.$store.commit(TOGGLE_CONTENT_WIDTH, false)
+          } else {
+            this.settings.fixSiderbar = false
+            this.settings.contentWidth = true
+            this.$store.commit(TOGGLE_FIXED_SIDEBAR, false)
+            this.$store.commit(TOGGLE_CONTENT_WIDTH, true)
+          }
+          break
+        case 'contentWidth':
+          //  const flag = value === 'Fixed'
+          // this.settings.contentWidth = flag
+          // this.$store.commit(TOGGLE_CONTENT_WIDTH, flag)
+          break
+         case 'fixedHeader':
+          this.$store.commit(TOGGLE_FIXED_HEADER, value)
+          break
+         case 'fixSiderbar':
+          this.$store.commit(TOGGLE_FIXED_SIDEBAR, value)
+          break
+        case 'colorWeak':
+          this.$store.commit(TOGGLE_WEAK, value)
+          break
+        case 'layout1':
           if (value === 'sidemenu') {
             this.settings.contentWidth = false
           } else {
