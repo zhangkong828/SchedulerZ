@@ -1,7 +1,7 @@
 <template>
   <div>
-    <a-form>
-      <a-result title="操作成功" :is-success="true" sub-title="预计两小时内到账" style="max-width: 560px; margin: 40px auto 0;">
+    <a-form style="margin: 40px auto 0;">
+      <result title="操作成功" :is-success="true" description="预计两小时内到账" style="max-width: 560px;">
         <div class="information">
           <a-row>
             <a-col :sm="8" :xs="24">付款账户：</a-col>
@@ -20,18 +20,23 @@
             <a-col :sm="16" :xs="24"><span class="money">500</span> 元</a-col>
           </a-row>
         </div>
-        <template #extra>
+        <div slot="action">
           <a-button type="primary" @click="finish">再转一笔</a-button>
           <a-button style="margin-left: 8px" @click="toOrderList">查看账单</a-button>
-        </template>
-      </a-result>
+        </div>
+      </result>
     </a-form>
   </div>
 </template>
 
 <script>
+import { Result } from '@/components'
+
 export default {
   name: 'Step3',
+  components: {
+    Result
+  },
   data () {
     return {
       loading: false

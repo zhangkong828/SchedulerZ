@@ -1,10 +1,10 @@
 <template>
-  <a-card :bordered="false">
-    <a-result status="error" :title="title" :sub-title="description">
-      <template #extra>
+  <a-card :bordered="false" style="margin: -24px -24px 0px;">
+    <result type="error" :title="title" :description="description">
+      <template slot="action">
         <a-button type="primary" >返回修改</a-button>
       </template>
-      <div class="desc">
+      <div>
         <div style="font-size: 16px; color: rgba(0, 0, 0, 0.85); font-weight: 500; margin-bottom: 16px">
           您提交的内容有如下错误：
         </div>
@@ -19,14 +19,18 @@
           <a style="margin-left: 16px">立即升级 <a-icon type="right" /></a>
         </div>
       </div>
-    </a-result>
+    </result>
   </a-card>
 </template>
 
 <script>
+import { Result } from '@/components'
 
 export default {
   name: 'Error',
+  components: {
+    Result
+  },
   data () {
     return {
       title: '提交失败',
@@ -35,3 +39,7 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+
+</style>

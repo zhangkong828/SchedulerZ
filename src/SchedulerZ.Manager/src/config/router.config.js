@@ -1,11 +1,6 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
+import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
-
-const RouteView = {
-  name: 'RouteView',
-  render: (h) => h('router-view')
-}
 
 export const asyncRouterMap = [
 
@@ -13,34 +8,40 @@ export const asyncRouterMap = [
     path: '/',
     name: 'index',
     component: BasicLayout,
-    meta: { title: 'menu.home' },
+    meta: { title: '首页' },
     redirect: '/dashboard/workplace',
     children: [
       // dashboard
       {
-        path: '/dashboard',
+        path: 'dashboard',
         name: 'dashboard',
         redirect: '/dashboard/workplace',
         component: RouteView,
-        meta: { title: 'menu.dashboard', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
+        meta: { title: '仪表盘', keepAlive: true, icon: bxAnaalyse, permission: [ 'dashboard' ] },
         children: [
           {
-            path: '/dashboard/analysis/:pageNo([1-9]\\d*)?',
+            path: 'analysis/:pageNo([1-9]\\d*)?',
             name: 'Analysis',
             component: () => import('@/views/dashboard/Analysis'),
-            meta: { title: 'menu.dashboard.analysis', keepAlive: false, permission: [ 'dashboard' ] }
+            meta: { title: '分析页', keepAlive: false, permission: [ 'dashboard' ] }
           },
           // 外部链接
           {
             path: 'https://www.baidu.com/',
             name: 'Monitor',
-            meta: { title: 'menu.dashboard.monitor', target: '_blank' }
+            meta: { title: '监控页（外部）', target: '_blank' }
           },
           {
-            path: '/dashboard/workplace',
+            path: 'workplace',
             name: 'Workplace',
             component: () => import('@/views/dashboard/Workplace'),
-            meta: { title: 'menu.dashboard.workplace', keepAlive: true, permission: [ 'dashboard' ] }
+            meta: { title: '工作台', keepAlive: true, permission: [ 'dashboard' ] }
+          },
+          {
+            path: 'test-work',
+            name: 'TestWork',
+            component: () => import('@/views/dashboard/TestWork'),
+            meta: { title: '测试功能', keepAlive: true, permission: [ 'dashboard' ] }
           }
         ]
       },
@@ -49,13 +50,13 @@ export const asyncRouterMap = [
       {
         path: '/form',
         redirect: '/form/base-form',
-        component: RouteView,
+        component: PageView,
         meta: { title: '表单页', icon: 'form', permission: [ 'form' ] },
         children: [
           {
             path: '/form/base-form',
             name: 'BaseForm',
-            component: () => import('@/views/form/basicForm'),
+            component: () => import('@/views/form/BasicForm'),
             meta: { title: '基础表单', keepAlive: true, permission: [ 'form' ] }
           },
           {
@@ -77,7 +78,7 @@ export const asyncRouterMap = [
       {
         path: '/list',
         name: 'list',
-        component: RouteView,
+        component: PageView,
         redirect: '/list/table-list',
         meta: { title: '列表页', icon: 'table', permission: [ 'table' ] },
         children: [
@@ -91,7 +92,7 @@ export const asyncRouterMap = [
           {
             path: '/list/basic-list',
             name: 'BasicList',
-            component: () => import('@/views/list/BasicList'),
+            component: () => import('@/views/list/StandardList'),
             meta: { title: '标准列表', keepAlive: true, permission: [ 'table' ] }
           },
           {
@@ -141,7 +142,7 @@ export const asyncRouterMap = [
           {
             path: '/profile/basic',
             name: 'ProfileBasic',
-            component: () => import('@/views/profile/basic'),
+            component: () => import('@/views/profile/basic/Index'),
             meta: { title: '基础详情页', permission: [ 'profile' ] }
           },
           {
@@ -157,7 +158,7 @@ export const asyncRouterMap = [
       {
         path: '/result',
         name: 'result',
-        component: RouteView,
+        component: PageView,
         redirect: '/result/success',
         meta: { title: '结果页', icon: 'check-circle-o', permission: [ 'result' ] },
         children: [
@@ -216,7 +217,7 @@ export const asyncRouterMap = [
           {
             path: '/account/center',
             name: 'center',
-            component: () => import('@/views/account/center'),
+            component: () => import('@/views/account/center/Index'),
             meta: { title: '个人中心', keepAlive: true, permission: [ 'user' ] }
           },
           {
@@ -266,7 +267,7 @@ export const asyncRouterMap = [
       {
         path: '/other',
         name: 'otherPage',
-        component: RouteView,
+        component: PageView,
         meta: { title: '其他组件', icon: 'slack', permission: [ 'dashboard' ] },
         redirect: '/other/icon-selector',
         children: [
@@ -359,6 +360,19 @@ export const constantRouterMap = [
         path: 'recover',
         name: 'recover',
         component: undefined
+      }
+    ]
+  },
+
+  {
+    path: '/test',
+    component: BlankLayout,
+    redirect: '/test/home',
+    children: [
+      {
+        path: 'home',
+        name: 'TestHome',
+        component: () => import('@/views/Home')
       }
     ]
   },

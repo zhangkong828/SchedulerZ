@@ -1,15 +1,5 @@
 <template>
-  <page-header-wrapper
-    :tab-list="tabList"
-    :tab-active-key="tabActiveKey"
-    :tab-change="(key) => {
-      this.tabActiveKey = key
-    }"
-    content="段落示意：蚂蚁金服务设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态， 提供跨越设计与开发的体验解决方案。"
-  >
-    <template v-slot:extraContent>
-      <div style="width: 155px; margin-top: -20px;"><img style="width: 100%" :src="extraImage" /></div>
-    </template>
+  <div class="card-list" ref="content">
     <a-list
       rowKey="id"
       :grid="{gutter: 24, lg: 3, md: 2, sm: 1, xs: 1}"
@@ -37,7 +27,7 @@
         </template>
       </a-list-item>
     </a-list>
-  </page-header-wrapper>
+  </div>
 </template>
 
 <script>
@@ -56,14 +46,23 @@ for (let i = 0; i < 11; i++) {
 export default {
   name: 'CardList',
   data () {
-    this.tabList = [
-      { key: 'tab1', tab: '快速开始' },
-      { key: 'tab2', tab: '产品简介' },
-      { key: 'tab3', tab: '产品文档' }
-    ]
     return {
-      tabActiveKey: 'tab1',
-
+      description: '段落示意：蚂蚁金服务设计平台 ant.design，用最小的工作量，无缝接入蚂蚁金服生态， 提供跨越设计与开发的体验解决方案。',
+      linkList: [
+        {
+          icon: 'rocket',
+          href: '#',
+          title: '快速开始',
+          // 回调，可不写
+          callback: () => {
+            // this.$message.info('快速开始被单击')
+            this.testFun()
+            console.log('call[\'快速开始\'] action')
+          }
+        },
+        { icon: 'info-circle-o', href: '#', title: '产品简介' },
+        { icon: 'file-text', href: '#', title: '产品文档' }
+      ],
       extraImage: 'https://gw.alipayobjects.com/zos/rmsportal/RzwpdLnhmvDJToTdfDPe.png',
       dataSource
     }

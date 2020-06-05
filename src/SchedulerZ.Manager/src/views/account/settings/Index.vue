@@ -1,11 +1,11 @@
 <template>
   <div class="page-header-index-wide">
     <a-card :bordered="false" :bodyStyle="{ padding: '16px 0', height: '100%' }" :style="{ height: '100%' }">
-      <div class="account-settings-info-main" :class="{ 'mobile': isMobile }">
+      <div class="account-settings-info-main" :class="device">
         <div class="account-settings-info-left">
           <a-menu
-            :mode="isMobile ? 'horizontal' : 'inline'"
-            :style="{ border: '0', width: isMobile ? '560px' : 'auto'}"
+            :mode="device == 'mobile' ? 'horizontal' : 'inline'"
+            :style="{ border: '0', width: device == 'mobile' ? '560px' : 'auto'}"
             :selectedKeys="selectedKeys"
             type="inner"
             @openChange="onOpenChange"
@@ -49,14 +49,15 @@
 </template>
 
 <script>
-import { RouteView } from '@/layouts'
-import { baseMixin } from '@/store/app-mixin'
+import { PageView, RouteView } from '@/layouts'
+import { mixinDevice } from '@/utils/mixin.js'
 
 export default {
   components: {
-    RouteView
+    RouteView,
+    PageView
   },
-  mixins: [baseMixin],
+  mixins: [mixinDevice],
   data () {
     return {
       // horizontal  inline

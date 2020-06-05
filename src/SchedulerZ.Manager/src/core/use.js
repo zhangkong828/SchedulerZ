@@ -1,4 +1,6 @@
 import Vue from 'vue'
+import VueStorage from 'vue-ls'
+import config from '@/config/defaultSettings'
 
 // base library
 import Antd from 'ant-design-vue'
@@ -20,6 +22,7 @@ Vue.use(Antd)
 Vue.use(Viser)
 Vue.use(MultiTab)
 Vue.use(PageLoading)
+Vue.use(VueStorage, config.storageOptions)
 Vue.use(VueClipboard)
 Vue.use(PermissionHelper)
 Vue.use(VueCropper)

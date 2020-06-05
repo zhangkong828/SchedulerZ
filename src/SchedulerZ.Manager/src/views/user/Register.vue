@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import { mixinDevice } from '@/utils/mixin.js'
 import { getSmsCaptcha } from '@/api/login'
 
 const levelNames = {
@@ -123,7 +124,7 @@ export default {
   name: 'Register',
   components: {
   },
-  mixins: [],
+  mixins: [mixinDevice],
   data () {
     return {
       form: this.$form.createForm(this),

@@ -1,17 +1,5 @@
-import request from '@/utils/request'
-
-const userApi = {
-  Login: '/auth/login',
-  Logout: '/auth/logout',
-  ForgePassword: '/auth/forge-password',
-  Register: '/auth/register',
-  twoStepCode: '/auth/2step-code',
-  SendSms: '/account/sms',
-  SendSmsErr: '/account/sms_err',
-  // get my info
-  UserInfo: '/user/info',
-  UserMenu: '/user/nav'
-}
+import api from './index'
+import { axios } from '@/utils/request'
 
 /**
  * login func
@@ -25,24 +13,24 @@ const userApi = {
  * @returns {*}
  */
 export function login (parameter) {
-  return request({
-    url: userApi.Login,
+  return axios({
+    url: '/auth/login',
     method: 'post',
     data: parameter
   })
 }
 
 export function getSmsCaptcha (parameter) {
-  return request({
-    url: userApi.SendSms,
+  return axios({
+    url: api.SendSms,
     method: 'post',
     data: parameter
   })
 }
 
 export function getInfo () {
-  return request({
-    url: userApi.UserInfo,
+  return axios({
+    url: '/user/info',
     method: 'get',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -50,16 +38,16 @@ export function getInfo () {
   })
 }
 
-export function getCurrentUserNav () {
-  return request({
-    url: userApi.UserMenu,
+export function getCurrentUserNav (token) {
+  return axios({
+    url: '/user/nav',
     method: 'get'
   })
 }
 
 export function logout () {
-  return request({
-    url: userApi.Logout,
+  return axios({
+    url: '/auth/logout',
     method: 'post',
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
@@ -72,8 +60,8 @@ export function logout () {
  * @param parameter {*}
  */
 export function get2step (parameter) {
-  return request({
-    url: userApi.twoStepCode,
+  return axios({
+    url: api.twoStepCode,
     method: 'post',
     data: parameter
   })
