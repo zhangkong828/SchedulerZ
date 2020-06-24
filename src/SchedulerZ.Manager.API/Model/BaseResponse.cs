@@ -130,6 +130,12 @@ namespace SchedulerZ.Manager.API.Model
             return new BaseResponse<T>(code, message, data);
         }
 
+        public static BaseResponse<T> GetBaseResponse(T data)
+        {
+            var code = ResponseStatusType.Success;
+            return new BaseResponse<T>((int)code, GetEnumDescription(code), data);
+        }
+
         public static BaseResponse<T> GetBaseResponse(ResponseStatusType code, T data)
         {
             return new BaseResponse<T>((int)code, GetEnumDescription(code), data);
