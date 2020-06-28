@@ -12,7 +12,7 @@ namespace SchedulerZ.Manager.API.Model.Request
         /// 用户名
         /// </summary>
         [Required(ErrorMessage = "用户名不能为空")]
-        [StringLength(4, MinimumLength = 4, ErrorMessage = "用户名长度错误")]
+        [StringLength(20, MinimumLength = 4, ErrorMessage = "用户名长度错误")]
         public string Username { get; set; }
 
         /// <summary>

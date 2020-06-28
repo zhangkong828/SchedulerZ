@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,10 +22,13 @@ namespace SchedulerZ.Manager.API.Controllers
         private readonly ILogger<AccountController> _logger;
 
         private readonly JWTConfig _jwtConfig;
-        public AccountController(ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions)
+
+        private readonly IEasyCachingProvider _cachingProvider;
+        public AccountController(ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory)
         {
             _logger = logger;
             _jwtConfig = jwtOptions.Value;
+            _cachingProvider = cacheFactory.GetCachingProvider("default");
         }
 
         /// <summary>
@@ -33,13 +37,14 @@ namespace SchedulerZ.Manager.API.Controllers
         /// <param name="request"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet]
+        [HttpPost]
         public ActionResult<BaseResponse> Login(LoginRequest request)
         {
             if (request.Username != "admin" && request.Password != "admin")
-                return BaseResponse<Token>.GetBaseResponse(ResponseStatusType.Failed, "用户名或密码错误");
+                return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名或密码错误");
 
             var token = GenerateToken();
+            _cachingProvider.Set(CacheKey.Token("1"), token, TimeSpan.FromDays(_jwtConfig.RefreshTokenExpiresDays));
             return BaseResponse<Token>.GetBaseResponse(token);
         }
 
