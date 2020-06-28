@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSRedis;
 using EasyCaching.Core.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -40,33 +41,9 @@ namespace SchedulerZ.Manager.API
             {
                 //use memory cache that named default
                 options.UseInMemory("default");
-
-                // // use memory cache with your own configuration
-                // options.UseInMemory(config => 
-                // {
-                //     config.DBConfig = new InMemoryCachingOptions
-                //     {
-                //         // scan time, default value is 60s
-                //         ExpirationScanFrequency = 60, 
-                //         // total count of cache items, default value is 10000
-                //         SizeLimit = 100 
-                //     };
-                //     // the max random second will be added to cache's expiration, default value is 120
-                //     config.MaxRdSecond = 120;
-                //     // whether enable logging, default is false
-                //     config.EnableLogging = false;
-                //     // mutex key's alive time(ms), default is 5000
-                //     config.LockMs = 5000;
-                //     // when mutex key alive, it will sleep some time, default is 300
-                //     config.SleepMs = 300;
-                // }, "m2");
-
-                //use redis cache that named redis1
-                //options.UseRedis(config =>
-                //{
-                //    config.DBConfig.Endpoints.Add(new ServerEndPoint("127.0.0.1", 6379));
-                //}, "redis");
             });
+
+            services.AddSingleton(_ => new CSRedisClient(Configuration.GetValue<string>("Redis:Connection")));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
