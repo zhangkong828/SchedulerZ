@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using CSRedis;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,14 @@ namespace SchedulerZ.Manager.API.Controllers
 
         private readonly JWTConfig _jwtConfig;
 
+        private readonly CSRedisClient _redisClient;
         private readonly IEasyCachingProvider _cachingProvider;
-        public AccountController(ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory)
+        public AccountController(ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory, CSRedisClient redisClient)
         {
             _logger = logger;
             _jwtConfig = jwtOptions.Value;
             _cachingProvider = cacheFactory.GetCachingProvider("default");
+            _redisClient = redisClient;
         }
 
         /// <summary>
