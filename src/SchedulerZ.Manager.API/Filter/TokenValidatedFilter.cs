@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SchedulerZ.Manager.API.Filter
@@ -10,7 +11,7 @@ namespace SchedulerZ.Manager.API.Filter
     {
         public static Task OnTokenValidated(TokenValidatedContext context)
         {
-            var uId = context.Principal.Claims.FirstOrDefault(x => x.Type == "userId")?.Value;
+            var uId = context.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Sid)?.Value;
             if (!string.IsNullOrWhiteSpace(uId))
             {
                 //var redisClient = context.HttpContext.RequestServices.GetService(typeof(CSRedisClient)) as CSRedisClient;

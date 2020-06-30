@@ -25,9 +25,11 @@ namespace SchedulerZ.Manager.API.Filter
                         operation.Parameters.Add(new OpenApiParameter
                         {
                             Name = "Authorization",
-                            @In = ParameterLocation.Header,
+                            In = ParameterLocation.Header,
                             Description = "示例: Bearer {Token}",
-                            Required = true
+                            Required = true,
+                            Schema = new OpenApiSchema { Type = "string" }
+
                         });
                     }
                 }

@@ -12,6 +12,7 @@ using SchedulerZ.Manager.API.Filter;
 
 namespace SchedulerZ.Manager.API.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]

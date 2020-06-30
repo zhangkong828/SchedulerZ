@@ -83,10 +83,31 @@ namespace SchedulerZ.Manager.API
                     Description = "A Simple SchedulerZ.Manager Web API"
                 });
 
-                options.OperationFilter<SwaggerOperationFilter>();
+                //options.OperationFilter<SwaggerOperationFilter>();
 
                 var basePath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
                 options.IncludeXmlComments(Path.Combine(basePath, "SchedulerZ.Manager.API.xml"));
+
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme.",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Scheme = "bearer",
+                    Type = SecuritySchemeType.Http,
+                    BearerFormat = "JWT"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             //Origin

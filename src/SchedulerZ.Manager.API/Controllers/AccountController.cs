@@ -46,8 +46,27 @@ namespace SchedulerZ.Manager.API.Controllers
             if (request.Username != "admin" && request.Password != "admin")
                 return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名或密码错误");
 
-            var token = GenerateToken();
-            _cachingProvider.Set(CacheKey.Token("1"), token, TimeSpan.FromDays(_jwtConfig.RefreshTokenExpiresDays));
+            var userId = "1";
+            var tokenCacheKey = CacheKey.Token(userId);
+
+            var token = _redisClient.Get<Token>(tokenCacheKey);
+            if (token == null)
+            {
+                token = GenerateToken();
+                var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
+                _redisClient.Set(tokenCacheKey, token, expireSeconds);
+            }
+            else
+            {
+                var expires = FormatHelper.ConvertToDateTime(token.AccessTokenExpires);
+                if (expires <= DateTime.Now)
+                {
+                    //access token过期  生成新access token
+                    var newToken = GenerateToken();
+                    token.AccessToken = newToken.AccessToken;
+                    token.AccessTokenExpires = newToken.AccessTokenExpires;
+                }
+            }
             return BaseResponse<Token>.GetBaseResponse(token);
         }
 
@@ -81,6 +100,13 @@ namespace SchedulerZ.Manager.API.Controllers
                 RefreshToken = refreshToken,
                 RefreshTokenExpires = refreshTokenExpires.ConvertToUnixOfTime()
             };
+        }
+
+
+        [HttpGet]
+        public ActionResult<BaseResponse> GetUserInfo()
+        {
+            return BaseResponse<string>.GetBaseResponse("user info");
         }
     }
 }
