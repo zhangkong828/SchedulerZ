@@ -37,8 +37,6 @@ namespace SchedulerZ.Manager.API.Controllers
         /// <summary>
         /// 登录
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
         public ActionResult<BaseResponse> Login(LoginRequest request)
@@ -61,7 +59,6 @@ namespace SchedulerZ.Manager.API.Controllers
                 var expires = FormatHelper.ConvertToDateTime(token.AccessTokenExpires);
                 if (expires <= DateTime.Now)
                 {
-                    //access token过期  生成新access token
                     var newToken = GenerateToken();
                     token.AccessToken = newToken.AccessToken;
                     token.AccessTokenExpires = newToken.AccessTokenExpires;

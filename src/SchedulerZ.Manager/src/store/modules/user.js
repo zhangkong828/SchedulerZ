@@ -1,11 +1,12 @@
 import Vue from 'vue'
 import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
   state: {
     token: '',
+    refreshToken: '',
     name: '',
     welcome: '',
     avatar: '',
@@ -16,6 +17,9 @@ const user = {
   mutations: {
     SET_TOKEN: (state, token) => {
       state.token = token
+    },
+    SET_REFRESH_TOKEN: (state, refreshToken) => {
+      state.refreshToken = refreshToken
     },
     SET_NAME: (state, { name, welcome }) => {
       state.name = name
@@ -40,6 +44,8 @@ const user = {
           const result = response.result
           Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result.token)
+          Vue.ls.set(REFRESH_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_REFRESH_TOKEN', result.token)
           resolve()
         }).catch(error => {
           reject(error)

@@ -8,8 +8,6 @@
             <summary>
             登录
             </summary>
-            <param name="request"></param>
-            <returns></returns>
         </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">
             <summary>
