@@ -50,10 +50,10 @@ namespace SchedulerZ.Manager.API.Controllers
             var tokenCacheKey = CacheKey.Token(userId);
 
             var token = _redisClient.Get<Token>(tokenCacheKey);
+            var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
             if (token == null)
             {
                 token = GenerateToken();
-                var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
                 _redisClient.Set(tokenCacheKey, token, expireSeconds);
             }
             else
@@ -65,6 +65,7 @@ namespace SchedulerZ.Manager.API.Controllers
                     var newToken = GenerateToken();
                     token.AccessToken = newToken.AccessToken;
                     token.AccessTokenExpires = newToken.AccessTokenExpires;
+                    _redisClient.Set(tokenCacheKey, token, expireSeconds);
                 }
             }
             return BaseResponse<Token>.GetBaseResponse(token);

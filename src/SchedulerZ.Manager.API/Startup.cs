@@ -56,8 +56,7 @@ namespace SchedulerZ.Manager.API
                 {
                     ValidIssuer = Configuration.GetValue<string>("JWTConfig:Issuer"),
                     ValidAudience = Configuration.GetValue<string>("JWTConfig:Audience"),
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWTConfig:IssuerSigningKey"))),
-                    ClockSkew = TimeSpan.FromSeconds(5)
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("JWTConfig:IssuerSigningKey")))
                 };
             });
 
