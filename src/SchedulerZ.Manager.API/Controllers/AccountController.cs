@@ -103,7 +103,7 @@ namespace SchedulerZ.Manager.API.Controllers
 
 
         [HttpGet]
-        public ActionResult<BaseResponse> GetUserInfo()
+        public ActionResult<BaseResponse> Info()
         {
             return BaseResponse<string>.GetBaseResponse("user info");
         }
