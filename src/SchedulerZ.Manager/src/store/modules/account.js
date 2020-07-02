@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import { login, getInfo, logout } from '@/api/login'
+import { login, getInfo, logout } from '@/api/account'
 import { ACCESS_TOKEN, REFRESH_TOKEN } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
-const user = {
+const account = {
   state: {
     token: '',
     refreshToken: '',
@@ -38,17 +38,32 @@ const user = {
 
   actions: {
     // 登录
-    Login1 ({ commit }, userInfo) {
+    Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(response => {
-          const result = response.result
-          Vue.ls.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
-          Vue.ls.set(REFRESH_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_REFRESH_TOKEN', result.token)
+          const result = response.data
+          Vue.ls.set(ACCESS_TOKEN, result.accessToken, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_TOKEN', result.accessToken)
+          Vue.ls.set(REFRESH_TOKEN, result.refreshToken, 7 * 24 * 60 * 60 * 1000)
+          commit('SET_REFRESH_TOKEN', result.refreshToken)
           resolve()
         }).catch(error => {
           reject(error)
+        })
+      })
+    },
+
+    // 登出
+    Logout ({ commit, state }) {
+      return new Promise((resolve) => {
+        logout(state.token).then(() => {
+          resolve()
+        }).catch(() => {
+          resolve()
+        }).finally(() => {
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          Vue.ls.remove(ACCESS_TOKEN)
         })
       })
     },
@@ -83,24 +98,8 @@ const user = {
           reject(error)
         })
       })
-    },
-
-    // 登出
-    Logout1 ({ commit, state }) {
-      return new Promise((resolve) => {
-        logout(state.token).then(() => {
-          resolve()
-        }).catch(() => {
-          resolve()
-        }).finally(() => {
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          Vue.ls.remove(ACCESS_TOKEN)
-        })
-      })
     }
-
   }
 }
 
-export default user
+export default account

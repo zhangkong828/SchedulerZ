@@ -41,7 +41,8 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> Login(LoginRequest request)
         {
-            if (request.Username != "admin" && request.Password != "admin")
+            //admin admin
+            if (request.Username != "admin" && request.Password != "21232f297a57a5a743894a0e4a801fc3")
                 return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名或密码错误");
 
             var userId = "1";

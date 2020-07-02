@@ -25,3 +25,10 @@ export function logout () {
     method: 'post'
   })
 }
+
+export function getInfo () {
+  return axios({
+    url: '/account/info',
+    method: 'get'
+  })
+}
