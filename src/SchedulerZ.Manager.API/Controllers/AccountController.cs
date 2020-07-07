@@ -105,6 +105,20 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpGet]
         public ActionResult<BaseResponse> Info()
         {
+            var user = new User()
+            {
+                Id = 1,
+                Username = "admin",
+                Password = "",
+                Name = "管理员",
+                Avatar = "https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png",
+                LastLoginIp = "192.168.1.180",
+                LastLoginTime = DateTime.Now,
+                Status = 1,
+                CreateTime = DateTime.Now,
+                IsDelete = false
+            };
+            var roles = new List<Role>();
             return BaseResponse<string>.GetBaseResponse("user info");
         }
     }
