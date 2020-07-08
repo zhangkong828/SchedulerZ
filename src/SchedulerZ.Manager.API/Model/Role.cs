@@ -13,5 +13,7 @@ namespace SchedulerZ.Manager.API.Model
         public string Remark { get; set; }
         public DateTime CreateTime { get; set; }
         public bool IsDelete { get; set; }
+
+        public List<Router> Routers { get; set; }
     }
 }

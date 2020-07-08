@@ -72,26 +72,19 @@ const account = {
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(response => {
-          const result = response.result
+          const result = response.data
 
-          if (result.role && result.role.permissions.length > 0) {
-            const role = result.role
-            role.permissions = result.role.permissions
-            role.permissions.map(per => {
-              if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-                const action = per.actionEntitySet.map(action => { return action.action })
-                per.actionList = action
-              }
-            })
-            role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-            commit('SET_ROLES', result.role)
-            commit('SET_INFO', result)
+          if (result.roles && result.roles.length > 0) {
+            const roles = result.roles
+            roles.permissionList = roles[0].routers.map(router => { return router.permission })
+            commit('SET_ROLES', result.roles)
+            commit('SET_INFO', result.user)
           } else {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
-          commit('SET_AVATAR', result.avatar)
+          commit('SET_NAME', { name: result.user.name, welcome: welcome() })
+          commit('SET_AVATAR', result.user.avatar)
 
           resolve(response)
         }).catch(error => {

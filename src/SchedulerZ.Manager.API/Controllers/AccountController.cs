@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Request;
+using SchedulerZ.Manager.API.Model.Response;
 using SchedulerZ.Manager.API.Utility;
 
 namespace SchedulerZ.Manager.API.Controllers
@@ -119,7 +120,29 @@ namespace SchedulerZ.Manager.API.Controllers
                 IsDelete = false
             };
             var roles = new List<Role>();
-            return BaseResponse<string>.GetBaseResponse("user info");
+
+            var admin = new Role()
+            {
+                Id = 1,
+                RoleId = "admin",
+                RoleName = "管理员",
+                CreateTime = DateTime.Now,
+
+                Routers = new List<Router>() {
+                    new Router(){
+                        Id=1,
+                        Name="仪表盘",
+                        Permission="dashboard"
+                    },
+                    new Router(){
+                        Id=2,
+                        Name="业务布局",
+                        Permission="support"
+                    }
+                }
+            };
+            roles.Add(admin);
+            return BaseResponse<UserInfoResponse>.GetBaseResponse(new UserInfoResponse() { User = user, Roles = roles });
         }
     }
 }

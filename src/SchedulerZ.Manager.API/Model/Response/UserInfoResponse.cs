@@ -7,6 +7,7 @@ namespace SchedulerZ.Manager.API.Model.Response
 {
     public class UserInfoResponse
     {
-        public User Info { get; set; }
+        public User User { get; set; }
+        public List<Role> Roles { get; set; }
     }
 }
