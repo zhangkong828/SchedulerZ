@@ -42,7 +42,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> Login(LoginRequest request)
         {
-            //admin admin
+            //admin 123456
             if (request.Username != "admin" && request.Password != "21232f297a57a5a743894a0e4a801fc3")
                 return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名或密码错误");
 
@@ -102,6 +102,15 @@ namespace SchedulerZ.Manager.API.Controllers
             };
         }
 
+        /// <summary>
+        /// 登出
+        /// </summary>
+        [HttpPost]
+        public ActionResult<BaseResponse> Logout()
+        {
+            var code = _redisClient.Del(CacheKey.Token(GetUserId())) > 0 ? ResponseStatusType.Success : ResponseStatusType.Failed;
+            return BaseResponse.GetBaseResponse(code);
+        }
 
         [HttpGet]
         public ActionResult<BaseResponse> Info()

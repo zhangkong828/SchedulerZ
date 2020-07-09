@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import app from './modules/app'
-import user from './modules/user'
+// import user from './modules/user'
 import account from './modules/account'
 
 // default router permission control
@@ -17,7 +17,6 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   modules: {
     app,
-    user,
     account,
     permission
   },
