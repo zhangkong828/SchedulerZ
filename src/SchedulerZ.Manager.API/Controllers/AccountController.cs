@@ -144,6 +144,11 @@ namespace SchedulerZ.Manager.API.Controllers
                         Permission="dashboard"
                     },
                     new Router(){
+                        Id=3,
+                        Name="表单页",
+                        Permission="form"
+                    },
+                    new Router(){
                         Id=2,
                         Name="业务布局",
                         Permission="support"
