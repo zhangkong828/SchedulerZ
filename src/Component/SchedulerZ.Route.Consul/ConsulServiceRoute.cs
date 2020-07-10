@@ -53,11 +53,20 @@ namespace SchedulerZ.Route.Consul
             {
                 ID = checkId,
                 Name = checkName,
-                TCP = $"{service.Address}:{service.Port}",
                 Interval = _config.ServiceCheckInterval,
                 Status = HealthStatus.Passing,
                 DeregisterCriticalServiceAfter = _config.ServiceCriticalInterval,
             };
+
+            switch (service.HealthCheckType.ToLower())
+            {
+                case "http":
+                    agentCheck.HTTP = service.HealthCheck;
+                    break;
+                case "tcp":
+                    agentCheck.TCP = service.HealthCheck;
+                    break;
+            }
 
             var agentService = new AgentServiceRegistration
             {

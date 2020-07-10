@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Component\SchedulerZ.Logging.Log4Net\SchedulerZ.Logging.Log4Net.csproj" />
+    <ProjectReference Include="..\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj" />
   </ItemGroup>
 
   <ItemGroup>

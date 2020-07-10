@@ -44,6 +44,16 @@ namespace SchedulerZ.Route
         public IDictionary<string, object> Metadatas { get; set; }
 
         /// <summary>
+        /// 健康检查类型
+        /// </summary>
+        public string HealthCheckType { get; set; }
+
+        /// <summary>
+        /// 健康检查地址
+        /// </summary>
+        public string HealthCheck { get; set; }
+
+        /// <summary>
         /// 获取一个元数据
         /// </summary>
         /// <typeparam name="T">元数据类型</typeparam>

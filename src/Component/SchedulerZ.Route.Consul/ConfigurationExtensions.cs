@@ -31,6 +31,8 @@ namespace SchedulerZ.Route.Consul
                 Check.NotNullOrEmpty(serviceRouteDescriptor.Name, "服务名称");
                 Check.NotNullOrEmpty(serviceRouteDescriptor.Address, "地址");
                 Check.Positive(serviceRouteDescriptor.Port, "端口");
+                Check.NotNullOrEmpty(serviceRouteDescriptor.HealthCheckType, "健康检查类型");
+                Check.NotNullOrEmpty(serviceRouteDescriptor.HealthCheck, "健康检查地址");
 
                 services.AddSingleton(serviceRouteDescriptor);
                 services.AddHostedService<ConsulHostedService>();

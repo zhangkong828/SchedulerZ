@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using SchedulerZ.Logging.Log4Net;
 using SchedulerZ.Manager.API.Filter;
 using SchedulerZ.Manager.API.Model;
+using SchedulerZ.Route.Consul;
 
 namespace SchedulerZ.Manager.API
 {
@@ -117,6 +118,18 @@ namespace SchedulerZ.Manager.API
                     {
                         builder.AllowAnyOrigin().AllowAnyHeader();
                     });
+            });
+
+            services.UseConsulServiceRoute(config =>
+            {
+                config.Host = Configuration.GetValue<string>("ConsulConfig:Host");
+                config.Port = Configuration.GetValue<int>("ConsulConfig:Port");
+
+            }, registerService =>
+            {
+                registerService.Name = "manager";
+                registerService.Address = "192.168.31.200";
+                registerService.Port = 10001;
             });
         }
 

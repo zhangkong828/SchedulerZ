@@ -36,6 +36,8 @@ namespace SchedulerZ.Worker
                                         registerService.Name = "test";
                                         registerService.Address = "192.168.31.200";
                                         registerService.Port = 10001;
+                                        registerService.HealthCheckType = "TCP";
+                                        registerService.HealthCheck = "192.168.31.200:10001";
                                     })
                                     .UseGrpcRemoting(config =>
                                     {
