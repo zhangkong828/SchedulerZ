@@ -130,6 +130,8 @@ namespace SchedulerZ.Manager.API
                 registerService.Name = "manager";
                 registerService.Address = "192.168.31.200";
                 registerService.Port = 10001;
+                registerService.HealthCheckType = "HTTP";
+                registerService.HealthCheck = "http://192.168.31.200:10001/api/health/check";
             });
         }
 
