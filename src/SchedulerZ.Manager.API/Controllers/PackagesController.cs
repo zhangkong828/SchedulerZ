@@ -86,6 +86,23 @@ namespace SchedulerZ.Manager.API.Controllers
             return BaseResponse<List<UploadPackageResponse>>.GetBaseResponse(response);
         }
 
+        [HttpGet]
+        public ActionResult<BaseResponse> DownLoadPackage(string packageName)
+        {
+            if (string.IsNullOrWhiteSpace(packageName))
+            {
+                return NotFound();
+            }
 
+            var uploadDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "Packages");
+            var filePath= Path.Combine(uploadDirectory, packageName);
+
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound();
+            }
+
+            return NotFound();
+        }
     }
 }

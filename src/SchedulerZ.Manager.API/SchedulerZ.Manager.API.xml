@@ -14,6 +14,11 @@
             登出
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.HealthController.Check">
+            <summary>
+            健康检查
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">
             <summary>
             转换时间为unix时间戳

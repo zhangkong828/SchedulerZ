@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchedulerZ.Logging.Log4Net;
+using SchedulerZ.Manager.API.Data;
 using SchedulerZ.Manager.API.Filter;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Route.Consul;
@@ -36,6 +38,8 @@ namespace SchedulerZ.Manager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<SchedulerZContext>(options =>options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
+
             services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
 
             services.AddEasyCaching(options =>
