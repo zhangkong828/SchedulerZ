@@ -16,7 +16,7 @@ namespace SchedulerZ.Manager.API.Entity
         public string Username { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [StringLength(50)]
         public string Password { get; set; }
 
         [Required]
@@ -38,6 +38,6 @@ namespace SchedulerZ.Manager.API.Entity
 
         public bool IsDelete { get; set; }
 
-        public List<Role> Roles { get; set; }
+        public List<UserRoleRelation> UserRoleRelations { get; set; }
     }
 }

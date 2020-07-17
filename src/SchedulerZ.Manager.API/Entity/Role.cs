@@ -26,8 +26,8 @@ namespace SchedulerZ.Manager.API.Entity
 
         public bool IsDelete { get; set; }
 
-        public List<User> Users { get; set; }
+        public List<UserRoleRelation> UserRoleRelations { get; set; }
 
-        public List<Router> Routers { get; set; }
+        public List<RoleRouterRelation> RoleRouterRelations { get; set; }
     }
 }

@@ -21,7 +21,7 @@ namespace SchedulerZ.Manager.API.Data
             var user = new User()
             {
                 Username = "admin",
-                Password = "123456",
+                Password = "21232f297a57a5a743894a0e4a801fc3",
                 Name = "Admin",
                 Avatar = "https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png",
                 LastLoginIp = "192.168.1.180",

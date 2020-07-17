@@ -22,21 +22,17 @@ namespace SchedulerZ.Manager.API.Controllers
     {
 
         [NonAction]
-        protected string GetUserId()
+        protected long GetUserId()
         {
-            return User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Sid)?.Value;
+            var uId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Sid)?.Value;
+            long.TryParse(uId, out long userId);
+            return userId;
         }
 
         [NonAction]
         protected string GetUserName()
         {
             return User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name)?.Value;
-        }
-
-        [NonAction]
-        protected string GetUserRole()
-        {
-            return User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value;
         }
 
     }

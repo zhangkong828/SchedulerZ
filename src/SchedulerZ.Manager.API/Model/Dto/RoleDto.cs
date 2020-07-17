@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchedulerZ.Manager.API.Model
+namespace SchedulerZ.Manager.API.Model.Dto
 {
-    public class Role
+    public class RoleDto
     {
         public long Id { get; set; }
-        public string RoleId { get; set; }
-        public string RoleName { get; set; }
+
+        public string Identify { get; set; }
+
+        public string Name { get; set; }
+
         public string Remark { get; set; }
+
         public DateTime CreateTime { get; set; }
+
         public bool IsDelete { get; set; }
 
-        public List<Router> Routers { get; set; }
+        public List<RouterDto> Routers { get; set; }
     }
 }

@@ -34,6 +34,6 @@ namespace SchedulerZ.Manager.API.Entity
 
         public bool IsDelete { get; set; }
 
-        public List<Role> Roles { get; set; }
+        public List<RoleRouterRelation> RoleRouterRelations { get; set; }
     }
 }

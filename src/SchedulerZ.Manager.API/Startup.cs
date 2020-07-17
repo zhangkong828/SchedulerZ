@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CSRedis;
 using EasyCaching.Core.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -38,7 +39,7 @@ namespace SchedulerZ.Manager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<SchedulerZContext>(options =>options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<SchedulerZContext>(options => options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
 
             services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
 
@@ -66,6 +67,10 @@ namespace SchedulerZ.Manager.API
             });
 
             services.AddControllers()
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new DateTimeConverter());
+            })
             .ConfigureApiBehaviorOptions(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -75,6 +80,7 @@ namespace SchedulerZ.Manager.API
                 };
             });
 
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.UseLog4Net();
 
             //Swagger

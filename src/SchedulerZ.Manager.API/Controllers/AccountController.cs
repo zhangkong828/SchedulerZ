@@ -5,14 +5,19 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using CSRedis;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SchedulerZ.Manager.API.Data;
+using SchedulerZ.Manager.API.Entity;
 using SchedulerZ.Manager.API.Model;
+using SchedulerZ.Manager.API.Model.Dto;
 using SchedulerZ.Manager.API.Model.Request;
 using SchedulerZ.Manager.API.Model.Response;
 using SchedulerZ.Manager.API.Utility;
@@ -21,14 +26,18 @@ namespace SchedulerZ.Manager.API.Controllers
 {
     public class AccountController : BaseApiController
     {
+        private readonly IMapper _mapper;
+        private readonly SchedulerZContext _context;
         private readonly ILogger<AccountController> _logger;
 
         private readonly JWTConfig _jwtConfig;
 
         private readonly CSRedisClient _redisClient;
         private readonly IEasyCachingProvider _cachingProvider;
-        public AccountController(ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory, CSRedisClient redisClient)
+        public AccountController(IMapper mapper, SchedulerZContext context, ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory, CSRedisClient redisClient)
         {
+            _mapper = mapper;
+            _context = context;
             _logger = logger;
             _jwtConfig = jwtOptions.Value;
             _cachingProvider = cacheFactory.GetCachingProvider("default");
@@ -43,17 +52,20 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> Login(LoginRequest request)
         {
             //admin 123456
-            if (request.Username != "admin" && request.Password != "21232f297a57a5a743894a0e4a801fc3")
-                return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名或密码错误");
+            var user = _context.Users.SingleOrDefault(x => x.Username == request.Username);
+            if (user == null)
+                return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名错误");
 
-            var userId = "1";
-            var tokenCacheKey = CacheKey.Token(userId);
+            if (user.Password != request.Password)
+                return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "密码错误");
+
+            var tokenCacheKey = CacheKey.Token(user.Id.ToString());
 
             var token = _redisClient.Get<Token>(tokenCacheKey);
             var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
             if (token == null)
             {
-                token = GenerateToken();
+                token = GenerateToken(user);
                 _redisClient.Set(tokenCacheKey, token, expireSeconds);
             }
             else
@@ -61,23 +73,32 @@ namespace SchedulerZ.Manager.API.Controllers
                 var expires = FormatHelper.ConvertToDateTime(token.AccessTokenExpires);
                 if (expires <= DateTime.Now)
                 {
-                    var newToken = GenerateToken();
+                    var newToken = GenerateToken(user);
                     token.AccessToken = newToken.AccessToken;
                     token.AccessTokenExpires = newToken.AccessTokenExpires;
                     _redisClient.Set(tokenCacheKey, token, expireSeconds);
                 }
             }
+            UpdateLastLoginInfo(user);
             return BaseResponse<Token>.GetBaseResponse(token);
         }
 
         [NonAction]
-        private Token GenerateToken()
+        private bool UpdateLastLoginInfo(User user)
+        {
+            user.LastLoginIp = HttpContext.GetIpAddress();
+            user.LastLoginTime = DateTime.Now;
+            _context.Users.Update(user);
+            return _context.SaveChanges() > 0;
+        }
+
+        [NonAction]
+        private Token GenerateToken(User user)
         {
             var claims = new[]
                {
-                    new Claim(ClaimTypes.Sid, "1"),
-                    new Claim(ClaimTypes.Name, "test"),
-                    new Claim(ClaimTypes.Role, "admin")
+                    new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name)
                 };
 
             var now = DateTime.Now;
@@ -108,55 +129,29 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> Logout()
         {
-            var code = _redisClient.Del(CacheKey.Token(GetUserId())) > 0 ? ResponseStatusType.Success : ResponseStatusType.Failed;
+            var code = _redisClient.Del(CacheKey.Token(GetUserId().ToString())) > 0 ? ResponseStatusType.Success : ResponseStatusType.Failed;
             return BaseResponse.GetBaseResponse(code);
         }
 
+        /// <summary>
+        /// 获取用户信息
+        /// </summary>
         [HttpGet]
         public ActionResult<BaseResponse> Info()
         {
-            var user = new User()
-            {
-                Id = 1,
-                Username = "admin",
-                Password = "",
-                Name = "管理员",
-                Avatar = "https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png",
-                LastLoginIp = "192.168.1.180",
-                LastLoginTime = DateTime.Now,
-                Status = 1,
-                CreateTime = DateTime.Now,
-                IsDelete = false
-            };
-            var roles = new List<Role>();
+            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
 
-            var admin = new Role()
-            {
-                Id = 1,
-                RoleId = "admin",
-                RoleName = "管理员",
-                CreateTime = DateTime.Now,
+            var userDto = _mapper.Map<UserDto>(user);
 
-                Routers = new List<Router>() {
-                    new Router(){
-                        Id=1,
-                        Name="仪表盘",
-                        Permission="dashboard"
-                    },
-                    new Router(){
-                        Id=3,
-                        Name="表单页",
-                        Permission="form"
-                    },
-                    new Router(){
-                        Id=2,
-                        Name="业务布局",
-                        Permission="support"
-                    }
-                }
-            };
-            roles.Add(admin);
-            return BaseResponse<UserInfoResponse>.GetBaseResponse(new UserInfoResponse() { User = user, Roles = roles });
+            var roles = new List<RoleDto>();
+            foreach (var role in user.UserRoleRelations)
+            {
+                var roleDto = _mapper.Map<RoleDto>(role.Role);
+                roleDto.Routers = role.Role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).ToList();
+                roles.Add(roleDto);
+            }
+
+            return BaseResponse<UserInfoResponse>.GetBaseResponse(new UserInfoResponse() { User = userDto, Roles = roles });
         }
     }
 }
