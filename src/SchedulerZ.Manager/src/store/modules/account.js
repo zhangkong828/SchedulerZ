@@ -76,7 +76,16 @@ const account = {
 
           if (result.roles && result.roles.length > 0) {
             const roles = result.roles
-            roles.permissionList = roles[0].routers.map(router => { return router.permission })
+            roles.permissionList = []
+            for (let i = 0; i < roles.length; i++) {
+              for (let j = 0; j < roles[i].routers.length; j++) {
+                const permission = roles[i].routers[j].permission
+                if (!roles.permissionList.includes(permission)) {
+                  roles.permissionList.push(permission)
+                }
+              }
+            }
+            // roles.permissionList = roles[0].routers.map(router => { return router.permission })
             commit('SET_ROLES', result.roles)
             commit('SET_INFO', result.user)
           } else {
