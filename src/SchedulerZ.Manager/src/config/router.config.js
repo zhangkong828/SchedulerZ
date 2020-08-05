@@ -322,7 +322,37 @@ export const asyncRouterMap = [
             ]
           }
         ]
+      },
+
+      // 系统设置
+      {
+        path: '/system',
+        name: 'system',
+        component: PageView,
+        meta: { title: '系统设置', icon: 'slack', permission: [ 'system' ] },
+        redirect: '/other/icon-selector',
+        children: [
+          {
+            path: '/system/user-list',
+            name: 'UserList',
+            component: () => import('@/views/other/IconSelectorView'),
+            meta: { title: '用户列表', keepAlive: true }
+          },
+          {
+            path: '/system/role-list',
+            name: 'RoleList',
+            component: () => import('@/views/other/IconSelectorView'),
+            meta: { title: '角色列表', keepAlive: true }
+          },
+          {
+            path: '/system/permission-list',
+            name: 'PermissionList',
+            component: () => import('@/views/other/IconSelectorView'),
+            meta: { title: '权限列表', keepAlive: true }
+          }
+        ]
       }
+
     ]
   },
   {
