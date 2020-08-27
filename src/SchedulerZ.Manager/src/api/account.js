@@ -32,3 +32,10 @@ export function getInfo () {
     method: 'get'
   })
 }
+
+export function getCurrentUserNav (token) {
+  return axios({
+    url: '/account/nav',
+    method: 'get'
+  })
+}

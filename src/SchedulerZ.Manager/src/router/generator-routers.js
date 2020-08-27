@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import * as loginService from '@/api/login'
+import * as loginService from '@/api/account'
 // eslint-disable-next-line
 import { BasicLayout, BlankLayout, PageView, RouteView } from '@/layouts'
 
@@ -109,7 +109,7 @@ export const generatorDynamicRouter = (token) => {
  */
 export const generator = (routerMap, parent) => {
   return routerMap.map(item => {
-    const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
+    // const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
     const currentRouter = {
       // 如果路由设置了 path，则作为默认 path，否则 路由地址 动态拼接生成如 /dashboard/workplace
       path: item.path || `${parent && parent.path || ''}/${item.key}`,
@@ -122,19 +122,19 @@ export const generator = (routerMap, parent) => {
 
       // meta: 页面标题, 菜单图标, 页面权限(供指令权限用，可去掉)
       meta: {
-        title: title,
-        icon: icon || undefined,
-        hiddenHeaderContent: hiddenHeaderContent,
-        target: target,
+        title: item.title,
+        icon: item.icon || undefined,
+        hiddenHeaderContent: item.hiddenHeaderContent,
+        target: item.target,
         permission: item.name
       }
     }
     // 是否设置了隐藏菜单
-    if (show === false) {
+    if (item.show === false) {
       currentRouter.hidden = true
     }
     // 是否设置了隐藏子菜单
-    if (hideChildren) {
+    if (item.hideChildren) {
       currentRouter.hideChildrenInMenu = true
     }
     // 为了防止出现后端返回结果不规范，处理有可能出现拼接出两个 反斜杠

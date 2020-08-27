@@ -43,9 +43,30 @@ namespace SchedulerZ.Manager.API.Data
             context.SaveChanges();
 
             var routers = new Router[] {
-                new Router(){ Name="仪表盘",Permission="dashboard",ParentId=0,CreateTime=DateTime.Now },
-                new Router(){ Name="业务布局",Permission="support",ParentId=0,CreateTime=DateTime.Now },
-                new Router(){ Name="表单页",Permission="form",ParentId=0,CreateTime=DateTime.Now }
+                new Router(){
+                    Title="仪表盘",
+                    Path="/dashboard",
+                    Name="仪表盘",
+                    Component="RouteView",
+                    Permission="dashboard",
+                    Icon="dashboard",
+                    Show=true,
+                    Redirect="/dashboard/workplace",
+                    ParentId=0,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="业务布局11",
+                    Path="/system",
+                    Name="业务布局11",
+                    Component="other/IconSelectorView",
+                    Permission="dashboard",
+                    Icon="slack",
+                    Show=true,
+                    Redirect="/other/icon-selector",
+                    ParentId=0,
+                    CreateTime=DateTime.Now
+                }
             };
             context.Routers.AddRange(routers);
             context.SaveChanges();
