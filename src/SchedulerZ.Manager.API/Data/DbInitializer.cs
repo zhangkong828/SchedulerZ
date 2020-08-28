@@ -46,8 +46,8 @@ namespace SchedulerZ.Manager.API.Data
                 new Router(){
                     Title="仪表盘",
                     Path="/dashboard",
-                    Name="仪表盘",
-                    Component="RouteView",
+                    Name="dashboard",
+                    Component="",
                     Permission="dashboard",
                     Icon="dashboard",
                     Show=true,
@@ -55,16 +55,40 @@ namespace SchedulerZ.Manager.API.Data
                     ParentId=0,
                     CreateTime=DateTime.Now
                 },
+                 new Router(){
+                    Title="工作台",
+                    Path="/workplace",
+                    Name="workplace",
+                    Component="dashboard/Workplace",
+                    Permission="dashboard",
+                    Icon="",
+                    Show=true,
+                    Redirect="",
+                    ParentId=1,
+                    CreateTime=DateTime.Now
+                },
                 new Router(){
                     Title="业务布局11",
                     Path="/system",
-                    Name="业务布局11",
-                    Component="other/IconSelectorView",
+                    Name="otherPage",
+                    Component="",
                     Permission="dashboard",
                     Icon="slack",
                     Show=true,
                     Redirect="/other/icon-selector",
                     ParentId=0,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="用户列表",
+                    Path="/other/list/user-list",
+                    Name="UserList",
+                    Component="other/UserList",
+                    Permission="dashboard",
+                    Icon="",
+                    Show=true,
+                    Redirect="",
+                    ParentId=3,
                     CreateTime=DateTime.Now
                 }
             };

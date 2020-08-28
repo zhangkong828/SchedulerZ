@@ -172,7 +172,16 @@ namespace SchedulerZ.Manager.API.Controllers
                 roles.Add(roleDto);
             }
 
-            return BaseResponse<UserInfoResponse>.GetBaseResponse(new UserInfoResponse() { User = userDto, Roles = roles });
+            //所有角色对应路由的并集
+            var routerList = roles[0].Routers;
+            if (roles.Count > 1)
+            {
+                for (int i = 1; i < roles.Count; i++)
+                {
+                    routerList = routerList.Union(roles[i].Routers).ToList();
+                }
+            }
+            return BaseResponse<List<RouterDto>>.GetBaseResponse(routerList);
         }
     }
 }

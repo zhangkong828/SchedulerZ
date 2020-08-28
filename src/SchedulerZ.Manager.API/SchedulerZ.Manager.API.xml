@@ -19,6 +19,11 @@
             获取用户信息
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.AccountController.Nav">
+            <summary>
+            获取用户菜单
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.Controllers.HealthController.Check">
             <summary>
             健康检查
@@ -45,6 +50,51 @@
         <member name="P:SchedulerZ.Manager.API.Model.BaseResponse`1.Data">
             <summary>
             数据
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Title">
+            <summary>
+            页面标题
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Path">
+            <summary>
+            路径地址
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Name">
+            <summary>
+            路由名称 不能重复
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Component">
+            <summary>
+            组件
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Permission">
+            <summary>
+            权限
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Target">
+            <summary>
+            菜单链接跳转目标（参考 html a 标记） _blank|_self|_top|_parent
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Show">
+            <summary>
+            是否显示菜单
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.HideChildren">
+            <summary>
+            是否隐藏子菜单
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Dto.RouterDto.Redirect">
+            <summary>
+            重定向地址, 访问这个路由时,自定进行重定向
             </summary>
         </member>
         <member name="F:SchedulerZ.Manager.API.Model.ResponseStatusType.Failed">

@@ -82,7 +82,7 @@ export const generatorDynamicRouter = (token) => {
   return new Promise((resolve, reject) => {
     loginService.getCurrentUserNav(token).then(res => {
       console.log('res', res)
-      const { result } = res
+      const result = res.data
       const menuNav = []
       const childrenNav = []
       //      后端数据, 根级树数组,  根级 PID
