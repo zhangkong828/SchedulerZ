@@ -19,7 +19,7 @@
             获取用户信息
             </summary>
         </member>
-        <member name="M:SchedulerZ.Manager.API.Controllers.AccountController.Nav">
+        <member name="M:SchedulerZ.Manager.API.Controllers.AccountController.GetUserNav">
             <summary>
             获取用户菜单
             </summary>

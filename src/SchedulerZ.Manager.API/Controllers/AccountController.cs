@@ -139,17 +139,11 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpGet]
         public ActionResult<BaseResponse> Info()
         {
-            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
+            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).FirstOrDefault(x => x.Id == GetUserId());
 
             var userDto = _mapper.Map<UserDto>(user);
 
-            var roles = new List<RoleDto>();
-            foreach (var role in user.UserRoleRelations)
-            {
-                var roleDto = _mapper.Map<RoleDto>(role.Role);
-                roleDto.Routers = role.Role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).ToList();
-                roles.Add(roleDto);
-            }
+            var roles = user.UserRoleRelations.Select(x => _mapper.Map<RoleDto>(x.Role)).ToList();            
 
             return BaseResponse<UserInfoResponse>.GetBaseResponse(new UserInfoResponse() { User = userDto, Roles = roles });
         }
@@ -158,7 +152,7 @@ namespace SchedulerZ.Manager.API.Controllers
         /// 获取用户菜单
         /// </summary>
         [HttpGet]
-        public ActionResult<BaseResponse> Nav()
+        public ActionResult<BaseResponse> GetUserNav()
         {
             var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
 
