@@ -62,20 +62,27 @@ namespace SchedulerZ.Manager.API.Controllers
             var tokenCacheKey = CacheKey.Token(user.Id.ToString());
 
             var token = _redisClient.Get<Token>(tokenCacheKey);
-            var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
             if (token == null)
             {
+                //新用户 创建新Token
                 token = GenerateToken(user);
+                var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
                 _redisClient.Set(tokenCacheKey, token, expireSeconds);
             }
             else
             {
+                //老用户
                 var expires = FormatHelper.ConvertToDateTime(token.AccessTokenExpires);
                 if (expires <= DateTime.Now)
                 {
+                    //AccessTokeng过期 重新生成
                     var newToken = GenerateToken(user);
+                    //只更新AccessToken，老的RefreshToken保持不变
                     token.AccessToken = newToken.AccessToken;
                     token.AccessTokenExpires = newToken.AccessTokenExpires;
+
+                    var refreshTokenExpires = FormatHelper.ConvertToDateTime(token.RefreshTokenExpires);
+                    var expireSeconds = (int)(refreshTokenExpires - DateTime.Now).TotalSeconds;
                     _redisClient.Set(tokenCacheKey, token, expireSeconds);
                 }
             }
