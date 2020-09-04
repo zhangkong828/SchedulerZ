@@ -56,6 +56,8 @@ namespace SchedulerZ.Manager.API.Entity
         [Required]
         public long ParentId { get; set; }
 
+        public int Sort { get; set; }
+
         public DateTime CreateTime { get; set; }
 
         public bool IsDelete { get; set; }

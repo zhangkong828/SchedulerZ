@@ -126,6 +126,7 @@ namespace SchedulerZ.Manager.API.Controllers
         /// <summary>
         /// 登出
         /// </summary>
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult<BaseResponse> Logout()
         {
@@ -143,7 +144,7 @@ namespace SchedulerZ.Manager.API.Controllers
 
             var userDto = _mapper.Map<UserDto>(user);
 
-            var roles = user.UserRoleRelations.Select(x => _mapper.Map<RoleDto>(x.Role)).ToList();            
+            var roles = user.UserRoleRelations.Select(x => _mapper.Map<RoleDto>(x.Role)).ToList();
 
             return BaseResponse<UserInfoResponse>.GetBaseResponse(new UserInfoResponse() { User = userDto, Roles = roles });
         }
@@ -175,6 +176,7 @@ namespace SchedulerZ.Manager.API.Controllers
                     routerList = routerList.Union(roles[i].Routers).ToList();
                 }
             }
+            routerList = routerList.OrderBy(x => x.Sort).ToList();
             return BaseResponse<List<RouterDto>>.GetBaseResponse(routerList);
         }
     }

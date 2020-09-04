@@ -14,9 +14,14 @@ const constantRouterComponents = {
   '404': () => import(/* webpackChunkName: "error" */ '@/views/exception/404'),
   '500': () => import(/* webpackChunkName: "error" */ '@/views/exception/500'),
 
-  // 你需要动态引入的页面组件
+  // dashboard
   'Workplace': () => import('@/views/dashboard/Workplace'),
   'Analysis': () => import('@/views/dashboard/Analysis'),
+
+  // system
+  'User': () => import('@/views/system/User'),
+  'Role': () => import('@/views/system/Role'),
+  'Permission': () => import('@/views/system/Permission'),
 
   // form
   'BasicForm': () => import('@/views/form/basicForm'),
@@ -82,7 +87,7 @@ export const generatorDynamicRouter = (token) => {
   return new Promise((resolve, reject) => {
     loginService.getCurrentUserNav().then(res => {
       console.log('res', res)
-      const { result } = res.data
+      const result = res.data
       const menuNav = []
       const childrenNav = []
       //      后端数据, 根级树数组,  根级 PID

@@ -29,6 +29,11 @@
             健康检查
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.GetUserList(SchedulerZ.Manager.API.Model.Request.UserListRequest)">
+            <summary>
+            用户列表
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">
             <summary>
             转换时间为unix时间戳

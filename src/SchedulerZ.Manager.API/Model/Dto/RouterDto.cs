@@ -61,6 +61,7 @@ namespace SchedulerZ.Manager.API.Model.Dto
         public string Remark { get; set; }
 
         public long ParentId { get; set; }
+        public int Sort { get; set; }
 
         public DateTime CreateTime { get; set; }
 

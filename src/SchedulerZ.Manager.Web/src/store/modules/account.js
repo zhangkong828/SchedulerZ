@@ -66,8 +66,8 @@ const user = {
             reject(new Error('getInfo: roles must be a non-null array !'))
           }
 
-          commit('SET_NAME', { name: result.name, welcome: welcome() })
-          commit('SET_AVATAR', result.avatar)
+          commit('SET_NAME', { name: result.user.name, welcome: welcome() })
+          commit('SET_AVATAR', result.user.avatar)
 
           resolve(response)
         }).catch(error => {

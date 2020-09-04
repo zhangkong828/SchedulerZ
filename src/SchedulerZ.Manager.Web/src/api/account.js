@@ -62,3 +62,11 @@ export function get2step (parameter) {
     data: parameter
   })
 }
+
+export function getUserList (parameter) {
+  return request({
+    url: '/account/getUserList',
+    method: 'get',
+    params: parameter
+  })
+}
