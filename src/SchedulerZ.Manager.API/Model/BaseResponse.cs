@@ -147,4 +147,10 @@ namespace SchedulerZ.Manager.API.Model
         }
 
     }
+
+    public class BaseResponseData
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+    }
 }

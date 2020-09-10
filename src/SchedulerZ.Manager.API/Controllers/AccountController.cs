@@ -52,7 +52,7 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> Login(LoginRequest request)
         {
             //admin 123456
-            var user = _context.Users.SingleOrDefault(x => x.Username == request.Username);
+            var user = _context.Users.AsNoTracking().SingleOrDefault(x => x.Username == request.Username);
             if (user == null)
                 return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名错误");
 
@@ -64,7 +64,7 @@ namespace SchedulerZ.Manager.API.Controllers
             var token = _redisClient.Get<Token>(tokenCacheKey);
             if (token == null)
             {
-                //新用户 创建新Token
+                //新登录用户 创建新Token
                 token = GenerateToken(user);
                 var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
                 _redisClient.Set(tokenCacheKey, token, expireSeconds);
@@ -128,6 +128,39 @@ namespace SchedulerZ.Manager.API.Controllers
                 RefreshToken = refreshToken,
                 RefreshTokenExpires = refreshTokenExpires.ConvertToUnixOfTime()
             };
+        }
+
+        /// <summary>
+        /// 刷新Token
+        /// </summary>
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult<BaseResponse> RefreshToken(RefreshTokenRequest request)
+        {
+            var jwtHandler = new JwtSecurityTokenHandler();
+            if (jwtHandler.CanReadToken(request.AccessToken))
+            {
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(request.AccessToken);
+                var uId = jwt.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Sid)?.Value;
+                if (!string.IsNullOrWhiteSpace(uId) && long.TryParse(uId, out long userId))
+                {
+                    var tokenCacheKey = CacheKey.Token(userId.ToString());
+                    var token = _redisClient.Get<Token>(tokenCacheKey);
+                    if (token != null && token.RefreshToken == request.RefreshToken)
+                    {
+                        var user = _context.Users.AsNoTracking().SingleOrDefault(x => x.Id == userId);
+                        if (user != null)
+                        {
+                            var newToken = GenerateToken(user);
+                            token.AccessToken = newToken.AccessToken;
+                            token.AccessTokenExpires = newToken.AccessTokenExpires;
+
+                            return BaseResponse<Token>.GetBaseResponse(token);
+                        }
+                    }
+                }
+            }
+            return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "刷新失败");
         }
 
         /// <summary>

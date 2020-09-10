@@ -9,6 +9,11 @@
             登录
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.AccountController.RefreshToken(SchedulerZ.Manager.API.Model.Request.RefreshTokenRequest)">
+            <summary>
+            刷新Token
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.Controllers.AccountController.Logout">
             <summary>
             登出
