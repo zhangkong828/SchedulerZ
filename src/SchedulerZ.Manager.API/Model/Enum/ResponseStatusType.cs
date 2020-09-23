@@ -37,5 +37,11 @@ namespace SchedulerZ.Manager.API.Model
         /// </summary>
         [Description("无权限操作")]
         Forbidden = 10002,
+
+        /// <summary>
+        /// 刷新Token失败
+        /// </summary>
+        [Description("刷新Token失败")]
+        Unauthorized = 10003,
     }
 }

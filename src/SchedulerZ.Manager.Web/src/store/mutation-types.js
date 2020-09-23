@@ -1,5 +1,7 @@
 export const ACCESS_TOKEN = 'Access_Token'
+export const ACCESS_TOKEN_EXPIRES = 'Access_Token_Expires'
 export const REFRESH_TOKEN = 'Refresh_Token'
+export const REFRESH_TOKEN_EXPIRES = 'Refresh_Token_Expires'
 export const SIDEBAR_TYPE = 'sidebar_type'
 export const TOGGLE_MOBILE_TYPE = 'is_mobile'
 export const TOGGLE_NAV_THEME = 'nav_theme'

@@ -19,14 +19,6 @@ export function login (parameter) {
   })
 }
 
-export function getSmsCaptcha (parameter) {
-  return request({
-    url: '',
-    method: 'post',
-    data: parameter
-  })
-}
-
 export function getInfo () {
   return request({
     url: '/account/info',

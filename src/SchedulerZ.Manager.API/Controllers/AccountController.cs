@@ -155,12 +155,16 @@ namespace SchedulerZ.Manager.API.Controllers
                             token.AccessToken = newToken.AccessToken;
                             token.AccessTokenExpires = newToken.AccessTokenExpires;
 
+                            var refreshTokenExpires = FormatHelper.ConvertToDateTime(token.RefreshTokenExpires);
+                            var expireSeconds = (int)(refreshTokenExpires - DateTime.Now).TotalSeconds;
+                            _redisClient.Set(tokenCacheKey, token, expireSeconds);
+
                             return BaseResponse<Token>.GetBaseResponse(token);
                         }
                     }
                 }
             }
-            return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "刷新失败");
+            return BaseResponse.GetBaseResponse(ResponseStatusType.Unauthorized, "刷新失败");
         }
 
         /// <summary>

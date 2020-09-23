@@ -132,6 +132,11 @@
             无权限操作
             </summary>
         </member>
+        <member name="F:SchedulerZ.Manager.API.Model.ResponseStatusType.Unauthorized">
+            <summary>
+            刷新Token失败
+            </summary>
+        </member>
         <member name="P:SchedulerZ.Manager.API.Model.Request.LoginRequest.Username">
             <summary>
             用户名
