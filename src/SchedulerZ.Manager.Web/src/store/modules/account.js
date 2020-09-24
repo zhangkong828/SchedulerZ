@@ -59,7 +59,7 @@ const user = {
           commit('SET_REFRESH_TOKEN', result.refreshToken)
           storage.set(REFRESH_TOKEN_EXPIRES, result.refreshTokenExpires)
           commit('SET_REFRESH_TOKEN_EXPIRES', result.refreshTokenExpires)
-          resolve()
+          resolve(result)
         }).catch(error => {
           reject(error)
         })

@@ -26,6 +26,11 @@ request.setToken = (data) => {
   store.commit('SET_REFRESH_TOKEN_EXPIRES', data.refreshTokenExpires)
 }
 
+// 是否正在刷新的标记
+let isRefreshing = false
+// 重试队列
+let requests = []
+
 // 异常拦截处理器
 const errorHandler = (error) => {
   if (error.response) {
@@ -39,28 +44,36 @@ const errorHandler = (error) => {
 
     if (error.response.status === 401) {
       console.log(error.response)
-      const token = storage.get(ACCESS_TOKEN) || ''
-      const refreshToken = storage.get(REFRESH_TOKEN) || ''
-      if (token && refreshToken) {
-        return refreshTokenFun({ AccessToken: token, RefreshToken: refreshToken }).then(response => {
-          console.log(response)
-          request.setToken(response)
-          const config = error.response.config
-          config.headers['authorization'] = 'Bearer ' + response.accessToken
-          return request(config)
-        }).catch(error => {
-          console.error('refreshToken error', error)
-          window.location.href = loginRoutePath
+      const config = error.response.config
+      if (!isRefreshing) {
+        isRefreshing = true
+        const token = storage.get(ACCESS_TOKEN) || ''
+        const refreshToken = storage.get(REFRESH_TOKEN) || ''
+        if (token && refreshToken) {
+          return refreshTokenFun({ AccessToken: token, RefreshToken: refreshToken }).then(response => {
+            console.log(response)
+            request.setToken(response)
+            config.headers['authorization'] = 'Bearer ' + response.accessToken
+            // 已刷新token 将所有队列请求进行重试
+            requests.forEach(r => r(response.accessToken))
+            requests = []
+            return request(config)
+          }).catch(error => {
+            console.error('refreshToken error', error)
+            window.location.href = loginRoutePath
+          }).finally(() => {
+            isRefreshing = false
+          })
+        }
+      } else {
+        // 正在刷新 返回一个未执行resolve的promise
+        return new Promise(resolve => {
+          requests.push(token => {
+            config.headers['authorization'] = 'Bearer ' + token
+            resolve(request(config))
+          })
         })
       }
-      window.location.href = loginRoutePath
-      // if (refreshToken) {
-      //   store.dispatch('Logout').then(() => {
-      //     setTimeout(() => {
-      //       window.location.reload()
-      //     }, 1500)
-      //   })
-      // }
     }
   }
 
