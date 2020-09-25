@@ -174,8 +174,8 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> Logout()
         {
-            var code = _redisClient.Del(CacheKey.Token(GetUserId().ToString())) > 0 ? ResponseStatusType.Success : ResponseStatusType.Failed;
-            return BaseResponse.GetBaseResponse(code);
+            _redisClient.Del(CacheKey.Token(GetUserId().ToString()));
+            return BaseResponse.GetBaseResponse(ResponseStatusType.Success);
         }
 
         /// <summary>
