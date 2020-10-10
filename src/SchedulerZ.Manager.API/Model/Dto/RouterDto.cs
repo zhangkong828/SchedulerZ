@@ -66,5 +66,8 @@ namespace SchedulerZ.Manager.API.Model.Dto
         public DateTime CreateTime { get; set; }
 
         public bool IsDelete { get; set; }
+
+
+        public List<RouterDto> Children { get; set; }
     }
 }

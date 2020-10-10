@@ -67,7 +67,7 @@ export default {
     list-style: none;
     padding: 0;
     overflow-y: scroll;
-    height: 250px;
+    height: 500px;
 
     li{
       display: inline-block;

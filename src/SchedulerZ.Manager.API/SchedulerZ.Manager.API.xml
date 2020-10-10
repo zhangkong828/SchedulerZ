@@ -34,9 +34,24 @@
             健康检查
             </summary>
         </member>
-        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.GetUserList(SchedulerZ.Manager.API.Model.Request.UserListRequest)">
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.QueryUserList(SchedulerZ.Manager.API.Model.Request.UserListRequest)">
             <summary>
             用户列表
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.QueryPermissionList(SchedulerZ.Manager.API.Model.Request.PermissionListRequest)">
+            <summary>
+            权限列表
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.ModifyPermission(SchedulerZ.Manager.API.Model.Dto.RouterDto)">
+            <summary>
+            修改权限
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.DeletePermission(System.Int64)">
+            <summary>
+            删除权限
             </summary>
         </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">

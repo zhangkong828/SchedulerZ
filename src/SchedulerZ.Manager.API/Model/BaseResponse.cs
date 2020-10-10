@@ -150,6 +150,23 @@ namespace SchedulerZ.Manager.API.Model
 
     public class BaseResponseData
     {
+        public BaseResponseData(bool success)
+        {
+            Success = success;
+            Message = success ? "成功" : "失败";
+        }
+
+        public BaseResponseData(string msg)
+        {
+            Message = msg;
+        }
+
+        public BaseResponseData(bool success, string msg)
+        {
+            Success = success;
+            Message = msg;
+        }
+
         public bool Success { get; set; }
         public string Message { get; set; }
     }

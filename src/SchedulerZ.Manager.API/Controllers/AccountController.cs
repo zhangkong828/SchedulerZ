@@ -201,27 +201,32 @@ namespace SchedulerZ.Manager.API.Controllers
         {
             var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
 
-            var userDto = _mapper.Map<UserDto>(user);
-
             var roles = new List<RoleDto>();
             foreach (var role in user.UserRoleRelations)
             {
                 var roleDto = _mapper.Map<RoleDto>(role.Role);
-                roleDto.Routers = role.Role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).ToList();
+                roleDto.Routers = role.Role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).Where(x => x.IsDelete == false).ToList();
                 roles.Add(roleDto);
             }
 
-            //所有角色对应路由的并集
-            var routerList = roles[0].Routers;
-            if (roles.Count > 1)
+            List<RouterDto> routerList = new List<RouterDto>();
+            if (roles.Count > 0)
             {
-                for (int i = 1; i < roles.Count; i++)
+                routerList = roles[0].Routers;
+
+                //所有角色对应路由的并集
+                if (roles.Count > 1)
                 {
-                    routerList = routerList.Union(roles[i].Routers).ToList();
+                    for (int i = 1; i < roles.Count; i++)
+                    {
+                        routerList = routerList.Union(roles[i].Routers).ToList();
+                    }
                 }
+                routerList = routerList.OrderBy(x => x.Sort).ToList();
             }
-            routerList = routerList.OrderBy(x => x.Sort).ToList();
             return BaseResponse<List<RouterDto>>.GetBaseResponse(routerList);
         }
+
+
     }
 }
