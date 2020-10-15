@@ -24,7 +24,7 @@
 
     <s-table ref="table" :columns="columns" :data="loadData" :defaultExpandAllRows="true" row-key="id">
       <span slot="icon" slot-scope="text">
-        <a-icon :type="text" />
+        <a-icon v-if="text" :type="text" />
       </span>
 
       <span slot="actions" slot-scope="text, record">
@@ -39,21 +39,23 @@
     </s-table>
 
     <a-modal title="操作" :width="800" v-model="visible" @ok="handleOk">
-      <a-form :model="mdl">
+      <a-form ref="ruleForm1" :model="mdl" :rules="rules">
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="名称"
+          name="title"
         >
-          <a-input placeholder="名称" v-model="mdl.title" name="title" />
+          <a-input placeholder="名称" v-model="mdl.title" name="title"/>
         </a-form-item>
 
         <a-form-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="唯一识别码"
+          porp="name"
         >
-          <a-input placeholder="唯一识别码" v-model="mdl.name" name="name" />
+          <a-input placeholder="唯一识别码" v-model="mdl.name" name="name"/>
         </a-form-item>
 
         <a-form-item
@@ -62,7 +64,7 @@
           label="icon"
         >
           <a-input-search v-model="mdl.icon" name="icon" @search="handleIcon(mdl.icon)">
-            <template v-slot:prefix><a-icon :type="mdl.icon" /></template>
+            <template v-slot:prefix><a-icon v-if="mdl.icon" :type="mdl.icon" /></template>
             <template v-slot:enterButton>
               <a-button>选择</a-button>
             </template>
@@ -73,8 +75,9 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="路径"
+          name="path"
         >
-          <a-input placeholder="path" v-model="mdl.path" name="path" />
+          <a-input placeholder="path" v-model="mdl.path" />
         </a-form-item>
 
         <a-form-item
@@ -125,6 +128,14 @@
               action.label
             }}</a-select-option>
           </a-select>
+        </a-form-item>
+        <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+          <a-button type="primary" @click="onSubmit">
+            Create
+          </a-button>
+          <a-button style="margin-left: 10px;" @click="resetForm">
+            Reset
+          </a-button>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -218,7 +229,18 @@ export default {
       },
 
       selectedRowKeys: [],
-      selectedRows: []
+      selectedRows: [],
+      rules: {
+        title: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        path1: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ]
+      }
     }
   },
   created () {
@@ -263,7 +285,20 @@ export default {
       this.visible = true
     },
     handleDelete (record) {},
-    handleOk () {}
+    handleOk () {},
+    onSubmit () {
+      this.$refs.ruleForm1
+        .validate()
+        .then(() => {
+          console.log('values', this.form)
+        })
+        .catch(error => {
+          console.log('error', error)
+        })
+    },
+    resetForm () {
+      this.$refs.ruleForm1.resetFields()
+    }
   }
 }
 </script>
