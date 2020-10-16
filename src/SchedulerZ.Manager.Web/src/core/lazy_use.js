@@ -44,7 +44,8 @@ import {
   Statistic,
   Descriptions,
   message,
-  notification
+  notification,
+  FormModel
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -67,6 +68,7 @@ Vue.use(Checkbox)
 Vue.use(Select)
 Vue.use(Card)
 Vue.use(Form)
+Vue.use(FormModel)
 Vue.use(Row)
 Vue.use(Col)
 Vue.use(Modal)

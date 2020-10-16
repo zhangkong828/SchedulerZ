@@ -4,9 +4,9 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="权限">
+            <a-form-model-item label="权限">
               <a-input placeholder="请输入" v-model="queryParam.name"/>
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <span class="table-page-search-submitButtons">
@@ -38,106 +38,112 @@
       </span>
     </s-table>
 
-    <a-modal title="操作" :width="800" v-model="visible" @ok="handleOk">
-      <a-form ref="ruleForm1" :model="mdl" :rules="rules">
-        <a-form-item
+    <a-modal title="操作" :width="800" v-model="visible" :footer="null">
+      <a-form-model ref="ruleForm" :model="form" :rules="rules">
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="名称"
-          name="title"
+          prop="title"
         >
-          <a-input placeholder="名称" v-model="mdl.title" name="title"/>
-        </a-form-item>
+          <a-input placeholder="名称" v-model="form.title"/>
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="唯一识别码"
-          porp="name"
+          prop="name"
         >
-          <a-input placeholder="唯一识别码" v-model="mdl.name" name="name"/>
-        </a-form-item>
+          <a-input placeholder="唯一识别码" v-model="form.name" />
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="icon"
+          prop="icon"
         >
-          <a-input-search v-model="mdl.icon" name="icon" @search="handleIcon(mdl.icon)">
-            <template v-slot:prefix><a-icon v-if="mdl.icon" :type="mdl.icon" /></template>
+          <a-input-search v-model="form.icon" name="icon" @search="handleIcon(form.icon)">
+            <template v-slot:prefix><a-icon v-if="form.icon" :type="form.icon" /></template>
             <template v-slot:enterButton>
               <a-button>选择</a-button>
             </template>
           </a-input-search>
-        </a-form-item>
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="路径"
-          name="path"
+          prop="path"
         >
-          <a-input placeholder="path" v-model="mdl.path" />
-        </a-form-item>
+          <a-input placeholder="path" v-model="form.path" />
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="组件"
+          prop="component"
         >
-          <a-input placeholder="" v-model="mdl.component" name="component" />
-        </a-form-item>
+          <a-input placeholder="" v-model="form.component" name="component" />
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="重定向"
+          prop="redirect"
         >
-          <a-input placeholder="" v-model="mdl.redirect" name="redirect" />
-        </a-form-item>
+          <a-input placeholder="" v-model="form.redirect" />
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="跳转目标"
+          prop="target"
         >
-          <a-input placeholder="_blank|_self|_top|_parent" v-model="mdl.target" name="target" />
-        </a-form-item>
+          <a-input placeholder="_blank|_self|_top|_parent" v-model="form.target" />
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="排序"
+          prop="sort"
         >
-          <a-input placeholder="" v-model="mdl.sort" name="sort" />
-        </a-form-item>
+          <a-input placeholder="" v-model="form.sort" />
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="是否显示"
+          prop="show"
         >
-          <a-switch v-model="mdl.show" />
-        </a-form-item>
+          <a-switch v-model="form.show" />
+        </a-form-model-item>
 
         <a-divider />
 
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="赋予权限">
-          <a-select style="width: 100%" mode="multiple" v-model="mdl.permission" :allowClear="true">
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="赋予权限">
+          <a-select style="width: 100%" mode="multiple" v-model="form.permission" :allowClear="true">
             <a-select-option v-for="(action, index) in permissionList" :key="index" :value="action.value">{{
               action.label
             }}</a-select-option>
           </a-select>
-        </a-form-item>
-        <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+        </a-form-model-item>
+        <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
           <a-button type="primary" @click="onSubmit">
-            Create
+            确定
           </a-button>
           <a-button style="margin-left: 10px;" @click="resetForm">
-            Reset
+            重置
           </a-button>
-        </a-form-item>
-      </a-form>
+        </a-form-model-item>
+      </a-form-model>
     </a-modal>
 
     <a-modal title="选择Icon" :width="800" v-model="visibleIcon" @ok="handleIconOk">
@@ -150,7 +156,7 @@
 
 <script>
 import { STable, IconSelector } from '@/components'
-import { getPermissions } from '@/api/system'
+import { getPermissions, modifyPermission } from '@/api/system'
 
 export default {
   name: 'TableList',
@@ -171,8 +177,24 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      form: null,
-      mdl: {},
+      form: {},
+      mdl: {
+        id: 0,
+        title: '',
+        path: '',
+        name: '',
+        component: '',
+        permission: '',
+        icon: '',
+        hiddenHeaderContent: false,
+        target: '',
+        show: true,
+        hideChildren: false,
+        redirect: '',
+        remark: '',
+        parentId: 0,
+        sort: 0
+      },
 
       // 查询参数
       queryParam: {},
@@ -237,7 +259,13 @@ export default {
         name: [
           { required: true, message: '必填项', trigger: 'blur' }
         ],
-        path1: [
+        path: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        component: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        sort: [
           { required: true, message: '必填项', trigger: 'blur' }
         ]
       }
@@ -273,31 +301,31 @@ export default {
       this.currentSelectedIcon = icon
     },
     handleIconOk () {
-      this.mdl.icon = this.currentSelectedIcon
+      this.form.icon = this.currentSelectedIcon
       this.visibleIcon = false
     },
     handleAdd () {
-      this.mdl = {}
+      this.form = Object.assign({}, this.mdl)
       this.visible = true
     },
     handleEdit (record) {
-      this.mdl = Object.assign({}, record)
+      this.form = Object.assign({}, record)
       this.visible = true
     },
     handleDelete (record) {},
-    handleOk () {},
     onSubmit () {
-      this.$refs.ruleForm1
-        .validate()
-        .then(() => {
-          console.log('values', this.form)
-        })
-        .catch(error => {
-          console.log('error', error)
-        })
+       this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          modifyPermission(this.form)
+            .then((res) => {
+              this.$refs.table.refresh()
+              this.visible = false
+            })
+        }
+      })
     },
     resetForm () {
-      this.$refs.ruleForm1.resetFields()
+      this.$refs.ruleForm.resetFields()
     }
   }
 }

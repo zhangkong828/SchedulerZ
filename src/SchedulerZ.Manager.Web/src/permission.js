@@ -47,7 +47,7 @@ router.beforeEach((to, from, next) => {
               }
             })
           })
-          .catch(() => {
+          .catch(error => {
             // notification.error({
             //   message: '错误',
             //   description: '请求用户信息失败，请重试'
@@ -56,7 +56,7 @@ router.beforeEach((to, from, next) => {
             // store.dispatch('Logout').then(() => {
             //   next({ path: loginRoutePath, query: { redirect: to.fullPath } })
             // })
-            console.log('请求用户信息失败')
+            console.log('请求用户信息失败', error)
           })
       } else {
         next()

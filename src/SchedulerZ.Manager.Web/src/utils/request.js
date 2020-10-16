@@ -3,6 +3,7 @@ import store from '@/store'
 import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
 import { VueAxios } from './axios'
+// import router from '@/router'
 import { ACCESS_TOKEN, ACCESS_TOKEN_EXPIRES, REFRESH_TOKEN, REFRESH_TOKEN_EXPIRES } from '@/store/mutation-types'
 
 const loginRoutePath = '/account/login'
@@ -24,6 +25,18 @@ request.setToken = (data) => {
   store.commit('SET_REFRESH_TOKEN', data.refreshToken)
   storage.set(REFRESH_TOKEN_EXPIRES, data.refreshTokenExpires)
   store.commit('SET_REFRESH_TOKEN_EXPIRES', data.refreshTokenExpires)
+}
+
+request.clearToken = () => {
+  storage.set(ACCESS_TOKEN, '')
+  store.commit('SET_TOKEN', '')
+  storage.set(ACCESS_TOKEN_EXPIRES, '')
+  store.commit('SET_TOKEN_EXPIRES', '')
+
+  storage.set(REFRESH_TOKEN, '')
+  store.commit('SET_REFRESH_TOKEN', '')
+  storage.set(REFRESH_TOKEN_EXPIRES, '')
+  store.commit('SET_REFRESH_TOKEN_EXPIRES', '')
 }
 
 // 是否正在刷新的标记
@@ -60,6 +73,7 @@ const errorHandler = (error) => {
             return request(config)
           }).catch(error => {
             console.error('refreshToken error', error)
+            request.clearToken()
             window.location.href = loginRoutePath
           }).finally(() => {
             isRefreshing = false
@@ -116,6 +130,7 @@ request.interceptors.response.use((response) => {
         })
     } else if (response.data.code === 10003) {
       // token刷新失败
+      console.log('token刷新失败', response.data)
       return response.data
     } else {
       // 未定义异常
