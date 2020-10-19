@@ -16,6 +16,14 @@ export function getRoleList (parameter) {
   })
 }
 
+export function getPermissionTree (parameter) {
+  return request({
+    url: '/system/queryPermissionTreeList',
+    method: 'post',
+    data: parameter
+  })
+}
+
 export function getPermissions (parameter) {
   return request({
     url: '/system/queryPermissionList',

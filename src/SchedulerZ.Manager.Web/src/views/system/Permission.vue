@@ -43,6 +43,20 @@
         <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
+          label="层级"
+          prop="parentId"
+        >
+          <a-tree-select
+            v-model="form.parentId"
+            style="width: 100%"
+            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+            :tree-data="treeData"
+          />
+        </a-form-model-item>
+
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
           label="名称"
           prop="title"
         >
@@ -156,7 +170,7 @@
 
 <script>
 import { STable, IconSelector } from '@/components'
-import { getPermissions, modifyPermission } from '@/api/system'
+import { getPermissionTree, getPermissions, modifyPermission } from '@/api/system'
 
 export default {
   name: 'TableList',
@@ -268,11 +282,13 @@ export default {
         sort: [
           { required: true, message: '必填项', trigger: 'blur' }
         ]
-      }
+      },
+      treeData: []
     }
   },
   created () {
     this.loadPermissionList()
+    this.loadTreeList()
   },
   methods: {
     loadPermissionList () {
@@ -291,6 +307,11 @@ export default {
       }).then((res) => {
         this.permissionList = res
       })
+    },
+    loadTreeList () {
+      getPermissionTree().then((res) => {
+         this.treeData = res.data
+        })
     },
     handleIcon (icon) {
       this.currentSelectedIcon = icon

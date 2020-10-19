@@ -44,6 +44,11 @@
             权限列表
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.QueryPermissionTreeList">
+            <summary>
+            权限列表树
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.ModifyPermission(SchedulerZ.Manager.API.Model.Dto.RouterDto)">
             <summary>
             修改权限
