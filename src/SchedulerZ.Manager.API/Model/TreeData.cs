@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SchedulerZ.Manager.API.Model
 {
-    public class TreeData : IConvertTree<TreeData>
+    public class TreeData : IConvertTree<long,TreeData>
     {
         public TreeData()
         {
@@ -15,15 +15,17 @@ namespace SchedulerZ.Manager.API.Model
 
         public string Title { get; set; }
         public object Value { get; set; }
-        public object Key { get; set; }
-        public object ParentId { get; set; }
+        public long Key { get; set; }
+        public long ParentId { get; set; }
         public List<TreeData> Children { get; set; }
 
-        public object PId { get { return ParentId; } }
 
         public void AddChildrens(List<TreeData> childrens)
         {
-            Children = childrens;
+            if (childrens == null || childrens.Count == 0)
+                Children = null;
+            else
+                Children = childrens;
         }
 
         public TreeData Clone()
@@ -37,12 +39,12 @@ namespace SchedulerZ.Manager.API.Model
             };
         }
 
-        public object GetId()
+        public long GetId()
         {
             return Key;
         }
 
-        public object GetParentId()
+        public long GetPId()
         {
             return ParentId;
         }

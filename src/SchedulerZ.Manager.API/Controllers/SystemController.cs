@@ -66,30 +66,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> QueryPermissionList(PermissionListRequest request)
         {
-            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
-
-            var roles = new List<RoleDto>();
-            foreach (var role in user.UserRoleRelations)
-            {
-                var roleDto = _mapper.Map<RoleDto>(role.Role);
-                roleDto.Routers = role.Role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).Where(x => x.IsDelete == false).ToList();
-                roles.Add(roleDto);
-            }
-
-            List<RouterDto> routerList = new List<RouterDto>();
-            if (roles.Count > 0)
-            {
-                routerList = roles[0].Routers;
-
-                //所有角色对应路由的并集
-                if (roles.Count > 1)
-                {
-                    for (int i = 1; i < roles.Count; i++)
-                    {
-                        routerList = routerList.Union(roles[i].Routers).ToList();
-                    }
-                }
-            }
+            var routerList = _context.Routers.AsNoTracking().Where(x => x.IsDelete == false).Select(x => _mapper.Map<RouterDto>(x)).ToList();
 
             long total = 0;
             List<RouterDto> result = new List<RouterDto>();
@@ -107,7 +84,7 @@ namespace SchedulerZ.Manager.API.Controllers
 
                 result.ForEach(item =>
                 {
-                    item.Children = routerList.Where(x => x.ParentId == item.Id).OrderBy(x => x.Sort).ToList();
+                    item.Children = routerList.ConvertToTree<long, RouterDto>(item.Id);
                 });
             }
 
@@ -127,39 +104,14 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> QueryPermissionTreeList()
         {
-            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
-
-            var roles = new List<RoleDto>();
-            foreach (var role in user.UserRoleRelations)
-            {
-                var roleDto = _mapper.Map<RoleDto>(role.Role);
-                roleDto.Routers = role.Role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).Where(x => x.IsDelete == false).ToList();
-                roles.Add(roleDto);
-            }
-
-            List<RouterDto> routerList = new List<RouterDto>();
-            if (roles.Count > 0)
-            {
-                routerList = roles[0].Routers;
-
-                //所有角色对应路由的并集
-                if (roles.Count > 1)
-                {
-                    for (int i = 1; i < roles.Count; i++)
-                    {
-                        routerList = routerList.Union(roles[i].Routers).ToList();
-                    }
-                }
-            }
-
-            List<TreeData> list = routerList.OrderBy(x => x.Sort).Select(x => new TreeData() { Title = x.Title, Value = x.Id, Key = x.Id, ParentId = x.ParentId }).ToList();
+            List<TreeData> list = _context.Routers.AsNoTracking().Where(x => x.IsDelete == false).OrderBy(x => x.Sort).Select(x => new TreeData() { Title = x.Title, Value = x.Id, Key = x.Id, ParentId = x.ParentId }).ToList();
 
             TreeData tree = new TreeData()
             {
                 Title = "根目录",
                 Value = 0,
                 Key = 0,
-                Children = list.ConvertToTree(0)
+                Children = list.ConvertToTree<long, TreeData>(0)
             };
 
             return BaseResponse<List<TreeData>>.GetBaseResponse(new List<TreeData>() { tree });
@@ -175,11 +127,12 @@ namespace SchedulerZ.Manager.API.Controllers
             var entity = _mapper.Map<Router>(request);
             if (request.Id > 0)
             {
-                _context.Update(entity);
+                _context.Routers.Update(entity);
             }
             else
             {
-                _context.Add(entity);
+                entity.CreateTime = DateTime.Now;
+                _context.Routers.Add(entity);
             }
             var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
@@ -196,8 +149,8 @@ namespace SchedulerZ.Manager.API.Controllers
             {
                 return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData("不存在"));
             }
-
-            _context.Routers.Remove(router);
+            router.IsDelete = true;
+            _context.Routers.Update(router);
             var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }

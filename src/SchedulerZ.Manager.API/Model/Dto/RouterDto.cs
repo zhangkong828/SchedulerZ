@@ -1,11 +1,12 @@
-﻿using System;
+﻿using SchedulerZ.Manager.API.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace SchedulerZ.Manager.API.Model.Dto
 {
-    public class RouterDto
+    public class RouterDto : IConvertTree<long, RouterDto>
     {
         public long Id { get; set; }
 
@@ -69,5 +70,49 @@ namespace SchedulerZ.Manager.API.Model.Dto
 
 
         public List<RouterDto> Children { get; set; }
+
+
+
+        public void AddChildrens(List<RouterDto> childrens)
+        {
+            if (childrens == null || childrens.Count == 0)
+                Children = null;
+            else
+                Children = childrens;
+        }
+
+        public RouterDto Clone()
+        {
+            return new RouterDto()
+            {
+                Id = this.Id,
+                Title = this.Title,
+                Path = this.Path,
+                Name = this.Name,
+                Component = this.Component,
+                Permission = this.Permission,
+                Icon = this.Icon,
+                HiddenHeaderContent = this.HiddenHeaderContent,
+                Target = this.Target,
+                Show = this.Show,
+                HideChildren = this.HideChildren,
+                Redirect = this.Redirect,
+                Remark = this.Remark,
+                ParentId = this.ParentId,
+                Sort = this.Sort,
+                CreateTime = this.CreateTime,
+                IsDelete = this.IsDelete
+            };
+        }
+
+        public long GetId()
+        {
+            return Id;
+        }
+
+        public long GetPId()
+        {
+            return ParentId;
+        }
     }
 }

@@ -34,7 +34,14 @@
       <span slot="action" slot-scope="text, record">
         <a @click="handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
-        <a @click="handleDelete(record)">删除</a>
+        <a-popconfirm
+          title="确定要删除?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="handleDelete(record)"
+        >
+          <a href="#">删除</a>
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -48,9 +55,11 @@
         >
           <a-tree-select
             v-model="form.parentId"
+            allow-clear
+            tree-default-expand-all
             style="width: 100%"
             :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-            :tree-data="treeData"
+            :tree-data="treeDataShow"
           />
         </a-form-model-item>
 
@@ -128,7 +137,7 @@
           label="排序"
           prop="sort"
         >
-          <a-input placeholder="" v-model="form.sort" />
+          <a-input placeholder="" v-model.number="form.sort" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -170,7 +179,7 @@
 
 <script>
 import { STable, IconSelector } from '@/components'
-import { getPermissionTree, getPermissions, modifyPermission } from '@/api/system'
+import { getPermissionTree, getPermissions, modifyPermission, deletePermission } from '@/api/system'
 
 export default {
   name: 'TableList',
@@ -197,7 +206,7 @@ export default {
         title: '',
         path: '',
         name: '',
-        component: '',
+        component: 'RouteView',
         permission: '',
         icon: '',
         hiddenHeaderContent: false,
@@ -267,6 +276,9 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       rules: {
+        parentId: [
+          { required: true, message: '必填项', trigger: 'change' }
+        ],
         title: [
           { required: true, message: '必填项', trigger: 'blur' }
         ],
@@ -283,7 +295,8 @@ export default {
           { required: true, message: '必填项', trigger: 'blur' }
         ]
       },
-      treeData: []
+      treeData: [],
+      treeDataShow: []
     }
   },
   created () {
@@ -326,19 +339,38 @@ export default {
       this.visibleIcon = false
     },
     handleAdd () {
+      this.treeDataShow = this.treeData
       this.form = Object.assign({}, this.mdl)
       this.visible = true
     },
     handleEdit (record) {
+      this.treeDataShow = this.filterTree(this.treeData, record.id)
       this.form = Object.assign({}, record)
       this.visible = true
     },
-    handleDelete (record) {},
+    filterTree (treeNodes, currentNodeKey) {
+      return treeNodes.filter(item => {
+        return item.key !== currentNodeKey
+      }).map(item => {
+        item = Object.assign({}, item)
+        if (item.children && item.children.length > 0) {
+          item.children = this.filterTree(item.children, currentNodeKey)
+        }
+        return item
+      })
+    },
+    handleDelete (record) {
+      deletePermission(record.id).then(res => {
+        this.loadTreeList()
+        this.$refs.table.refresh()
+      })
+    },
     onSubmit () {
        this.$refs.ruleForm.validate(valid => {
         if (valid) {
           modifyPermission(this.form)
             .then((res) => {
+              this.loadTreeList()
               this.$refs.table.refresh()
               this.visible = false
             })

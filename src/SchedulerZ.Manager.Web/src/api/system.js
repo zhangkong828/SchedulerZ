@@ -44,6 +44,6 @@ export function deletePermission (parameter) {
   return request({
     url: '/system/deletePermission',
     method: 'post',
-    data: parameter
+    params: { id: parameter }
   })
 }

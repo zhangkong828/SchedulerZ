@@ -7,16 +7,16 @@ namespace SchedulerZ.Manager.API.Extensions
 {
     public static class ListExtension
     {
-        public static List<T> ConvertToTree<T>(this List<T> list, object PId)
-            where T : class, IConvertTree<T>
+        public static List<TNode> ConvertToTree<TId, TNode>(this List<TNode> list, TId PId)
+            where TNode : class, IConvertTree<TId, TNode>
         {
-            var tree = new List<T>();
-            var tempList = list.Where(x => x.PId == PId).ToList();
+            var tree = new List<TNode>();
+            var tempList = list.Where(x => x.GetPId().Equals(PId)).ToList();
 
             foreach (var item in tempList)
             {
                 var treeNode = item.Clone();
-                treeNode.AddChildrens(list.ConvertToTree<T>(item.GetId()));
+                treeNode.AddChildrens(list.ConvertToTree<TId, TNode>(item.GetId()));
                 tree.Add(treeNode);
             }
 
@@ -25,11 +25,11 @@ namespace SchedulerZ.Manager.API.Extensions
     }
 
 
-    public interface IConvertTree<T> where T : class
+    public interface IConvertTree<TId,TNode> where TNode : class
     {
-        object GetId();
-        object PId { get; }
-        void AddChildrens(List<T> childrens);
-        T Clone();
+        TId GetId();
+        TId GetPId();
+        void AddChildrens(List<TNode> childrens);
+        TNode Clone();
     }
 }
