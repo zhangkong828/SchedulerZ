@@ -10,7 +10,7 @@ export function getUserList (parameter) {
 
 export function getRoleList (parameter) {
   return request({
-    url: '/system/getUserList',
+    url: '/system/queryRoleList',
     method: 'post',
     data: parameter
   })

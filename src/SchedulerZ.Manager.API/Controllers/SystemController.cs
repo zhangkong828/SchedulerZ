@@ -55,7 +55,7 @@ namespace SchedulerZ.Manager.API.Controllers
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize,
                 TotalCount = total,
-                List = _mapper.Map<List<UserDto>>(result),
+                List = _mapper.Map<List<UserDto>>(result)
             };
             return BaseResponse<PageData<UserDto>>.GetBaseResponse(pageData);
         }
@@ -93,7 +93,7 @@ namespace SchedulerZ.Manager.API.Controllers
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize,
                 TotalCount = total,
-                List = result,
+                List = result
             };
             return BaseResponse<PageData<RouterDto>>.GetBaseResponse(pageData);
         }
@@ -116,7 +116,6 @@ namespace SchedulerZ.Manager.API.Controllers
 
             return BaseResponse<List<TreeData>>.GetBaseResponse(new List<TreeData>() { tree });
         }
-
 
         /// <summary>
         /// 修改权限
@@ -153,6 +152,38 @@ namespace SchedulerZ.Manager.API.Controllers
             _context.Routers.Update(router);
             var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+        }
+
+
+        /// <summary>
+        /// 角色列表
+        /// </summary>
+        [HttpPost]
+        public ActionResult<BaseResponse> QueryRoleList(RoleListRequest request)
+        {
+            var roles = _context.Roles.AsNoTracking().Include(x => x.RoleRouterRelations).ThenInclude(x => x.Router).Where(x => !x.IsDelete);
+
+            if (!string.IsNullOrWhiteSpace(request.Name))
+                roles = roles.Where(x => x.Name.Contains(request.Name) || x.Identify.Contains(request.Name));
+
+            var total = roles.Count();
+            var result = roles.OrderByDescending(x => x.CreateTime).Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
+
+            var list = new List<RoleDto>();
+            foreach (var role in roles)
+            {
+                var roleDto = _mapper.Map<RoleDto>(role);
+                roleDto.Routers = role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).Where(x => x.IsDelete == false).OrderBy(x => x.Sort).ToList();
+                list.Add(roleDto);
+            }
+            var pageData = new PageData<RoleDto>()
+            {
+                PageIndex = request.PageIndex,
+                PageSize = request.PageSize,
+                TotalCount = total,
+                List = list
+            };
+            return BaseResponse<PageData<RoleDto>>.GetBaseResponse(pageData);
         }
     }
 }

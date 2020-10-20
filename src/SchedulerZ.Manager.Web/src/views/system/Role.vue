@@ -4,23 +4,14 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="角色ID">
-              <a-input placeholder="请输入"/>
-            </a-form-item>
-          </a-col>
-          <a-col :md="8" :sm="24">
-            <a-form-item label="状态">
-              <a-select placeholder="请选择" default-value="0">
-                <a-select-option value="0">全部</a-select-option>
-                <a-select-option value="1">正常</a-select-option>
-                <a-select-option value="2">禁用</a-select-option>
-              </a-select>
+            <a-form-item label="名称">
+              <a-input placeholder="请输入" v-model="queryParam.name"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <span class="table-page-search-submitButtons">
-              <a-button type="primary">查询</a-button>
-              <a-button style="margin-left: 8px">重置</a-button>
+              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+              <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>
             </span>
           </a-col>
         </a-row>
@@ -29,9 +20,10 @@
 
     <s-table
       ref="table"
-      size="default"
       :columns="columns"
       :data="loadData"
+      :defaultExpandAllRows="true"
+      row-key="id"
     >
       <div
         slot="expandedRowRender"
@@ -54,22 +46,14 @@
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.modal.edit(record)">编辑</a>
         <a-divider type="vertical" />
-        <a-dropdown>
-          <a class="ant-dropdown-link">
-            更多 <a-icon type="down" />
-          </a>
-          <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;">详情</a>
-            </a-menu-item>
-            <a-menu-item>
-              <a href="javascript:;">禁用</a>
-            </a-menu-item>
-            <a-menu-item>
-              <a href="javascript:;">删除</a>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
+        <a-popconfirm
+          title="确定要删除?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="handleDelete(record)"
+        >
+          <a href="#">删除</a>
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -81,6 +65,7 @@
 <script>
 import { STable } from '@/components'
 import RoleModal from './modules/RoleModal'
+import { getRoleList } from '@/api/system'
 
 export default {
   name: 'TableList',
@@ -90,56 +75,48 @@ export default {
   },
   data () {
     return {
-      description: '列表使用场景：后台管理中的权限管理以及角色管理，可用于基于 RBAC 设计的角色权限控制，颗粒度细到每一个操作类型。',
-
       visible: false,
-
       form: null,
       mdl: {},
-
-      // 高级搜索 展开/关闭
-      advanced: false,
       // 查询参数
       queryParam: {},
       // 表头
       columns: [
         {
           title: '唯一识别码',
-          dataIndex: 'id'
+          dataIndex: 'identify'
         },
         {
-          title: '角色名称',
+          title: '名称',
           dataIndex: 'name'
         },
         {
-          title: '状态',
-          dataIndex: 'status'
+          title: '备注',
+          dataIndex: 'remark'
         },
         {
           title: '创建时间',
           dataIndex: 'createTime',
           sorter: true
-        }, {
+        },
+        {
           title: '操作',
           width: '150px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' }
         }
       ],
-      // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return this.$http.get('/role', {
-          params: Object.assign(parameter, this.queryParam)
-        }).then(res => {
-          return res.result
+        const requestParameters = Object.assign({}, parameter, this.queryParam)
+        return getRoleList(requestParameters).then((res) => {
+          console.log('getRoleList', res)
+          return res.data
         })
-      },
-
-      selectedRowKeys: [],
-      selectedRows: []
+      }
     }
   },
   methods: {
+    handleDelete (record) {},
     handleEdit (record) {
       this.mdl = Object.assign({}, record)
 
@@ -155,28 +132,7 @@ export default {
     handleOk () {
       // 新增/修改 成功时，重载列表
       this.$refs.table.refresh()
-    },
-    onChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
-    toggleAdvanced () {
-      this.advanced = !this.advanced
     }
-  },
-  watch: {
-    /*
-      'selectedRows': function (selectedRows) {
-        this.needTotalList = this.needTotalList.map(item => {
-          return {
-            ...item,
-            total: selectedRows.reduce( (sum, val) => {
-              return sum + val[item.dataIndex]
-            }, 0)
-          }
-        })
-      }
-      */
   }
 }
 </script>

@@ -59,6 +59,11 @@
             删除权限
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.QueryRoleList(SchedulerZ.Manager.API.Model.Request.RoleListRequest)">
+            <summary>
+            角色列表
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">
             <summary>
             转换时间为unix时间戳
