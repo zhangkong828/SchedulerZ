@@ -22,13 +22,19 @@
       <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
     </div>
 
-    <s-table ref="table" :columns="columns" :data="loadData" :defaultExpandAllRows="true" row-key="id">
+    <s-table
+      ref="table"
+      :columns="columns"
+      :data="loadData"
+      :expandedRowKeys="expandedRowKeys"
+      row-key="id"
+      @expand="handleExpand">
       <span slot="icon" slot-scope="text">
         <a-icon v-if="text" :type="text" />
       </span>
 
-      <span slot="actions" slot-scope="text, record">
-        <a-tag v-for="(action, index) in record.actionList" :key="index">{{ action.describe }}</a-tag>
+      <span slot="permission" slot-scope="text, record">
+        <a-tag v-for="(action, index) in record.permission.split(',')" :key="index">{{ action }}</a-tag>
       </span>
 
       <span slot="action" slot-scope="text, record">
@@ -238,8 +244,8 @@ export default {
         },
         {
           title: '可操作权限',
-          dataIndex: 'actions',
-          scopedSlots: { customRender: 'actions' }
+          dataIndex: 'permission',
+          scopedSlots: { customRender: 'permission' }
         },
         {
           title: '排序',
@@ -269,10 +275,14 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return getPermissions(requestParameters).then((res) => {
           console.log('getPermissions', res)
+          this.expandedRowKeys = res.data.list.map(item => item.id)
+          res.data.list.map(item => {
+            item.permission = '列表,新增,查询,修改,删除'
+          })
           return res.data
         })
       },
-
+      expandedRowKeys: [],
       selectedRowKeys: [],
       selectedRows: [],
       rules: {
@@ -316,7 +326,7 @@ export default {
           { label: '导入', value: 'import', defaultChecked: false },
           { label: '导出', value: 'export', defaultChecked: false }
         ]
-        setTimeout(resolve(data), 1500)
+        setTimeout(resolve(data), 500)
       }).then((res) => {
         this.permissionList = res
       })
@@ -325,6 +335,13 @@ export default {
       getPermissionTree().then((res) => {
          this.treeData = res.data
         })
+    },
+    handleExpand (expanded, record) {
+      if (expanded) {
+        this.expandedRowKeys.push(record.id)
+      } else {
+        this.expandedRowKeys = this.expandedRowKeys.filter(item => record.id !== item)
+      }
     },
     handleIcon (icon) {
       this.currentSelectedIcon = icon

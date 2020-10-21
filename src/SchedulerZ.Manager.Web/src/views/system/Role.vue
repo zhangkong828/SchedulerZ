@@ -22,8 +22,9 @@
       ref="table"
       :columns="columns"
       :data="loadData"
-      :defaultExpandAllRows="true"
+      :expandedRowKeys="expandedRowKeys"
       row-key="id"
+      @expand="handleExpand"
     >
       <div
         slot="expandedRowRender"
@@ -32,12 +33,12 @@
         <a-row
           :gutter="24"
           :style="{ marginBottom: '12px' }">
-          <a-col :span="12" v-for="(role, index) in record.permissions" :key="index" :style="{ marginBottom: '12px' }">
+          <a-col :span="12" v-for="(router, index) in record.routers" :key="index" :style="{ marginBottom: '12px' }">
             <a-col :span="4">
-              <span>{{ role.permissionName }}：</span>
+              <span>{{ router.title }}：</span>
             </a-col>
-            <a-col :span="20" v-if="role.actionEntitySet.length > 0">
-              <a-tag color="cyan" v-for="(action, k) in role.actionEntitySet" :key="k">{{ action.describe }}</a-tag>
+            <a-col :span="20" v-if="router.permission">
+              <a-tag color="cyan" v-for="(action, k) in router.permission.split(',')" :key="k">{{ action }}</a-tag>
             </a-col>
             <a-col :span="20" v-else>-</a-col>
           </a-col>
@@ -87,7 +88,7 @@ export default {
           dataIndex: 'identify'
         },
         {
-          title: '名称',
+          title: '角色名称',
           dataIndex: 'name'
         },
         {
@@ -110,12 +111,24 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         return getRoleList(requestParameters).then((res) => {
           console.log('getRoleList', res)
+          this.expandedRowKeys = res.data.list.map(item => item.id)
+          res.data.list.map(item => {
+            item.routers.map(router => { router.permission = '列表,新增,查询,修改,删除' })
+          })
           return res.data
         })
-      }
+      },
+      expandedRowKeys: []
     }
   },
   methods: {
+    handleExpand (expanded, record) {
+      if (expanded) {
+        this.expandedRowKeys.push(record.id)
+      } else {
+        this.expandedRowKeys = this.expandedRowKeys.filter(item => record.id !== item)
+      }
+    },
     handleDelete (record) {},
     handleEdit (record) {
       this.mdl = Object.assign({}, record)
