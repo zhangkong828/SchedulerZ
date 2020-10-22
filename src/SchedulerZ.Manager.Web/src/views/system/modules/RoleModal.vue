@@ -35,42 +35,25 @@
 
       <a-card :bordered="false">
         <a-row :gutter="8">
-          <a-col :span="5">
-            <s-tree
-              :dataSource="routerTree"
-              @click="routerTreeHandleClick"></s-tree>
+          <a-col :span="14">
+            <a-tree
+              v-model="routerTreeCheckedKeys"
+              :tree-data="routerTree"
+              checkable
+              checkStrictly
+              defaultExpandAll
+              @click="routerTreeHandleClick"
+              @check="routerTreeHandleCheck"></a-tree>
           </a-col>
-          <a-col :span="19">
-            <s-table
+          <a-col :span="10">
+            <a-table
               ref="actionTable"
-              size="default"
+              row-key="id"
               :columns="columns"
-              :alert="false"
-              :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+              :data-source="actionTableDatas"
+              :rowSelection="{ selectedRowKeys: actionTableSelectedRowKeys, onChange: onActionTableSelectChange }"
             >
-              <span slot="action" slot-scope="text, record">
-                <template v-if="$auth('table.update')">
-                  <a @click="handleEdit(record)">编辑</a>
-                  <a-divider type="vertical" />
-                </template>
-                <a-dropdown>
-                  <a class="ant-dropdown-link">
-                    更多 <a-icon type="down" />
-                  </a>
-                  <a-menu slot="overlay">
-                    <a-menu-item>
-                      <a href="javascript:;">详情</a>
-                    </a-menu-item>
-                    <a-menu-item v-if="$auth('table.disable')">
-                      <a href="javascript:;">禁用</a>
-                    </a-menu-item>
-                    <a-menu-item v-if="$auth('table.delete')">
-                      <a href="javascript:;">删除</a>
-                    </a-menu-item>
-                  </a-menu>
-                </a-dropdown>
-              </span>
-            </s-table>
+            </a-table>
           </a-col>
         </a-row>
       </a-card>
@@ -83,14 +66,9 @@
 // import { getPermissions } from '@/api/manage'
 // import { actionToObject } from '@/utils/permissions'
 // import pick from 'lodash.pick'
-import STree from '@/components/Tree/Tree'
-import { STable } from '@/components'
+import { getPermissionTree } from '@/api/system'
 export default {
   name: 'RoleModal',
-  components: {
-    STree,
-    STable
-  },
   data () {
     return {
       labelCol: {
@@ -107,48 +85,19 @@ export default {
       form: {},
       permissions: [],
       rules: {
-        parentId: [
-          { required: true, message: '必填项', trigger: 'change' }
-        ],
-        title: [
+        identify: [
           { required: true, message: '必填项', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        path: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        component: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
-        sort: [
-          { required: true, message: '必填项', trigger: 'blur' }
         ]
       },
       routerTree: [],
+      routerTreeCheckedKeys: [],
       columns: [
         {
           title: '名称',
-          dataIndex: 'title'
-        },
-        {
-          title: '唯一识别码',
           dataIndex: 'name'
-        },
-        {
-          title: '菜单icon',
-          dataIndex: 'icon',
-          scopedSlots: { customRender: 'icon' }
-        },
-        {
-          title: '可操作权限',
-          dataIndex: 'permission',
-          scopedSlots: { customRender: 'permission' }
-        },
-        {
-          title: '排序',
-          dataIndex: 'sort'
         },
         {
           title: '操作',
@@ -157,38 +106,34 @@ export default {
           scopedSlots: { customRender: 'action' }
         }
       ],
-      selectedRowKeys: [],
-      selectedRows: []
+      actionTableSelectedRowKeys: [],
+      actionTableSelectedRows: [],
+      actionTableDatas: []
     }
   },
   created () {
-    // this.loadPermissions()
+    this.loadActions()
+    this.loadRouterTreeList()
   },
   methods: {
+    loadActions () {
+      const datas = [{ id: 1, name: '新增' }, { id: 2, name: '修改' }, { id: 3, name: '查询' }, { id: 4, name: '删除' }]
+      this.actionTableDatas = datas
+    },
+    loadRouterTreeList () {
+      getPermissionTree().then((res) => {
+         this.routerTree = res.data[0].children
+        })
+    },
     add () {
       this.edit({ id: 0 })
     },
     edit (record) {
-      this.mdl = Object.assign({}, record)
+      this.form = Object.assign({}, record)
       this.visible = true
 
-      // // 有权限表，处理勾选
-      // if (this.mdl.permissions && this.permissions) {
-      //   // 先处理要勾选的权限结构
-      //   const permissionsAction = {}
-      //   this.mdl.permissions.forEach(permission => {
-      //     permissionsAction[permission.permissionId] = permission.actionEntitySet.map(entity => entity.action)
-      //   })
-      //   // 把权限表遍历一遍，设定要勾选的权限 action
-      //   this.permissions.forEach(permission => {
-      //     permission.selected = permissionsAction[permission.id] || []
-      //   })
-      // }
-
-      // this.$nextTick(() => {
-      //   this.form.setFieldsValue(pick(this.mdl, 'id', 'name', 'status', 'describe'))
-      // })
-      console.log('this.mdl', this.mdl)
+      // router
+      this.routerTreeCheckedKeys = record.routers.map(item => item.id)
     },
     close () {
       this.$emit('close')
@@ -222,15 +167,35 @@ export default {
     handleCancel () {
       this.close()
     },
-    routerTreeHandleClick (e) {
-      this.queryParam = {
-        key: e.key
-      }
-      this.$refs.actionTable.refresh(true)
+    routerTreeHandleClick (e, node) {
+      this.actionTableSelectedRowKeys = [1, 2, 4]
     },
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+    routerTreeHandleCheck (checkedKeys, e) {
+      console.log(this.form.routers)
+      const childrens = this.form.routers.filter(item => item.parentId === e.node.value)
+      this.routerTreeExpandChildren(childrens, e.checked)
+    },
+    routerTreeExpandChildren (childrens, checked) {
+      const checkedList = this.routerTreeCheckedKeys.checked
+      childrens.map(item => {
+        if (checked) {
+          if (checkedList.indexOf(item.id) === -1) {
+            checkedList.push(item.id)
+          }
+        } else {
+           if (checkedList.indexOf(item.id) > -1) {
+            checkedList.splice(checkedList.findIndex(r => r === item.id), 1)
+          }
+        }
+
+        if (item.children && item.children.length > 0) {
+          this.routerTreeExpandChildren(item.children, checked)
+        }
+      })
+    },
+    onActionTableSelectChange (selectedRowKeys, selectedRows) {
+      this.actionTableSelectedRowKeys = selectedRowKeys
+      this.actionTableSelectedRows = selectedRows
     },
     onChangeCheck (permission) {
       permission.indeterminate = !!permission.selected.length && (permission.selected.length < permission.actionsOptions.length)
