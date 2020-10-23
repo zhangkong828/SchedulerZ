@@ -171,25 +171,31 @@ export default {
       this.actionTableSelectedRowKeys = [1, 2, 4]
     },
     routerTreeHandleCheck (checkedKeys, e) {
-      console.log(this.form.routers)
+      console.log(e.node.value)
       const childrens = this.form.routers.filter(item => item.parentId === e.node.value)
       this.routerTreeExpandChildren(childrens, e.checked)
+      var list = []
+      var checkedList = this.routerTreeCheckedKeys.checked
+      list.map(item => {
+          if (e.checked) {
+            if (checkedList.indexOf(item.id) === -1) {
+              checkedList.push(item.id)
+            }
+          } else {
+            if (checkedList.indexOf(item.id) > -1) {
+              checkedList.splice(checkedList.findIndex(r => r === item.id), 1)
+            }
+          }
+      })
     },
-    routerTreeExpandChildren (childrens, checked) {
-      const checkedList = this.routerTreeCheckedKeys.checked
-      childrens.map(item => {
-        if (checked) {
-          if (checkedList.indexOf(item.id) === -1) {
-            checkedList.push(item.id)
-          }
-        } else {
-           if (checkedList.indexOf(item.id) > -1) {
-            checkedList.splice(checkedList.findIndex(r => r === item.id), 1)
-          }
+    routerTreeFindChildren (tree, checkedId, isChildren, list) {
+      tree.map(item => {
+        if (!isChildren && item.id === checkedId) {
+          list.push(item)
+          isChildren = true
         }
-
         if (item.children && item.children.length > 0) {
-          this.routerTreeExpandChildren(item.children, checked)
+          this.routerTreeFindChildren(item.children, checkedId, isChildren, list)
         }
       })
     },
