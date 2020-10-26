@@ -39,6 +39,7 @@
             <a-tree
               v-model="routerTreeCheckedKeys"
               :tree-data="routerTree"
+              :defaultSelectedKeys="routerTreeDefaultSelectedKeys"
               checkable
               checkStrictly
               defaultExpandAll
@@ -94,6 +95,7 @@ export default {
       },
       routerTree: [],
       routerTreeCheckedKeys: [],
+      routerTreeDefaultSelectedKeys: [],
       columns: [
         {
           title: '名称',
@@ -134,6 +136,10 @@ export default {
 
       // router
       this.routerTreeCheckedKeys = record.routers.map(item => item.id)
+      if (this.routerTreeCheckedKeys && this.routerTreeCheckedKeys.length > 0) {
+        this.routerTreeDefaultSelectedKeys.push(this.routerTreeCheckedKeys[0])
+        this.actionTableSelectedRowKeys = [2, 4]
+      }
     },
     close () {
       this.$emit('close')
@@ -141,26 +147,11 @@ export default {
     },
     handleOk () {
       const _this = this
-      // 触发表单验证
-      this.form.validateFields((err, values) => {
-        // 验证表单没错误
-        if (!err) {
-          console.log('form values', values)
-
-          _this.confirmLoading = true
-          // 模拟后端请求 2000 毫秒延迟
-          new Promise((resolve) => {
-            setTimeout(() => resolve(), 2000)
-          }).then(() => {
-            // Do something
-            _this.$message.success('保存成功')
-            _this.$emit('ok')
-          }).catch(() => {
-            // Do something
-          }).finally(() => {
-            _this.confirmLoading = false
-            _this.close()
-          })
+      this.$refs.ruleForm.validate(valid => {
+         _this.confirmLoading = true
+        if (valid) {
+          _this.confirmLoading = false
+          _this.close()
         }
       })
     },
@@ -168,34 +159,42 @@ export default {
       this.close()
     },
     routerTreeHandleClick (e, node) {
+      // todo
       this.actionTableSelectedRowKeys = [1, 2, 4]
     },
     routerTreeHandleCheck (checkedKeys, e) {
-      console.log(e.node.value)
-      const childrens = this.form.routers.filter(item => item.parentId === e.node.value)
-      this.routerTreeExpandChildren(childrens, e.checked)
       var list = []
+      this.routerTreeFindChildrenList(this.routerTree, e.node.value, false, list)
       var checkedList = this.routerTreeCheckedKeys.checked
       list.map(item => {
           if (e.checked) {
-            if (checkedList.indexOf(item.id) === -1) {
-              checkedList.push(item.id)
+            if (checkedList.indexOf(item.key) === -1) {
+              checkedList.push(item.key)
             }
           } else {
-            if (checkedList.indexOf(item.id) > -1) {
-              checkedList.splice(checkedList.findIndex(r => r === item.id), 1)
+            if (checkedList.indexOf(item.key) > -1) {
+              checkedList.splice(checkedList.findIndex(r => r === item.key), 1)
             }
           }
       })
     },
-    routerTreeFindChildren (tree, checkedId, isChildren, list) {
+    routerTreeFindChildrenList (tree, checkedId, isChildren, list) {
       tree.map(item => {
-        if (!isChildren && item.id === checkedId) {
-          list.push(item)
-          isChildren = true
+        var isFind = false
+        if (!isChildren) {
+          if (item.key === checkedId) {
+            list.push(item)
+            isFind = true
+          }
+        } else {
+          if (item.parentId === checkedId) {
+            list.push(item)
+            isFind = true
+          }
         }
+
         if (item.children && item.children.length > 0) {
-          this.routerTreeFindChildren(item.children, checkedId, isChildren, list)
+          this.routerTreeFindChildrenList(item.children, item.key, isFind, list)
         }
       })
     },
@@ -214,25 +213,6 @@ export default {
         checkedAll: e.target.checked
       })
     }
-    // loadPermissions () {
-    //   const that = this
-    //   getPermissions().then(res => {
-    //     const result = res.result
-    //     that.permissions = result.map(permission => {
-    //       const options = actionToObject(permission.actionData)
-    //       permission.checkedAll = false
-    //       permission.selected = []
-    //       permission.indeterminate = false
-    //       permission.actionsOptions = options.map(option => {
-    //         return {
-    //           label: option.describe,
-    //           value: option.action
-    //         }
-    //       })
-    //       return permission
-    //     })
-    //   })
-    // }
 
   }
 }
