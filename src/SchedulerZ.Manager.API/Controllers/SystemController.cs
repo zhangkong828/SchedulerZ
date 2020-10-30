@@ -20,6 +20,7 @@ using SchedulerZ.Manager.API.Extensions;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Dto;
 using SchedulerZ.Manager.API.Model.Request;
+using SchedulerZ.Manager.API.Utility;
 
 namespace SchedulerZ.Manager.API.Controllers
 {
@@ -184,6 +185,56 @@ namespace SchedulerZ.Manager.API.Controllers
                 List = list
             };
             return BaseResponse<PageData<RoleDto>>.GetBaseResponse(pageData);
+        }
+
+        /// <summary>
+        /// 修改角色
+        /// </summary>
+        [HttpPost]
+        public ActionResult<BaseResponse> ModifyRole(RoleDto request)
+        {
+            var entity = _mapper.Map<Role>(request);
+            if (request.Id > 0)
+            {
+                var old = _context.Roles.AsNoTracking().Include(x=>x.RoleRouterRelations).FirstOrDefault(x => x.Id == request.Id);
+                if (request.RouterIds.Count > 0)
+                {
+                    Utils.ListBatchAddOrDelete<long>(old.RoleRouterRelations.Select(x => x.RouterId).ToList(), request.RouterIds, out List<long> deleteList, out List<long> addList);
+
+                    if (deleteList.Any())
+                    {
+                        var deleteEntities = _context.RoleRouterRelations.Where(x => deleteList.Contains(x.RouterId) && x.RoleId == old.Id).ToList();
+                        _context.RoleRouterRelations.RemoveRange(deleteEntities);
+                    }
+
+                    if (addList.Any())
+                    {
+                        var addEntities = new List<RoleRouterRelation>();
+                        addList.ForEach(id =>
+                        {
+                            addEntities.Add(new RoleRouterRelation() { RoleId = old.Id, RouterId = id });
+                        });
+                        _context.RoleRouterRelations.AddRange(addEntities);
+                    }
+                }
+                _context.Roles.Update(entity);
+            }
+            else
+            {
+                entity.CreateTime = DateTime.Now;
+
+                var roleRouterRelations = new List<RoleRouterRelation>();
+                request.RouterIds.ForEach(id =>
+                {
+                    roleRouterRelations.Add(new RoleRouterRelation() { RouterId = id });
+                });
+                entity.RoleRouterRelations = roleRouterRelations;
+
+                _context.Roles.Add(entity);
+
+            }
+            var result = _context.SaveChanges() > 0;
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
     }
 }

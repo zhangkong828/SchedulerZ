@@ -67,7 +67,7 @@
 // import { getPermissions } from '@/api/manage'
 // import { actionToObject } from '@/utils/permissions'
 // import pick from 'lodash.pick'
-import { getPermissionTree } from '@/api/system'
+import { getPermissionTree, modifyRole } from '@/api/system'
 export default {
   name: 'RoleModal',
   data () {
@@ -131,14 +131,19 @@ export default {
       this.edit({ id: 0 })
     },
     edit (record) {
+      this.routerTreeCheckedKeys = []
+      this.routerTreeDefaultSelectedKeys = []
+      this.actionTableSelectedRowKeys = []
       this.form = Object.assign({}, record)
       this.visible = true
 
       // router
-      this.routerTreeCheckedKeys = record.routers.map(item => item.id)
-      if (this.routerTreeCheckedKeys && this.routerTreeCheckedKeys.length > 0) {
-        this.routerTreeDefaultSelectedKeys.push(this.routerTreeCheckedKeys[0])
-        this.actionTableSelectedRowKeys = [2, 4]
+      if (record.routers) {
+        this.routerTreeCheckedKeys = record.routers.map(item => item.id)
+        if (this.routerTreeCheckedKeys && this.routerTreeCheckedKeys.length > 0) {
+          this.routerTreeDefaultSelectedKeys.push(this.routerTreeCheckedKeys[0])
+          this.actionTableSelectedRowKeys = [2, 4]
+        }
       }
     },
     close () {
@@ -150,8 +155,12 @@ export default {
       this.$refs.ruleForm.validate(valid => {
          _this.confirmLoading = true
         if (valid) {
-          _this.confirmLoading = false
-          _this.close()
+          this.form.routerIds = this.routerTreeCheckedKeys.checked
+          modifyRole(this.form)
+            .then((res) => {
+              _this.confirmLoading = false
+              _this.close()
+            })
         }
       })
     },

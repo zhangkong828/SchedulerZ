@@ -18,6 +18,10 @@
       </a-form>
     </div>
 
+    <div class="table-operator">
+      <a-button type="primary" icon="plus" @click="$refs.modal.add()">新建</a-button>
+    </div>
+
     <s-table
       ref="table"
       :columns="columns"
@@ -130,19 +134,8 @@ export default {
       }
     },
     handleDelete (record) {},
-    handleEdit (record) {
-      this.mdl = Object.assign({}, record)
-
-      this.mdl.permissions.forEach(permission => {
-        permission.actionsOptions = permission.actionEntitySet.map(action => {
-          return { label: action.describe, value: action.action, defaultCheck: action.defaultCheck }
-        })
-      })
-
-      console.log(this.mdl)
-      this.visible = true
-    },
     handleOk () {
+      console.log('refresh')
       // 新增/修改 成功时，重载列表
       this.$refs.table.refresh()
     }

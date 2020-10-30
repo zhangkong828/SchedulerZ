@@ -20,5 +20,8 @@ namespace SchedulerZ.Manager.API.Model.Dto
         public bool IsDelete { get; set; }
 
         public List<RouterDto> Routers { get; set; }
+
+
+        public List<long> RouterIds { get; set; }
     }
 }

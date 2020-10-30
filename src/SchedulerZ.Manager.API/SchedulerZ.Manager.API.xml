@@ -64,6 +64,11 @@
             角色列表
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.ModifyRole(SchedulerZ.Manager.API.Model.Dto.RoleDto)">
+            <summary>
+            修改角色
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">
             <summary>
             转换时间为unix时间戳
@@ -213,6 +218,25 @@
             时间戳转换为日期
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Utility.Utils.MapperPropertyValue``2(``0)">
+            <summary>
+            将属性名相同的原对象属性值映射到目标对象的属性值上
+            </summary>
+            <typeparam name="Source">原对象类型</typeparam>
+            <typeparam name="Target">目标对象类型</typeparam>
+            <param name="s">原对象</param>
+            <returns></returns>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Utility.Utils.ListBatchAddOrDelete``1(System.Collections.Generic.List{``0},System.Collections.Generic.List{``0},System.Collections.Generic.List{``0}@,System.Collections.Generic.List{``0}@)">
+            <summary>
+            集合批量操作，返回需要删除和新增的集合
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="oldList"></param>
+            <param name="newList"></param>
+            <param name="deleteList"></param>
+            <param name="addList"></param>
         </member>
     </members>
 </doc>

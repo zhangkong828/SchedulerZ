@@ -16,6 +16,22 @@ export function getRoleList (parameter) {
   })
 }
 
+export function modifyRole (parameter) {
+  return request({
+    url: '/system/ModifyRole',
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function deleteRole (parameter) {
+  return request({
+    url: '/system/deleteRole',
+    method: 'post',
+    params: { id: parameter }
+  })
+}
+
 export function getPermissionTree (parameter) {
   return request({
     url: '/system/queryPermissionTreeList',
