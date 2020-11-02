@@ -196,8 +196,8 @@ namespace SchedulerZ.Manager.API.Controllers
             var entity = _mapper.Map<Role>(request);
             if (request.Id > 0)
             {
-                var old = _context.Roles.AsNoTracking().Include(x=>x.RoleRouterRelations).FirstOrDefault(x => x.Id == request.Id);
-                if (request.RouterIds.Count > 0)
+                var old = _context.Roles.AsNoTracking().Include(x => x.RoleRouterRelations).FirstOrDefault(x => x.Id == request.Id);
+                if (request.RouterIds != null && request.RouterIds.Count > 0)
                 {
                     Utils.ListBatchAddOrDelete<long>(old.RoleRouterRelations.Select(x => x.RouterId).ToList(), request.RouterIds, out List<long> deleteList, out List<long> addList);
 
@@ -233,6 +233,23 @@ namespace SchedulerZ.Manager.API.Controllers
                 _context.Roles.Add(entity);
 
             }
+            var result = _context.SaveChanges() > 0;
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+        }
+
+        /// <summary>
+        /// 删除角色
+        /// </summary>
+        [HttpPost]
+        public ActionResult<BaseResponse> DeleteRole(long id)
+        {
+            var router = _context.Roles.Find(id);
+            if (router == null)
+            {
+                return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData("不存在"));
+            }
+            router.IsDelete = true;
+            _context.Roles.Update(router);
             var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }

@@ -69,6 +69,11 @@
             修改角色
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.DeleteRole(System.Int64)">
+            <summary>
+            删除角色
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.DateTimeExtension.ConvertToUnixOfTime(System.DateTime,System.Boolean)">
             <summary>
             转换时间为unix时间戳

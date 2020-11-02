@@ -62,7 +62,7 @@
       </span>
     </s-table>
 
-    <role-modal ref="modal" @ok="handleOk"></role-modal>
+    <role-modal ref="modal" @close="handleOk"></role-modal>
 
   </a-card>
 </template>
@@ -70,7 +70,7 @@
 <script>
 import { STable } from '@/components'
 import RoleModal from './modules/RoleModal'
-import { getRoleList } from '@/api/system'
+import { getRoleList, deleteRole } from '@/api/system'
 
 export default {
   name: 'TableList',
@@ -133,10 +133,12 @@ export default {
         this.expandedRowKeys = this.expandedRowKeys.filter(item => record.id !== item)
       }
     },
-    handleDelete (record) {},
+    handleDelete (record) {
+      deleteRole(record.id).then(res => {
+        this.$refs.table.refresh()
+      })
+    },
     handleOk () {
-      console.log('refresh')
-      // 新增/修改 成功时，重载列表
       this.$refs.table.refresh()
     }
   }
