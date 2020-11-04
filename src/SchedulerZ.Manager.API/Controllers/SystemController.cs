@@ -62,6 +62,26 @@ namespace SchedulerZ.Manager.API.Controllers
         }
 
         /// <summary>
+        /// 修改用户
+        /// </summary>
+        [HttpPost]
+        public ActionResult<BaseResponse> ModifyUser(UserDto request)
+        {
+            var entity = _mapper.Map<Router>(request);
+            if (request.Id > 0)
+            {
+                _context.Routers.Update(entity);
+            }
+            else
+            {
+                entity.CreateTime = DateTime.Now;
+                _context.Routers.Add(entity);
+            }
+            var result = _context.SaveChanges() > 0;
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+        }
+
+        /// <summary>
         /// 权限列表
         /// </summary>
         [HttpPost]
