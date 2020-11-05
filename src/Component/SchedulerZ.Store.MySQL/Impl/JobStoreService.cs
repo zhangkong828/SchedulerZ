@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SchedulerZ.Stores
+namespace SchedulerZ.Store.MySQL.Impl
 {
-    public interface IJobStore
+    public class JobStoreService : IJobStore
     {
     }
 }

@@ -1,43 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using CSRedis;
 using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SchedulerZ.Manager.API.Data;
-using SchedulerZ.Manager.API.Entity;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Dto;
 using SchedulerZ.Manager.API.Model.Request;
 using SchedulerZ.Manager.API.Model.Response;
 using SchedulerZ.Manager.API.Utility;
+using SchedulerZ.Models;
+using SchedulerZ.Store;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
 
 namespace SchedulerZ.Manager.API.Controllers
 {
     public class AccountController : BaseApiController
     {
         private readonly IMapper _mapper;
-        private readonly SchedulerZContext _context;
+        private readonly IAccountStore _accountStoreService;
         private readonly ILogger<AccountController> _logger;
 
         private readonly JWTConfig _jwtConfig;
 
         private readonly CSRedisClient _redisClient;
         private readonly IEasyCachingProvider _cachingProvider;
-        public AccountController(IMapper mapper, SchedulerZContext context, ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory, CSRedisClient redisClient)
+        public AccountController(IMapper mapper, IAccountStore accountStoreService, ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory, CSRedisClient redisClient)
         {
             _mapper = mapper;
-            _context = context;
+            _accountStoreService = accountStoreService;
             _logger = logger;
             _jwtConfig = jwtOptions.Value;
             _cachingProvider = cacheFactory.GetCachingProvider("default");
@@ -52,7 +50,7 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> Login(LoginRequest request)
         {
             //admin 123456
-            var user = _context.Users.AsNoTracking().SingleOrDefault(x => x.Username == request.Username);
+            var user = _accountStoreService.QueryUserByName(request.Username);
             if (user == null)
                 return BaseResponse.GetBaseResponse(ResponseStatusType.Failed, "用户名错误");
 
@@ -94,9 +92,7 @@ namespace SchedulerZ.Manager.API.Controllers
         private bool UpdateLastLoginInfo(User user)
         {
             user.LastLoginIp = HttpContext.GetIpAddress();
-            user.LastLoginTime = DateTime.Now;
-            _context.Users.Update(user);
-            return _context.SaveChanges() > 0;
+            return _accountStoreService.UpdateUser(user);
         }
 
         [NonAction]
@@ -148,7 +144,7 @@ namespace SchedulerZ.Manager.API.Controllers
                     var token = _redisClient.Get<Token>(tokenCacheKey);
                     if (token != null && token.RefreshToken == request.RefreshToken)
                     {
-                        var user = _context.Users.AsNoTracking().SingleOrDefault(x => x.Id == userId);
+                        var user =_accountStoreService.QueryUserById(userId);
                         if (user != null)
                         {
                             var newToken = GenerateToken(user);
@@ -184,8 +180,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpGet]
         public ActionResult<BaseResponse> Info()
         {
-            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).FirstOrDefault(x => x.Id == GetUserId());
-
+            var user =_accountStoreService.QueryUserInfo(GetUserId());
             var userDto = _mapper.Map<UserDto>(user);
 
             var roles = user.UserRoleRelations.Select(x => _mapper.Map<RoleDto>(x.Role)).ToList();
@@ -199,7 +194,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpGet]
         public ActionResult<BaseResponse> GetUserNav()
         {
-            var user = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).ThenInclude(x => x.RoleRouterRelations).ThenInclude(x => x.Router).FirstOrDefault(x => x.Id == GetUserId());
+            var user = _accountStoreService.QueryUserInfo(GetUserId());
 
             var roles = new List<RoleDto>();
             foreach (var role in user.UserRoleRelations)

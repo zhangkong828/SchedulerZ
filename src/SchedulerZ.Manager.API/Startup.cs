@@ -24,6 +24,7 @@ using SchedulerZ.Manager.API.Data;
 using SchedulerZ.Manager.API.Filter;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Route.Consul;
+using SchedulerZ.Store.MySQL;
 
 namespace SchedulerZ.Manager.API
 {
@@ -39,7 +40,7 @@ namespace SchedulerZ.Manager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<SchedulerZContext>(options => options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
+            services.UseMySQL(options => options.ConnectionString = Configuration.GetConnectionString("DefaultConnection"));
 
             services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
 

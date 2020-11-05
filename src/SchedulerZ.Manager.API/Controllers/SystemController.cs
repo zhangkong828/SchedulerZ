@@ -15,23 +15,23 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SchedulerZ.Manager.API.Data;
-using SchedulerZ.Manager.API.Entity;
 using SchedulerZ.Manager.API.Extensions;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Dto;
 using SchedulerZ.Manager.API.Model.Request;
 using SchedulerZ.Manager.API.Utility;
+using SchedulerZ.Store;
 
 namespace SchedulerZ.Manager.API.Controllers
 {
     public class SystemController : BaseApiController
     {
         private readonly IMapper _mapper;
-        private readonly SchedulerZContext _context;
-        public SystemController(IMapper mapper, SchedulerZContext context)
+        private readonly IAccountStore _accountStoreService;
+        public SystemController(IMapper mapper, IAccountStore accountStoreService)
         {
             _mapper = mapper;
-            _context = context;
+            _accountStoreService = accountStoreService;
         }
 
         /// <summary>
