@@ -20,7 +20,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SchedulerZ.Logging.Log4Net;
-using SchedulerZ.Manager.API.Data;
 using SchedulerZ.Manager.API.Filter;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Route.Consul;

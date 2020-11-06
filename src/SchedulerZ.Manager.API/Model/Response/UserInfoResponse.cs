@@ -1,5 +1,4 @@
-﻿using SchedulerZ.Manager.API.Entity;
-using SchedulerZ.Manager.API.Model.Dto;
+﻿using SchedulerZ.Manager.API.Model.Dto;
 using System;
 using System.Collections.Generic;
 using System.Linq;

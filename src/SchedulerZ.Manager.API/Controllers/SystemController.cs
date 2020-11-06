@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +15,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using SchedulerZ.Manager.API.Data;
 using SchedulerZ.Manager.API.Extensions;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Dto;
 using SchedulerZ.Manager.API.Model.Request;
 using SchedulerZ.Manager.API.Utility;
+using SchedulerZ.Models;
 using SchedulerZ.Store;
 
 namespace SchedulerZ.Manager.API.Controllers
@@ -40,16 +41,15 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> QueryUserList(UserListRequest request)
         {
-            var list = _context.Users.AsNoTracking().Where(x => !x.IsDelete);
+            var filters = new List<Expression<Func<User, bool>>>();
 
             if (!string.IsNullOrWhiteSpace(request.Name))
-                list = list.Where(x => x.Name.Contains(request.Name));
+                filters.Add(x => x.Name.Contains(request.Name));
 
             if (request.Status > 0)
-                list = list.Where(x => x.Status == request.Status);
+                filters.Add(x => x.Status == request.Status);
 
-            var total = list.Count();
-            var result = list.OrderByDescending(x => x.CreateTime).Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
+            var result = _accountStoreService.QueryUserListPage(request.PageIndex, request.PageSize, filters, x => x.CreateTime, false, out int total);
 
             var pageData = new PageData<UserDto>()
             {
@@ -67,17 +67,17 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> ModifyUser(UserDto request)
         {
-            var entity = _mapper.Map<Router>(request);
+            var entity = _mapper.Map<User>(request);
+            bool result;
             if (request.Id > 0)
             {
-                _context.Routers.Update(entity);
+                result = _accountStoreService.UpdateUser(entity);
             }
             else
             {
                 entity.CreateTime = DateTime.Now;
-                _context.Routers.Add(entity);
+                result = _accountStoreService.AddUser(entity);
             }
-            var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
 
@@ -87,7 +87,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> QueryPermissionList(PermissionListRequest request)
         {
-            var routerList = _context.Routers.AsNoTracking().Where(x => x.IsDelete == false).Select(x => _mapper.Map<RouterDto>(x)).ToList();
+            var routerList = _mapper.Map<List<RouterDto>>(_accountStoreService.QueryRouterList());
 
             long total = 0;
             List<RouterDto> result = new List<RouterDto>();
@@ -125,7 +125,8 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> QueryPermissionTreeList()
         {
-            List<TreeData> list = _context.Routers.AsNoTracking().Where(x => x.IsDelete == false).OrderBy(x => x.Sort).Select(x => new TreeData() { Title = x.Title, Value = x.Id, Key = x.Id, ParentId = x.ParentId }).ToList();
+            var routerList = _mapper.Map<List<RouterDto>>(_accountStoreService.QueryRouterList());
+            List<TreeData> list = routerList.OrderBy(x => x.Sort).Select(x => new TreeData() { Title = x.Title, Value = x.Id, Key = x.Id, ParentId = x.ParentId }).ToList();
 
             TreeData tree = new TreeData()
             {
@@ -145,16 +146,16 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> ModifyPermission(RouterDto request)
         {
             var entity = _mapper.Map<Router>(request);
+            bool result;
             if (request.Id > 0)
             {
-                _context.Routers.Update(entity);
+                result = _accountStoreService.UpdateRouter(entity);
             }
             else
             {
                 entity.CreateTime = DateTime.Now;
-                _context.Routers.Add(entity);
+                result = _accountStoreService.AddRouter(entity);
             }
-            var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
 
@@ -164,14 +165,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> DeletePermission(long id)
         {
-            var router = _context.Routers.Find(id);
-            if (router == null)
-            {
-                return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData("不存在"));
-            }
-            router.IsDelete = true;
-            _context.Routers.Update(router);
-            var result = _context.SaveChanges() > 0;
+            var result = _accountStoreService.DeleteRouter(id, false);
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
 
@@ -182,16 +176,15 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> QueryRoleList(RoleListRequest request)
         {
-            var roles = _context.Roles.AsNoTracking().Include(x => x.RoleRouterRelations).ThenInclude(x => x.Router).Where(x => !x.IsDelete);
+            var filters = new List<Expression<Func<Role, bool>>>();
 
             if (!string.IsNullOrWhiteSpace(request.Name))
-                roles = roles.Where(x => x.Name.Contains(request.Name) || x.Identify.Contains(request.Name));
+                filters.Add(x => x.Name.Contains(request.Name) || x.Identify.Contains(request.Name));
 
-            var total = roles.Count();
-            var result = roles.OrderByDescending(x => x.CreateTime).Skip((request.PageIndex - 1) * request.PageSize).Take(request.PageSize).ToList();
+            var result = _accountStoreService.QueryRoleListPage(request.PageIndex, request.PageSize, filters, x => x.CreateTime, false, out int total);
 
             var list = new List<RoleDto>();
-            foreach (var role in roles)
+            foreach (var role in result)
             {
                 var roleDto = _mapper.Map<RoleDto>(role);
                 roleDto.Routers = role.RoleRouterRelations.Select(x => _mapper.Map<RouterDto>(x.Router)).Where(x => x.IsDelete == false).OrderBy(x => x.Sort).ToList();
@@ -214,17 +207,17 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> ModifyRole(RoleDto request)
         {
             var entity = _mapper.Map<Role>(request);
+            bool result;
             if (request.Id > 0)
             {
-                var old = _context.Roles.AsNoTracking().Include(x => x.RoleRouterRelations).FirstOrDefault(x => x.Id == request.Id);
+                var old = _accountStoreService.QueryRoleById(request.Id);
                 if (request.RouterIds != null && request.RouterIds.Count > 0)
                 {
                     Utils.ListBatchAddOrDelete<long>(old.RoleRouterRelations.Select(x => x.RouterId).ToList(), request.RouterIds, out List<long> deleteList, out List<long> addList);
 
                     if (deleteList.Any())
                     {
-                        var deleteEntities = _context.RoleRouterRelations.Where(x => deleteList.Contains(x.RouterId) && x.RoleId == old.Id).ToList();
-                        _context.RoleRouterRelations.RemoveRange(deleteEntities);
+                        _accountStoreService.DeleteRoleRouterRelations(old.Id, deleteList);
                     }
 
                     if (addList.Any())
@@ -234,10 +227,10 @@ namespace SchedulerZ.Manager.API.Controllers
                         {
                             addEntities.Add(new RoleRouterRelation() { RoleId = old.Id, RouterId = id });
                         });
-                        _context.RoleRouterRelations.AddRange(addEntities);
+                        _accountStoreService.AddRoleRouterRelations(addEntities);
                     }
                 }
-                _context.Roles.Update(entity);
+                result = _accountStoreService.UpdateRole(entity);
             }
             else
             {
@@ -250,10 +243,9 @@ namespace SchedulerZ.Manager.API.Controllers
                 });
                 entity.RoleRouterRelations = roleRouterRelations;
 
-                _context.Roles.Add(entity);
+                result = _accountStoreService.AddRole(entity);
 
             }
-            var result = _context.SaveChanges() > 0;
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
 
@@ -263,14 +255,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> DeleteRole(long id)
         {
-            var router = _context.Roles.Find(id);
-            if (router == null)
-            {
-                return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData("不存在"));
-            }
-            router.IsDelete = true;
-            _context.Roles.Update(router);
-            var result = _context.SaveChanges() > 0;
+            var result = _accountStoreService.DeleteRole(id, false);
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
     }

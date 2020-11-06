@@ -23,6 +23,11 @@ namespace SchedulerZ.Store.MySQL
             services.AddSingleton<IJobStore, JobStoreService>();
             services.AddSingleton<IAccountStore, AccountStoreService>();
 
+            using (var ctx = new SchedulerZContext())
+            {
+                DbInitializer.Initialize(ctx);
+            }
+
             return services;
         }
 
