@@ -11,7 +11,7 @@ namespace SchedulerZ.Route.Consul
     {
         public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> configDelegate = null, Action<ServiceRouteDescriptor> registerServiceDelegate = null)
         {
-            var config = new ConsulServiceRouteConfig();
+            var config = Config.GetValue<ConsulServiceRouteConfig>("ConsulServiceRoute");
             configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.Scheme, "协议");

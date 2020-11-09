@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using SchedulerZ.Remoting.gRPC;
+using SchedulerZ.Configurations;
 
 namespace SchedulerZ.Worker
 {
@@ -21,7 +22,7 @@ namespace SchedulerZ.Worker
                         .UseConsoleLifetime()
                         .ConfigureAppConfiguration((context, configurationBuilder) =>
                         {
-                            configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+                            configurationBuilder.AddConfigFile("schedulerZ.json", optional: true, reloadOnChange: true);
                         })
                         .ConfigureServices((context, services) =>
                         {

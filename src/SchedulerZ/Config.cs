@@ -7,6 +7,8 @@ namespace SchedulerZ
 {
     public class Config
     {
+        public static ConfigOptions Options { get; internal set; } = new ConfigOptions();
+
         public static IConfigurationRoot Configuration { get; internal set; }
 
         public static string GetValue(string key)
@@ -23,5 +25,6 @@ namespace SchedulerZ
         {
             return Configuration.GetSection(key).Exists();
         }
+
     }
 }

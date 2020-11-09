@@ -33,4 +33,37 @@ namespace SchedulerZ.Route.Consul
         /// </summary>
         public int NodeCheckTimeOut { get; set; } = 10000;
     }
+
+    public class RegisterService
+    {
+        /// <summary>
+        /// Id
+        /// </summary>
+        public string Id { get; set; }
+
+        /// <summary>
+        /// 名称
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 地址
+        /// </summary>
+        public string Address { get; set; }
+
+        /// <summary>
+        /// 端口
+        /// </summary>
+        public int Port { get; set; }
+
+        /// <summary>
+        /// 健康检查类型
+        /// </summary>
+        public string HealthCheckType { get; set; }
+
+        /// <summary>
+        /// 健康检查地址
+        /// </summary>
+        public string HealthCheck { get; set; }
+    }
 }

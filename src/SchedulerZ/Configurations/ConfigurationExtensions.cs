@@ -9,11 +9,17 @@ namespace SchedulerZ.Configurations
     {
         public static IConfigurationBuilder AddConfigFile(this IConfigurationBuilder builder, string path, bool optional, bool reloadOnChange)
         {
-            var builder = new ConfigurationBuilder()
+            builder.AddJsonFile(path, optional: optional, reloadOnChange: reloadOnChange);
+
+            var configurationBuilder = new ConfigurationBuilder()
              .SetBasePath(AppContext.BaseDirectory)
              .AddJsonFile(path, optional: optional, reloadOnChange: reloadOnChange);
 
-            Configuration = builder.Build();
+            Config.Configuration = configurationBuilder.Build();
+            if (Config.IsExists("SchedulerZ"))
+                Config.Options = Config.GetValue<ConfigOptions>("SchedulerZ");
+
+            return builder;
         }
     }
 }

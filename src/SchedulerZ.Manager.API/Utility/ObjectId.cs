@@ -140,5 +140,42 @@ namespace SchedulerZ.Manager.API.Utility
         {
             return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
+
+
+        private static char[] charSet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+        /// <summary>
+        /// 将指定数字转换为指定长度的62进制
+        /// </summary>
+        /// <param name="value">要转换的数字</param>
+        /// <param name="length">需要的长度</param>
+        /// <returns>62进制表示格式</returns>
+        public static string ConvertTo62(long value, int length)
+        {
+            string sixtyNum = string.Empty;
+            if (value < 62)
+            {
+                sixtyNum = charSet[value].ToString().PadLeft(length, '0');
+            }
+            else
+            {
+                long result = value;
+                //char[] ch = new char[length];
+                while (result > 0)
+                {
+                    long val = result % 62;
+                    //ch[--length] = charSet[val];
+                    sixtyNum = charSet[val] + sixtyNum;
+                    result = result / 62;
+                }
+                sixtyNum = sixtyNum.PadLeft(length, '0');
+                //for (int i = 0; i < length; i++)
+                //{
+                //    ch[i] = '0';
+                //}
+                //sixtyNum = new string(ch);
+            }
+            return sixtyNum;
+        }
     }
 }
