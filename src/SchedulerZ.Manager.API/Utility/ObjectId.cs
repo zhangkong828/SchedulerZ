@@ -124,6 +124,11 @@ namespace SchedulerZ.Manager.API.Utility
             }
         }
 
+        public string NextString()
+        {
+            return ConvertTo62(NextId());
+        }
+
         // 防止产生的时间比之前的时间还要小（由于NTP回拨等问题）,保持增量的趋势.
         protected virtual long TilNextMillis(long lastTimestamp)
         {
@@ -142,38 +147,21 @@ namespace SchedulerZ.Manager.API.Utility
         }
 
 
-        private static char[] charSet = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+        private static char[] charSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
 
         /// <summary>
         /// 将指定数字转换为指定长度的62进制
         /// </summary>
         /// <param name="value">要转换的数字</param>
-        /// <param name="length">需要的长度</param>
-        /// <returns>62进制表示格式</returns>
-        public static string ConvertTo62(long value, int length)
+        public static string ConvertTo62(long value)
         {
             string sixtyNum = string.Empty;
-            if (value < 62)
+            long result = value;
+            while (result > 0)
             {
-                sixtyNum = charSet[value].ToString().PadLeft(length, '0');
-            }
-            else
-            {
-                long result = value;
-                //char[] ch = new char[length];
-                while (result > 0)
-                {
-                    long val = result % 62;
-                    //ch[--length] = charSet[val];
-                    sixtyNum = charSet[val] + sixtyNum;
-                    result = result / 62;
-                }
-                sixtyNum = sixtyNum.PadLeft(length, '0');
-                //for (int i = 0; i < length; i++)
-                //{
-                //    ch[i] = '0';
-                //}
-                //sixtyNum = new string(ch);
+                long val = result % 62;
+                sixtyNum = charSet[val] + sixtyNum;
+                result = result / 62;
             }
             return sixtyNum;
         }

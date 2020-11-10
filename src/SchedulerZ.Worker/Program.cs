@@ -27,24 +27,8 @@ namespace SchedulerZ.Worker
                         .ConfigureServices((context, services) =>
                         {
                             services.UseDefaultLogging()
-                                    .UseConsulServiceRoute(config =>
-                                    {
-                                        config.Host = "192.168.31.101";
-                                        config.Port = 8500;
-
-                                    }, registerService =>
-                                    {
-                                        registerService.Name = "test";
-                                        registerService.Address = "192.168.31.200";
-                                        registerService.Port = 10001;
-                                        registerService.HealthCheckType = "TCP";
-                                        registerService.HealthCheck = "192.168.31.200:10001";
-                                    })
-                                    .UseGrpcRemoting(config =>
-                                    {
-                                        config.Host = "0.0.0.0";
-                                        config.Port = 10001;
-                                    })
+                                    .UseConsulServiceRoute()
+                                    .UseGrpcRemoting()
                                     .UseQuartzNetScheduler();
                         })
                         .Build();

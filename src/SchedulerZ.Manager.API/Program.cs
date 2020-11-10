@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SchedulerZ.Configurations;
 
 namespace SchedulerZ.Manager.API
 {
@@ -39,6 +40,7 @@ namespace SchedulerZ.Manager.API
                 .ConfigureAppConfiguration((hostingContext, config) =>
                 {
                     config.AddJsonFile("appsettings.json",optional: true,reloadOnChange: true);
+                    config.AddConfigFile("schedulerZ.json", optional: true, reloadOnChange: true);
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

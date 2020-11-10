@@ -16,8 +16,7 @@ namespace SchedulerZ.Configurations
              .AddJsonFile(path, optional: optional, reloadOnChange: reloadOnChange);
 
             Config.Configuration = configurationBuilder.Build();
-            if (Config.IsExists("SchedulerZ"))
-                Config.Options = Config.GetValue<ConfigOptions>("SchedulerZ");
+            Config.Options = Config.Get<ConfigOptions>("SchedulerZ") ?? new ConfigOptions();
 
             return builder;
         }

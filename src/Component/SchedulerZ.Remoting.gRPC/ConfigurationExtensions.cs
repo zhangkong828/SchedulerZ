@@ -10,7 +10,7 @@ namespace SchedulerZ.Remoting.gRPC
     {
         public static IServiceCollection UseGrpcRemoting(this IServiceCollection services, Action<GrpcServiceConfig> configDelegate = null)
         {
-            var config = new GrpcServiceConfig();
+            var config = Config.Get<GrpcServiceConfig>("GrpcService") ?? new GrpcServiceConfig();
             configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.Host, "主机");
@@ -19,7 +19,7 @@ namespace SchedulerZ.Remoting.gRPC
             services.AddSingleton(config);
 
             services.AddSingleton<SchedulerService.SchedulerServiceBase, SchedulerServiceImpl>();
-            services.AddHostedService<GrpcHostedService>();            
+            services.AddHostedService<GrpcHostedService>();
 
             return services;
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchedulerZ.Utility;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,37 +11,30 @@ namespace SchedulerZ.Route.Consul
         public string Host { get; set; } = "127.0.0.1";
         public int Port { get; set; } = 8500;
 
-        public int HealthCheckTimeOut { get; set; } = 60;
+        /// <summary>
+        /// 服务健康检测时间 毫秒
+        /// </summary>
+        public int ServiceCheckInterval { get; set; } = 10000;
 
         /// <summary>
-        /// 服务健康检测时间
+        /// 移除服务时间 毫秒
         /// </summary>
-        public TimeSpan ServiceCheckInterval { get; set; } = TimeSpan.FromSeconds(10);
+        public int ServiceCriticalInterval { get; set; } = 3000;
 
         /// <summary>
-        /// 移除服务时间
+        /// 节点检测间隔时间 毫秒
         /// </summary>
-        public TimeSpan ServiceCriticalInterval { get; set; } = TimeSpan.FromSeconds(20);
-
-
-        /// <summary>
-        /// 节点检测间隔时间
-        /// </summary>
-        public TimeSpan NodeCheckInterval { get; set; } = TimeSpan.FromMinutes(2);
+        public int NodeCheckInterval { get; set; } = 60000;
 
         /// <summary>
         /// 节点检测超时时间 毫秒
         /// </summary>
-        public int NodeCheckTimeOut { get; set; } = 10000;
+        public int NodeCheckTimeOut { get; set; } = 5000;
+
     }
 
-    public class RegisterService
+    public class RegisterServiceConfig
     {
-        /// <summary>
-        /// Id
-        /// </summary>
-        public string Id { get; set; }
-
         /// <summary>
         /// 名称
         /// </summary>

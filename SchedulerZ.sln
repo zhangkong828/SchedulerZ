@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Manager.API", "s
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Store.MySQL", "src\Component\SchedulerZ.Store.MySQL\SchedulerZ.Store.MySQL.csproj", "{0F2B4C8F-B67D-4883-9EFC-9890572CF80A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Store.SQLServer", "src\Component\SchedulerZ.Store.SQLServer\SchedulerZ.Store.SQLServer.csproj", "{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{0F2B4C8F-B67D-4883-9EFC-9890572CF80A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F2B4C8F-B67D-4883-9EFC-9890572CF80A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F2B4C8F-B67D-4883-9EFC-9890572CF80A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -94,6 +100,7 @@ Global
 		{24FB7DE4-122F-4D6E-BFA5-00DD0A3C2DEC} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{0BAEA4E9-12CF-45DB-A52E-0EEFDB113DF0} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{0F2B4C8F-B67D-4883-9EFC-9890572CF80A} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
+		{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65504834-0038-42F2-9846-6115F45CC269}

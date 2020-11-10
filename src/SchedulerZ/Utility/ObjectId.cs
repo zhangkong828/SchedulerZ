@@ -133,6 +133,11 @@ namespace SchedulerZ.Utility
             }
         }
 
+        public string NextString()
+        {
+            return ConvertTo62(NextId());
+        }
+
         // 防止产生的时间比之前的时间还要小（由于NTP回拨等问题）,保持增量的趋势.
         protected virtual long TilNextMillis(long lastTimestamp)
         {
@@ -148,6 +153,25 @@ namespace SchedulerZ.Utility
         protected virtual long TimeGen()
         {
             return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        }
+
+        private static char[] charSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".ToCharArray();
+
+        /// <summary>
+        /// 将指定数字转换为指定长度的62进制
+        /// </summary>
+        /// <param name="value">要转换的数字</param>
+        public static string ConvertTo62(long value)
+        {
+            string sixtyNum = string.Empty;
+            long result = value;
+            while (result > 0)
+            {
+                long val = result % 62;
+                sixtyNum = charSet[val] + sixtyNum;
+                result = result / 62;
+            }
+            return sixtyNum;
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchedulerZ.Utility;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +10,7 @@ namespace SchedulerZ.Route
     {
         public ServiceRouteDescriptor()
         {
-            Id = Guid.NewGuid().ToString("n");
+            Id = ObjectId.Default().NextString();
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 

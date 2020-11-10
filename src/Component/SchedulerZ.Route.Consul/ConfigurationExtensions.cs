@@ -9,9 +9,9 @@ namespace SchedulerZ.Route.Consul
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> configDelegate = null, Action<ServiceRouteDescriptor> registerServiceDelegate = null)
+        public static IServiceCollection UseConsulServiceRoute(this IServiceCollection services, Action<ConsulServiceRouteConfig> configDelegate = null, Action<RegisterServiceConfig> registerServiceDelegate = null)
         {
-            var config = Config.GetValue<ConsulServiceRouteConfig>("ConsulServiceRoute");
+            var config = Config.Get<ConsulServiceRouteConfig>("ConsulServiceRoute") ?? new ConsulServiceRouteConfig();
             configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.Scheme, "协议");
@@ -22,19 +22,20 @@ namespace SchedulerZ.Route.Consul
             services.AddSingleton<IConsulClientProvider, DefaultConsulClientProvider>();
             services.AddSingleton<IServiceRoute, ConsulServiceRoute>();
 
-            if (registerServiceDelegate != null)
+
+            //是否有需要注册的服务
+            if (Config.IsExists("ConsulServiceRoute:RegisterService") || registerServiceDelegate != null)
             {
-                var serviceRouteDescriptor = new ServiceRouteDescriptor();
-                registerServiceDelegate.Invoke(serviceRouteDescriptor);
+                var registerServiceConfig = Config.Get<RegisterServiceConfig>("ConsulServiceRoute:RegisterService");
+                registerServiceDelegate?.Invoke(registerServiceConfig);
 
-                Check.NotNullOrEmpty(serviceRouteDescriptor.Id, "服务Id");
-                Check.NotNullOrEmpty(serviceRouteDescriptor.Name, "服务名称");
-                Check.NotNullOrEmpty(serviceRouteDescriptor.Address, "地址");
-                Check.Positive(serviceRouteDescriptor.Port, "端口");
-                Check.NotNullOrEmpty(serviceRouteDescriptor.HealthCheckType, "健康检查类型");
-                Check.NotNullOrEmpty(serviceRouteDescriptor.HealthCheck, "健康检查地址");
+                Check.NotNullOrEmpty(registerServiceConfig.Name, "服务名称");
+                Check.NotNullOrEmpty(registerServiceConfig.Address, "地址");
+                Check.Positive(registerServiceConfig.Port, "端口");
+                Check.NotNullOrEmpty(registerServiceConfig.HealthCheckType, "健康检查类型");
+                Check.NotNullOrEmpty(registerServiceConfig.HealthCheck, "健康检查地址");
 
-                services.AddSingleton(serviceRouteDescriptor);
+                services.AddSingleton(registerServiceConfig);
                 services.AddHostedService<ConsulHostedService>();
             }
 

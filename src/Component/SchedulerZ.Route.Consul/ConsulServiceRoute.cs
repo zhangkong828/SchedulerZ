@@ -53,9 +53,9 @@ namespace SchedulerZ.Route.Consul
             {
                 ID = checkId,
                 Name = checkName,
-                Interval = _config.ServiceCheckInterval,
+                Interval = TimeSpan.FromMilliseconds(_config.ServiceCheckInterval),
                 Status = HealthStatus.Passing,
-                DeregisterCriticalServiceAfter = _config.ServiceCriticalInterval,
+                DeregisterCriticalServiceAfter = TimeSpan.FromMilliseconds(_config.ServiceCriticalInterval),
             };
 
             switch (service.HealthCheckType.ToLower())

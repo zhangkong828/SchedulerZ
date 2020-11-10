@@ -39,7 +39,7 @@ namespace SchedulerZ.Manager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.UseMySQL(options => options.ConnectionString = Configuration.GetConnectionString("DefaultConnection"));
+            services.UseMySQL();
 
             services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
 
@@ -130,19 +130,7 @@ namespace SchedulerZ.Manager.API
                     });
             });
 
-            //services.UseConsulServiceRoute(config =>
-            //{
-            //    config.Host = Configuration.GetValue<string>("ConsulConfig:Host");
-            //    config.Port = Configuration.GetValue<int>("ConsulConfig:Port");
-
-            //}, registerService =>
-            //{
-            //    registerService.Name = "manager";
-            //    registerService.Address = "192.168.31.200";
-            //    registerService.Port = 10001;
-            //    registerService.HealthCheckType = "HTTP";
-            //    registerService.HealthCheck = "http://192.168.31.200:10001/api/health/check";
-            //});
+            //services.UseConsulServiceRoute();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -20,4 +20,10 @@
     <ProjectReference Include="..\SchedulerZ\SchedulerZ.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="schedulerZ.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

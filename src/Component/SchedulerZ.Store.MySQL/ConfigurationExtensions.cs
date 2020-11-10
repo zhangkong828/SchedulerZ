@@ -11,17 +11,21 @@ namespace SchedulerZ.Store.MySQL
     {
         public static IServiceCollection UseMySQL(this IServiceCollection services, Action<ConnectionConfig> configDelegate = null)
         {
-            var config = new ConnectionConfig();
+            var config = Config.Get<ConnectionConfig>("MySqlStore") ?? new ConnectionConfig();
             configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.ConnectionString, "连接字符串");
 
-            services.AddSingleton(config);
+            Config.DbConnector = new DbConnector()
+            {
+                Provider = DbProvider.MySQL,
+                ConnectionString = config.ConnectionString
+            };
+            
+            services.AddDbContext<SchedulerZContext>();
 
-            services.AddDbContext<SchedulerZContext>(options => options.UseMySQL(config.ConnectionString));
-
-            services.AddSingleton<IJobStore, JobStoreService>();
-            services.AddSingleton<IAccountStore, AccountStoreService>();
+            services.AddScoped<IJobStore, JobStoreService>();
+            services.AddScoped<IAccountStore, AccountStoreService>();
 
             using (var ctx = new SchedulerZContext())
             {

@@ -12,7 +12,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
     {
         public static IServiceCollection UseQuartzNetScheduler(this IServiceCollection services, Action<QuartzNetConfig> configDelegate = null)
         {
-            var config = new QuartzNetConfig();
+            var config = Config.Get<QuartzNetConfig>("QuartzNet") ?? new QuartzNetConfig();
             configDelegate?.Invoke(config);
 
             Check.NotNullOrEmpty(config.JobDirectory, "Job目录");
