@@ -33,7 +33,7 @@ namespace SchedulerZ.Store.MySQL.Impl
 
         public List<User> QueryUserListPage<TOrderKey>(int pageIndex, int pageSize, List<Expression<Func<User, bool>>> wheres, Expression<Func<User, TOrderKey>> orderBy, bool isAsc, out int total)
         {
-            var query = _context.Users.AsNoTracking().Where(x => !x.IsDelete);
+            var query = _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).Where(x => !x.IsDelete);
             if (wheres.Any())
             {
                 foreach (var item in wheres)

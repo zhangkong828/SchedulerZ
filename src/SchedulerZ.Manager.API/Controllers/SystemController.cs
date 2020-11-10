@@ -51,12 +51,20 @@ namespace SchedulerZ.Manager.API.Controllers
 
             var result = _accountStoreService.QueryUserListPage(request.PageIndex, request.PageSize, filters, x => x.CreateTime, false, out int total);
 
+            var list = new List<UserDto>();
+            foreach (var user in result)
+            {
+                var userDto = _mapper.Map<UserDto>(user);
+                userDto.Roles = user.UserRoleRelations.Select(x => _mapper.Map<RoleDto>(x.Role)).Where(x => x.IsDelete == false).OrderBy(x => x.CreateTime).ToList();
+                list.Add(userDto);
+            }
+
             var pageData = new PageData<UserDto>()
             {
                 PageIndex = request.PageIndex,
                 PageSize = request.PageSize,
                 TotalCount = total,
-                List = _mapper.Map<List<UserDto>>(result)
+                List = list
             };
             return BaseResponse<PageData<UserDto>>.GetBaseResponse(pageData);
         }

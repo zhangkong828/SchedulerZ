@@ -27,7 +27,7 @@ namespace SchedulerZ.Manager.API.Model.Dto
 
         public bool IsDelete { get; set; }
 
-
+        public List<RoleDto> Roles { get; set; }
         public List<long> RoleIds { get; set; }
     }
 }

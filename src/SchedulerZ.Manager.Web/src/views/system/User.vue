@@ -47,8 +47,9 @@
       title="操作"
       style="top: 20px;"
       :width="800"
-      v-model="visible"
+      :visible="visible"
       @ok="handleOk"
+      @cancel="handleCancel"
     >
       <a-form-model ref="ruleForm" :model="form" :rules="rules">
 
@@ -82,6 +83,14 @@
           </a-select>
         </a-form-model-item>
 
+        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="角色">
+          <a-select style="width: 100%" mode="multiple" v-model="form.roleIds" :allowClear="true">
+            <a-select-option v-for="(role, index) in roleList" :key="index" :value="role.id">{{
+              role.name
+            }}</a-select-option>
+          </a-select>
+        </a-form-model-item>
+
       </a-form-model>
     </a-modal>
 
@@ -90,7 +99,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getUserList, modifyUser, deleteUser } from '@/api/system'
+import { getUserList, modifyUser, deleteUser, getRoleList } from '@/api/system'
 
 const STATUS = {
   1: '正常',
@@ -164,6 +173,7 @@ export default {
           { required: true, message: '必填项', trigger: 'blur' }
         ]
       },
+      roleList: [],
       // 查询参数
       queryParam: {},
       // 表头
@@ -174,6 +184,9 @@ export default {
         return getUserList(requestParameters)
           .then(res => {
             console.log('getUserList', res)
+            res.data.list.map(item => {
+              item.roleIds = item.roles.map(role => { return role.id })
+            })
             return res.data
           })
       }
@@ -185,8 +198,14 @@ export default {
     }
   },
   created () {
+    this.loadRoleList()
   },
   methods: {
+    loadRoleList () {
+      getRoleList({ 'pageindex': 1, 'pagesize': 10 }).then(res => {
+        this.roleList = res.data.list
+      })
+    },
     handleEdit (record) {
       this.form = Object.assign({}, record)
       this.visible = true
@@ -203,9 +222,13 @@ export default {
           modifyUser(this.form)
             .then((res) => {
               _this.$refs.table.refresh()
+              _this.visible = false
             })
         }
       })
+    },
+    handleCancel () {
+      this.visible = false
     }
   },
   watch: {
