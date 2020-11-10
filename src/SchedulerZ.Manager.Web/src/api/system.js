@@ -8,6 +8,22 @@ export function getUserList (parameter) {
   })
 }
 
+export function modifyUser (parameter) {
+  return request({
+    url: '/system/ModifyUser',
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function deleteUser (parameter) {
+  return request({
+    url: '/system/deleteUser',
+    method: 'post',
+    params: { id: parameter }
+  })
+}
+
 export function getRoleList (parameter) {
   return request({
     url: '/system/queryRoleList',

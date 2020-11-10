@@ -1,21 +1,21 @@
 <template>
   <a-card :bordered="false">
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <a-form-model layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="名称">
+            <a-form-model-item label="名称">
               <a-input placeholder="请输入" v-model="queryParam.name"/>
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
           <a-col :md="8" :sm="24">
-            <a-form-item label="状态">
+            <a-form-model-item label="状态">
               <a-select v-model.number="queryParam.status" placeholder="请选择" default-value="0">
                 <a-select-option :value="0">全部</a-select-option>
                 <a-select-option :value="1">正常</a-select-option>
                 <a-select-option :value="2">禁用</a-select-option>
               </a-select>
-            </a-form-item>
+            </a-form-model-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <span class="table-page-search-submitButtons">
@@ -24,7 +24,7 @@
             </span>
           </a-col>
         </a-row>
-      </a-form>
+      </a-form-model>
     </div>
 
     <s-table
@@ -50,64 +50,47 @@
       v-model="visible"
       @ok="handleOk"
     >
-      <a-form class="permission-form" :form="form">
+      <a-form-model ref="ruleForm" :model="form" :rules="rules">
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="Id"
-        >
-          <a-input
-            placeholder="Id"
-            disabled="disabled"
-            v-decorator="['id']"
-          />
-        </a-form-item>
-
-        <a-form-item
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="名称"
+          prop="name"
         >
-          <a-input
-            placeholder="名称"
-            v-decorator="['name']"
-          />
-        </a-form-item>
+          <a-input placeholder="名称" v-model="form.name"/>
+        </a-form-model-item>
 
-        <a-form-item
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="用户名"
+          prop="username"
+        >
+          <a-input placeholder="用户名" v-model="form.username"/>
+        </a-form-model-item>
+
+        <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="状态"
+          prop="status"
         >
-          <a-select v-decorator="['status', { initialValue: 1 }]">
+          <a-select v-model="form.status">
             <a-select-option :value="1">正常</a-select-option>
             <a-select-option :value="2">禁用</a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-model-item>
 
-        <a-form-item
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          label="创建时间"
-        >
-          <a-date-picker
-            style="width: 100%"
-            valueFormat="YYYY-MM-DD HH:mm"
-            v-decorator="['createTime']"
-          />
-        </a-form-item>
-
-      </a-form>
+      </a-form-model>
     </a-modal>
 
   </a-card>
 </template>
 
 <script>
-import pick from 'lodash.pick'
 import { STable } from '@/components'
-import { getUserList } from '@/api/system'
+import { getUserList, modifyUser, deleteUser } from '@/api/system'
 
 const STATUS = {
   1: '正常',
@@ -171,8 +154,16 @@ export default {
         xs: { span: 24 },
         sm: { span: 16 }
       },
-      form: this.$form.createForm(this),
-
+      mdl: {},
+      form: {},
+      rules: {
+        username: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '必填项', trigger: 'blur' }
+        ]
+      },
       // 查询参数
       queryParam: {},
       // 表头
@@ -197,20 +188,23 @@ export default {
   },
   methods: {
     handleEdit (record) {
+      this.form = Object.assign({}, record)
       this.visible = true
-      console.log('record', record)
-
-      this.$nextTick(() => {
-         this.form.setFieldsValue(pick(record, ['id', 'status', 'createTime', 'name']))
-      })
     },
     handleDelete (record) {
-
+      deleteUser(record.id).then(res => {
+        this.$refs.table.refresh()
+      })
     },
     handleOk (e) {
-      e.preventDefault()
-      this.form.validateFields((err, values) => {
-        console.log(err, values)
+      const _this = this
+      this.$refs.ruleForm.validate(valid => {
+        if (valid) {
+          modifyUser(this.form)
+            .then((res) => {
+              _this.$refs.table.refresh()
+            })
+        }
       })
     }
   },

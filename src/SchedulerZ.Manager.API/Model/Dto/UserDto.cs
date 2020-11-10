@@ -26,5 +26,8 @@ namespace SchedulerZ.Manager.API.Model.Dto
         public DateTime CreateTime { get; set; }
 
         public bool IsDelete { get; set; }
+
+
+        public List<long> RoleIds { get; set; }
     }
 }

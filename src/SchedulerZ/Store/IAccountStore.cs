@@ -14,7 +14,10 @@ namespace SchedulerZ.Store
         User QueryUserInfo(long userId);
         bool AddUser(User user);
         bool UpdateUser(User user);
+        bool DeleteUser(long id, bool isReal);
 
+        bool AddUserRoleRelations(List<UserRoleRelation> addEntities);
+        bool DeleteUserRoleRelations(long userId, List<long> deleteRoleIds);
 
         List<Router> QueryRouterList();
         bool UpdateRouter(Router router);

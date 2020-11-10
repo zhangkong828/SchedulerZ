@@ -18,12 +18,12 @@ namespace SchedulerZ.Store.MySQL.Impl
 
         public User QueryUserById(long id)
         {
-            return _context.Users.AsNoTracking().SingleOrDefault(x => x.Id == id);
+            return _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).SingleOrDefault(x => x.Id == id);
         }
 
         public User QueryUserByName(string userName)
         {
-            return _context.Users.AsNoTracking().SingleOrDefault(x => x.Username == userName);
+            return _context.Users.AsNoTracking().Include(x => x.UserRoleRelations).ThenInclude(x => x.Role).SingleOrDefault(x => x.Username == userName);
         }
 
         public User QueryUserInfo(long userId)
@@ -58,6 +58,22 @@ namespace SchedulerZ.Store.MySQL.Impl
             return _context.SaveChanges() > 0;
         }
 
+        public bool DeleteUser(long id, bool isReal)
+        {
+            var user = _context.Users.Find(id);
+            if (user == null) return false;
+
+            if (isReal)
+            {
+                _context.Users.Remove(user);
+            }
+            else
+            {
+                user.IsDelete = true;
+                _context.Users.Update(user);
+            }
+            return _context.SaveChanges() > 0;
+        }
 
 
 
@@ -158,6 +174,19 @@ namespace SchedulerZ.Store.MySQL.Impl
         {
             var deleteEntities = _context.RoleRouterRelations.Where(x => deleteRouterIds.Contains(x.RouterId) && x.RoleId == roleId).ToList();
             _context.RoleRouterRelations.RemoveRange(deleteEntities);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool AddUserRoleRelations(List<UserRoleRelation> addEntities)
+        {
+            _context.UserRoleRelations.AddRange(addEntities);
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool DeleteUserRoleRelations(long userId, List<long> deleteRoleIds)
+        {
+            var deleteEntities = _context.UserRoleRelations.Where(x => deleteRoleIds.Contains(x.RoleId) && x.UserId == userId).ToList();
+            _context.UserRoleRelations.RemoveRange(deleteEntities);
             return _context.SaveChanges() > 0;
         }
     }

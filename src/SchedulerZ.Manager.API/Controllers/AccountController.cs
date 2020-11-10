@@ -91,6 +91,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [NonAction]
         private bool UpdateLastLoginInfo(User user)
         {
+            user.LastLoginTime = DateTime.Now;
             user.LastLoginIp = HttpContext.GetIpAddress();
             return _accountStoreService.UpdateUser(user);
         }
@@ -144,7 +145,7 @@ namespace SchedulerZ.Manager.API.Controllers
                     var token = _redisClient.Get<Token>(tokenCacheKey);
                     if (token != null && token.RefreshToken == request.RefreshToken)
                     {
-                        var user =_accountStoreService.QueryUserById(userId);
+                        var user = _accountStoreService.QueryUserById(userId);
                         if (user != null)
                         {
                             var newToken = GenerateToken(user);
@@ -180,7 +181,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpGet]
         public ActionResult<BaseResponse> Info()
         {
-            var user =_accountStoreService.QueryUserInfo(GetUserId());
+            var user = _accountStoreService.QueryUserInfo(GetUserId());
             var userDto = _mapper.Map<UserDto>(user);
 
             var roles = user.UserRoleRelations.Select(x => _mapper.Map<RoleDto>(x.Role)).ToList();

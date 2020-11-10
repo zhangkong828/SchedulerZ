@@ -68,16 +68,46 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> ModifyUser(UserDto request)
         {
             var entity = _mapper.Map<User>(request);
-            bool result;
-            if (request.Id > 0)
+            bool result = false;
+            if (entity.Id > 0)
             {
-                result = _accountStoreService.UpdateUser(entity);
+                var user = _accountStoreService.QueryUserById(request.Id);
+                user.Name = entity.Name;
+                user.Avatar = entity.Avatar;
+                user.Status = entity.Status;
+
+                if (request.RoleIds != null && request.RoleIds.Count > 0)
+                {
+                    Utils.ListBatchAddOrDelete<long>(user.UserRoleRelations.Select(x => x.RoleId).ToList(), request.RoleIds, out List<long> deleteList, out List<long> addList);
+
+                    if (deleteList.Any())
+                    {
+                        _accountStoreService.DeleteUserRoleRelations(user.Id, deleteList);
+                    }
+
+                    if (addList.Any())
+                    {
+                        var addEntities = new List<UserRoleRelation>();
+                        addList.ForEach(id =>
+                        {
+                            addEntities.Add(new UserRoleRelation() { UserId = user.Id, RoleId = id });
+                        });
+                        _accountStoreService.AddUserRoleRelations(addEntities);
+                    }
+                }
+
+                result = _accountStoreService.UpdateUser(user);
             }
-            else
-            {
-                entity.CreateTime = DateTime.Now;
-                result = _accountStoreService.AddUser(entity);
-            }
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+        }
+
+        /// <summary>
+        /// 删除用户
+        /// </summary>
+        [HttpPost]
+        public ActionResult<BaseResponse> DeleteUser(long id)
+        {
+            var result = _accountStoreService.DeleteUser(id, false);
             return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
         }
 
