@@ -23,7 +23,8 @@ namespace SchedulerZ.Manager.API.Controllers
 {
     public class PackagesController : BaseApiController
     {
-        private readonly string[] _allowedFileExtension = { ".zip", ".7z", ".rar" };
+        private readonly string _jobDirectory;
+        private readonly string[] _allowedFileExtension;
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ILogger<PackagesController> _logger;
 
@@ -34,6 +35,10 @@ namespace SchedulerZ.Manager.API.Controllers
             _logger = logger;
             _hostEnvironment = hostEnvironment;
             _redisClient = redisClient;
+
+            _jobDirectory = Config.Options.JobDirectory;
+            var allowedFileExtensions = Config.Options.JobAllowedFileExtension;
+            _allowedFileExtension = string.IsNullOrWhiteSpace(allowedFileExtensions) ? new string[] { ".zip" } : allowedFileExtensions.Split(',', StringSplitOptions.RemoveEmptyEntries);
         }
 
         [HttpPost]
@@ -47,7 +52,6 @@ namespace SchedulerZ.Manager.API.Controllers
                 var result = new UploadPackageResponse();
                 try
                 {
-                    result.FileName = file.FileName;
                     var fileExtension = Path.GetExtension(file.FileName);
                     if (!_allowedFileExtension.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
                     {
@@ -57,14 +61,15 @@ namespace SchedulerZ.Manager.API.Controllers
                         continue;
                     }
 
-                    var uploadDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "Packages");
+                    result.FileName = $"{Path.GetFileNameWithoutExtension(file.FileName)}{DateTime.Now.FormatString("yyyyMMddHHmmss")}{fileExtension}";
+                    var uploadDirectory = Path.Combine(_hostEnvironment.ContentRootPath, _jobDirectory);
                     if (!Directory.Exists(uploadDirectory))
                     {
                         Directory.CreateDirectory(uploadDirectory);
                     }
 
-                    var uploadPath = Path.Combine(uploadDirectory, file.FileName);
-                    var webPath = Path.Combine("/Packages", file.FileName).Replace("\\", "/");
+                    var uploadPath = Path.Combine(uploadDirectory, result.FileName);
+                    var webPath = string.Concat("/", _jobDirectory, result.FileName);
 
                     using (var fileStream = new FileStream(uploadPath, FileMode.Create))
                     {
@@ -87,22 +92,21 @@ namespace SchedulerZ.Manager.API.Controllers
         }
 
         [HttpGet]
-        public ActionResult<BaseResponse> DownLoadPackage(string packageName)
+        public ActionResult<BaseResponse> DownloadPackage(string packageName)
         {
             if (string.IsNullOrWhiteSpace(packageName))
             {
                 return NotFound();
             }
 
-            var uploadDirectory = Path.Combine(_hostEnvironment.ContentRootPath, "Packages");
-            var filePath= Path.Combine(uploadDirectory, packageName);
-
+            var filePath = Path.Combine(_hostEnvironment.ContentRootPath, _jobDirectory, packageName).Replace('\\', Path.DirectorySeparatorChar);
             if (!System.IO.File.Exists(filePath))
             {
                 return NotFound();
             }
 
-            return NotFound();
+            var stream = System.IO.File.Open(filePath, FileMode.Open, FileAccess.Read);
+            return File(stream, "application/octet-stream", packageName);
         }
     }
 }

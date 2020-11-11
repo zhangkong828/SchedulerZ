@@ -15,6 +15,7 @@ namespace SchedulerZ.Store.MySQL
             optionsBuilder.UseMySQL(Config.DbConnector.ConnectionString);
         }
 
+        public DbSet<JobEntity> Jobs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Router> Routers { get; set; }

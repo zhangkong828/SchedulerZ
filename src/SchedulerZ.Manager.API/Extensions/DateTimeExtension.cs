@@ -26,5 +26,10 @@ namespace SchedulerZ.Manager.API
                 return (long)(date - startTime).TotalSeconds;
             }
         }
+
+        public static string FormatString(this DateTime date, string format = "yyyy-MM-dd HH:mm:ss")
+        {
+            return date.ToString(format);
+        }
     }
 }

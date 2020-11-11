@@ -7,6 +7,15 @@ namespace SchedulerZ
     public class ConfigOptions
     {
         /// <summary>
+        /// Job目录
+        /// </summary>
+        public string JobDirectory { get; set; } = "Packages";
+        /// <summary>
+        /// Job压缩文件的后缀
+        /// </summary>
+        public string JobAllowedFileExtension { get; set; } = ".zip";
+
+        /// <summary>
         /// 故障转移次数
         /// </summary>
         public int FailoverCluster { get; set; } = 3;
@@ -15,28 +24,6 @@ namespace SchedulerZ
         /// </summary>
         public bool CircuitBreakerForceOpen { get; set; }
 
-        /// <summary>
-        /// 执行超时时间
-        /// </summary>
-        public int ExecutionTimeoutInMilliseconds { get; set; } = 1000;
-        /// <summary>
-        /// 是否开启缓存
-        /// </summary>
-        public bool RequestCacheEnabled { get; set; }
-        /// <summary>
-        /// 注入
-        /// </summary>
-        public string Injection { get; set; } = "return null";
-
-        /// <summary>
-        /// IFallbackInvoker 实例名称
-        /// </summary>
-        public string FallBackName { get; set; }
-
-        /// <summary>
-        /// 注入命名空间
-        /// </summary>
-        public string[] InjectionNamespaces { get; set; }
         /// <summary>
         /// 错误率达到多少开启熔断保护
         /// </summary>

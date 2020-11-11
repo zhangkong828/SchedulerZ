@@ -36,18 +36,18 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
 
         private static void DeleteJobBaseAssemblyFromOutput(string jobDirectory, JobEntity jobView)
         {
-            var dllPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            var dllPath = $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
             if (File.Exists(dllPath))
                 File.Delete(dllPath);
 
-            var pdbPath = $"{Directory.GetCurrentDirectory()}\\Jobs\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.pdb".Replace('\\', Path.DirectorySeparatorChar);
+            var pdbPath = $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.pdb".Replace('\\', Path.DirectorySeparatorChar);
             if (File.Exists(pdbPath))
                 File.Delete(pdbPath);
         }
 
         public static string GetJobAssemblyPath(string jobDirectory, JobEntity jobView)
         {
-            return $"{Directory.GetCurrentDirectory()}\\Jobs\\src\\{jobView.AssemblyName}\\{jobView.AssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            return $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.AssemblyName}\\{jobView.AssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
 
     }
