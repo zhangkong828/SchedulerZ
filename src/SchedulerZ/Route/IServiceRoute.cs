@@ -20,6 +20,18 @@ namespace SchedulerZ.Route
         /// <summary>
         /// 移除服务
         /// </summary>
-        Task<bool> DeregisterService(ServiceRouteDescriptor service);
+        Task<bool> DeRegisterService(ServiceRouteDescriptor service);
+
+
+        /// <summary>
+        /// 所有服务
+        /// </summary>
+        Task<IEnumerable<ServiceRouteDescriptor>> QueryServices();
+
+        /// <summary>
+        /// 所有节点
+        /// </summary>
+        Task<IEnumerable<NodeDescriptor>> QueryNodes();
+
     }
 }

@@ -62,6 +62,11 @@ namespace SchedulerZ.Models
         public string ClassName { get; set; }
 
         /// <summary>
+        /// 自定义参数
+        /// </summary>
+        public string CustomParamsJson { get; set; }
+
+        /// <summary>
         /// 生效时间
         /// </summary>
         public DateTime? StartTime { get; set; }

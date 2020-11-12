@@ -82,7 +82,7 @@ namespace SchedulerZ.Route.Consul
         }
 
 
-        public async Task<bool> DeregisterService(ServiceRouteDescriptor service)
+        public async Task<bool> DeRegisterService(ServiceRouteDescriptor service)
         {
             var client = _consulClientProvider.GetClient();
             if (client == null) return false;
@@ -99,6 +99,49 @@ namespace SchedulerZ.Route.Consul
         private string GenCheckName(ServiceRouteDescriptor service)
         {
             return $"{service.Name}";
+        }
+
+        public async Task<IEnumerable<ServiceRouteDescriptor>> QueryServices()
+        {
+            var services = new List<ServiceRouteDescriptor>();
+            var client = _consulClientProvider.GetClient();
+            if (client == null) return services;
+            var queryResult = await client.Agent.Services();
+            if (queryResult.StatusCode == HttpStatusCode.OK)
+            {
+                foreach (var item in queryResult.Response)
+                {
+                    services.Add(new ServiceRouteDescriptor()
+                    {
+                        Id = item.Value.ID,
+                        Name = item.Value.Service,
+                        Tags = item.Value.Tags,
+                        Address = item.Value.Address,
+                        Port = item.Value.Port
+                    });
+                }
+            }
+            return services;
+        }
+
+        public async Task<IEnumerable<NodeDescriptor>> QueryNodes()
+        {
+            var nodes = new List<NodeDescriptor>();
+            var client = _consulClientProvider.GetClient();
+            if (client == null) return nodes;
+            var queryResult = await client.Catalog.Nodes();
+            if (queryResult.StatusCode == HttpStatusCode.OK)
+            {
+                foreach (var item in queryResult.Response)
+                {
+                    nodes.Add(new NodeDescriptor()
+                    {
+                        Name = item.Name,
+                        Address = item.Address
+                    });
+                }
+            }
+            return nodes;
         }
     }
 }

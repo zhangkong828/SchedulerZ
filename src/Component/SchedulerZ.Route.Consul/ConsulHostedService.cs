@@ -36,7 +36,7 @@ namespace SchedulerZ.Route.Consul
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
-            await _serviceRoute.DeregisterService(_registerSrvice);
+            await _serviceRoute.DeRegisterService(_registerSrvice);
         }
     }
 }

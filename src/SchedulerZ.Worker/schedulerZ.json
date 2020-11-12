@@ -22,7 +22,7 @@
     "NodeCheckTimeOut": 5000,
     //需要注册的服务,如果没有 删除该节点
     "RegisterService": {
-      "Name": "test",
+      "Name": "worker",
       "Address": "192.168.31.200",
       "Port": 10001,
       "HealthCheckType": "TCP",

@@ -8,15 +8,15 @@
   },
   //Consul 路由
   "ConsulServiceRoute": {
-    "Host": "192.168.31.101",
+    "Host": "192.168.1.203",
     "Port": 8500,
     //需要注册的服务,如果没有 删除该节点
     "RegisterService": {
       "Name": "manager",
-      "Address": "192.168.31.200",
-      "Port": 10001,
+      "Address": "192.168.1.202",
+      "Port": 5000,
       "HealthCheckType": "HTTP",
-      "HealthCheck": "http://192.168.31.200:10001/api/health/check"
+      "HealthCheck": "http://192.168.1.202:5000/api/health/check"
     }
   }
 }
