@@ -106,7 +106,7 @@ namespace SchedulerZ.Manager.API.Controllers
 
                 result = _accountStoreService.UpdateUser(user);
             }
-            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+            return BaseResponse.GetResponse(result);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> DeleteUser(long id)
         {
             var result = _accountStoreService.DeleteUser(id, false);
-            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+            return BaseResponse.GetResponse(result);
         }
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace SchedulerZ.Manager.API.Controllers
                 entity.CreateTime = DateTime.Now;
                 result = _accountStoreService.AddRouter(entity);
             }
-            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+            return BaseResponse.GetResponse(result);
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> DeletePermission(long id)
         {
             var result = _accountStoreService.DeleteRouter(id, false);
-            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+            return BaseResponse.GetResponse(result);
         }
 
 
@@ -284,7 +284,7 @@ namespace SchedulerZ.Manager.API.Controllers
                 result = _accountStoreService.AddRole(entity);
 
             }
-            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+            return BaseResponse.GetResponse(result);
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace SchedulerZ.Manager.API.Controllers
         public ActionResult<BaseResponse> DeleteRole(long id)
         {
             var result = _accountStoreService.DeleteRole(id, false);
-            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(result));
+            return BaseResponse.GetResponse(result);
         }
     }
 }

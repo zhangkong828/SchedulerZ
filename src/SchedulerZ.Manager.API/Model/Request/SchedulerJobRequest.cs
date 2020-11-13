@@ -1,21 +1,13 @@
-﻿using SchedulerZ.Utility;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace SchedulerZ.Models
+namespace SchedulerZ.Manager.API.Model.Request
 {
-    public class JobEntity
+    public class SchedulerJobRequest
     {
-        public JobEntity()
-        {
-            Id = ObjectId.Default().NextString();
-            CreateTime = DateTime.Now;
-        }
-
-        [Key]
         public string Id { get; set; }
 
         [Required]
@@ -34,8 +26,6 @@ namespace SchedulerZ.Models
 
         /// <summary>
         /// 是否简易Job(周期运行)
-        /// false 通过CronExpression控制
-        /// true 通过RepeatCount、IntervalSeconds控制
         /// </summary>
         public bool IsSimple { get; set; }
 
@@ -76,59 +66,9 @@ namespace SchedulerZ.Models
         /// </summary>
         public DateTime? EndTime { get; set; }
 
-        [Required]
-        public DateTime CreateTime { get; set; }
-
         /// <summary>
-        /// Job状态
+        /// 是否立即执行
         /// </summary>
-        [Required]
-        public int Status { get; set; }
-
-        /// <summary>
-        /// 上次运行时间
-        /// </summary>
-        public DateTime? LastRunTime { get; set; }
-
-        /// <summary>
-        /// 下次运行时间
-        /// </summary>
-        public DateTime? NextRunTime { get; set; }
-
-        /// <summary>
-        /// 总运行成功次数
-        /// </summary>
-        public int TotalRunCount { get; set; }
-    }
-
-    /// <summary>
-    /// 任务状态
-    /// </summary>
-    public enum JobStatus
-    {
-        /// <summary>
-        /// 已删除
-        /// </summary>
-        [Description("已删除")]
-        Deleted = -1,
-
-        /// <summary>
-        /// 已停止
-        /// </summary>
-        [Description("已停止")]
-        Stop = 0,
-
-        /// <summary>
-        /// 运行中
-        /// </summary>
-        [Description("运行中")]
-        Running = 1,
-
-        /// <summary>
-        /// 已暂停
-        /// </summary>
-        [Description("已暂停")]
-        Paused = 2
-
+        public bool RunNow { get; set; }
     }
 }

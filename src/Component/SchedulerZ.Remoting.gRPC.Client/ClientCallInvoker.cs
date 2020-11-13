@@ -28,7 +28,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
                     callInvoker = _strategy.Get(_service);
                     if (callInvoker == null)
                     {
-                        throw new ArgumentNullException($"{_service.Name}无可用节点");
+                        throw new ArgumentNullException($"{_service.Id} {_service.Name}无可用节点");
                     }
 
                     var channel = callInvoker.Channel;

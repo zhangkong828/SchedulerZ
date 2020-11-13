@@ -24,13 +24,13 @@ namespace SchedulerZ.Manager.API.Controllers
 {
     public class RouteController : BaseApiController
     {
-        private readonly ILogger<PackagesController> _logger;
+        private readonly ILogger<RouteController> _logger;
 
         private readonly CSRedisClient _redisClient;
         private readonly IEasyCachingProvider _cachingProvider;
 
         private readonly IServiceRoute _serviceRoute;
-        public RouteController(ILogger<PackagesController> logger, IHostEnvironment hostEnvironment, CSRedisClient redisClient, IServiceRoute serviceRoute)
+        public RouteController(ILogger<RouteController> logger, IHostEnvironment hostEnvironment, CSRedisClient redisClient, IServiceRoute serviceRoute)
         {
             _logger = logger;
             _redisClient = redisClient;

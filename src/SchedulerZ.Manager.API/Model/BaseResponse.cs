@@ -74,6 +74,26 @@ namespace SchedulerZ.Manager.API.Model
             System.ComponentModel.DescriptionAttribute da = (System.ComponentModel.DescriptionAttribute)objs[0];
             return da.Description;
         }
+
+        public static BaseResponse GetResponse(bool success)
+        {
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(success));
+        }
+
+        public static BaseResponse GetResponse(string msg)
+        {
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(msg));
+        }
+
+        public static BaseResponse GetResponse(bool success, string msg)
+        {
+            return BaseResponse<BaseResponseData>.GetBaseResponse(new BaseResponseData(success, msg));
+        }
+
+        public static BaseResponse GetResponse(BaseResponseData data)
+        {
+            return BaseResponse<BaseResponseData>.GetBaseResponse(data);
+        }
     }
 
     public class BaseResponse<T> : BaseResponse
@@ -150,6 +170,11 @@ namespace SchedulerZ.Manager.API.Model
 
     public class BaseResponseData
     {
+        public BaseResponseData()
+        {
+
+        }
+
         public BaseResponseData(bool success)
         {
             Success = success;
