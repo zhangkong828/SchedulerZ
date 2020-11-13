@@ -23,6 +23,15 @@ const constantRouterComponents = {
   'Role': () => import('@/views/system/Role'),
   'Permission': () => import('@/views/system/Permission'),
 
+  // node
+  'NodeList': () => import('@/views/node/NodeList'),
+  'Services': () => import('@/views/node/Services'),
+
+  // job
+  'Jobs': () => import('@/views/job/JobList'),
+  // log
+  'Logs': () => import('@/views/log/LogList'),
+
   // form
   'BasicForm': () => import('@/views/form/basicForm'),
   'StepForm': () => import('@/views/form/stepForm/StepForm'),

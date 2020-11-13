@@ -45,7 +45,7 @@ namespace SchedulerZ.Store.MySQL
                 new Router(){
                     Title="仪表盘",
                     Path="/dashboard",
-                    Name="dashboard",
+                    Name="Dashboard",
                     Component="RouteView",
                     Permission="dashboard",
                     Icon="dashboard",
@@ -58,7 +58,7 @@ namespace SchedulerZ.Store.MySQL
                  new Router(){
                     Title="工作台",
                     Path="/dashboard/workplace",
-                    Name="workplace",
+                    Name="Workplace",
                     Component="Workplace",
                     Permission="dashboard",
                     Icon="",
@@ -71,7 +71,7 @@ namespace SchedulerZ.Store.MySQL
                 new Router(){
                     Title="系统管理",
                     Path="/system",
-                    Name="system",
+                    Name="System",
                     Component="RouteView",
                     Permission="system",
                     Icon="slack",
@@ -84,7 +84,7 @@ namespace SchedulerZ.Store.MySQL
                 new Router(){
                     Title="用户管理",
                     Path="/system/user",
-                    Name="user",
+                    Name="User",
                     Component="User",
                     Permission="system",
                     Icon="",
@@ -97,7 +97,7 @@ namespace SchedulerZ.Store.MySQL
                 new Router(){
                     Title="角色管理",
                     Path="/system/role",
-                    Name="role",
+                    Name="Role",
                     Component="Role",
                     Permission="system",
                     Icon="",
@@ -110,7 +110,7 @@ namespace SchedulerZ.Store.MySQL
                 new Router(){
                     Title="权限管理",
                     Path="/system/permission",
-                    Name="permission",
+                    Name="Permission",
                     Component="Permission",
                     Permission="system",
                     Icon="",
@@ -118,6 +118,71 @@ namespace SchedulerZ.Store.MySQL
                     Redirect="",
                     ParentId=3,
                     Sort=2003,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="节点管理",
+                    Path="/node",
+                    Name="Node",
+                    Component="RouteView",
+                    Permission="",
+                    Icon="global",
+                    Show=true,
+                    Redirect="",
+                    ParentId=0,
+                    Sort=3000,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="节点列表",
+                    Path="/node/list",
+                    Name="NodeList",
+                    Component="NodeList",
+                    Permission="",
+                    Icon="",
+                    Show=true,
+                    Redirect="",
+                    ParentId=7,
+                    Sort=3001,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="服务列表",
+                    Path="/node/services",
+                    Name="Services",
+                    Component="Services",
+                    Permission="",
+                    Icon="",
+                    Show=true,
+                    Redirect="",
+                    ParentId=7,
+                    Sort=3002,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="任务列表",
+                    Path="/jobs",
+                    Name="Jobs",
+                    Component="Jobs",
+                    Permission="",
+                    Icon="schedule",
+                    Show=true,
+                    Redirect="",
+                    ParentId=0,
+                    Sort=4000,
+                    CreateTime=DateTime.Now
+                },
+                new Router(){
+                    Title="系统日志",
+                    Path="/logs",
+                    Name="Logs",
+                    Component="Logs",
+                    Permission="",
+                    Icon="file-search",
+                    Show=true,
+                    Redirect="",
+                    ParentId=0,
+                    Sort=5000,
                     CreateTime=DateTime.Now
                 }
             };
