@@ -14,6 +14,13 @@ namespace SchedulerZ.Route
             Metadatas = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
         }
 
+        public ServiceRouteDescriptor(string address, int port) : this()
+        {
+            Name = $"{address}:{port}";
+            Address = address;
+            Port = port;
+        }
+
         /// <summary>
         /// Id
         /// </summary>

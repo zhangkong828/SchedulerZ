@@ -21,6 +21,7 @@ using SchedulerZ.Manager.API.Model.Response;
 using SchedulerZ.Manager.API.Utility;
 using SchedulerZ.Models;
 using SchedulerZ.Remoting;
+using SchedulerZ.Route;
 using SchedulerZ.Scheduler;
 using SchedulerZ.Store;
 
@@ -110,16 +111,17 @@ namespace SchedulerZ.Manager.API.Controllers
         /// 立即运行一次
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<BaseResponse>> RunOnceJob(string id)
+        public async Task<ActionResult<BaseResponse>> RunOnceNowJob(string id)
         {
             var job = _jobStore.QueryJob(id);
             if (job == null) return BaseResponse.GetResponse("任务不存在");
 
             if (job.Status == (int)JobStatus.Running)
             {
-
+                var result = await _schedulerRemoting.RunJobOnceNow(job.Id, new ServiceRouteDescriptor(job.NodeHost, job.NodePort));
+                return BaseResponse.GetResponse(result);
             }
-            return BaseResponse.GetResponse("任务不在运行状态下");
+            return BaseResponse.GetResponse("任务在运行状态下才能立即执行");
         }
 
         /// <summary>
@@ -128,7 +130,24 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public async Task<ActionResult<BaseResponse>> PauseJob(string id)
         {
-            return BaseResponse.GetResponse("");
+            var job = _jobStore.QueryJob(id);
+            if (job == null) return BaseResponse.GetResponse("任务不存在");
+
+            if (job.Status == (int)JobStatus.Running)
+            {
+                var service = new ServiceRouteDescriptor(job.NodeHost, job.NodePort);
+                var result = await _schedulerRemoting.PauseJob(job.Id, service);
+                if (result)
+                {
+                    job.Status = (int)JobStatus.Paused;
+                    job.NextRunTime = null;
+                    result = _jobStore.UpdateJob(job);
+                    if (!result)
+                        await _schedulerRemoting.ResumeJob(job.Id, service);
+                }
+                return BaseResponse.GetResponse(result);
+            }
+            return BaseResponse.GetResponse("任务在运行状态下才能暂停");
         }
 
         /// <summary>
@@ -137,7 +156,23 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public async Task<ActionResult<BaseResponse>> ResumeJob(string id)
         {
-            return BaseResponse.GetResponse("");
+            var job = _jobStore.QueryJob(id);
+            if (job == null) return BaseResponse.GetResponse("任务不存在");
+
+            if (job.Status == (int)JobStatus.Paused)
+            {
+                var service = new ServiceRouteDescriptor(job.NodeHost, job.NodePort);
+                var result = await _schedulerRemoting.ResumeJob(job.Id, service);
+                if (result)
+                {
+                    job.Status = (int)JobStatus.Running;
+                    result = _jobStore.UpdateJob(job);
+                    if (!result)
+                        await _schedulerRemoting.PauseJob(job.Id, service);
+                }
+                return BaseResponse.GetResponse(result);
+            }
+            return BaseResponse.GetResponse("任务在暂停状态下才能恢复");
         }
 
         /// <summary>
@@ -146,16 +181,48 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public async Task<ActionResult<BaseResponse>> StopJob(string id)
         {
-            return BaseResponse.GetResponse("");
+            var job = _jobStore.QueryJob(id);
+            if (job == null) return BaseResponse.GetResponse("任务不存在");
+
+            if (job.Status > (int)JobStatus.Stop)
+            {
+                var service = new ServiceRouteDescriptor(job.NodeHost, job.NodePort);
+                var result = await _schedulerRemoting.StopJob(job.Id, service);
+                if (result)
+                {
+                    job.Status = (int)JobStatus.Stop;
+                    job.NextRunTime = null;
+                    result = _jobStore.UpdateJob(job);
+                    if (!result)
+                        await _schedulerRemoting.ResumeJob(job.Id, service);
+                }
+                return BaseResponse.GetResponse(result);
+            }
+            return BaseResponse.GetResponse("任务在当前状态下不能停止");
         }
 
         /// <summary>
         /// 删除任务
         /// </summary>
         [HttpPost]
-        public ActionResult<BaseResponse> DeleteJob(string id)
+        public async Task<ActionResult<BaseResponse>> DeleteJob(string id)
         {
-            return BaseResponse.GetResponse("");
+            var job = _jobStore.QueryJob(id);
+            if (job == null) return BaseResponse.GetResponse("任务不存在");
+
+            if (job.Status == (int)JobStatus.Stop)
+            {
+                var service = new ServiceRouteDescriptor(job.NodeHost, job.NodePort);
+                var result = await _schedulerRemoting.DeleteJob(job.Id, service);
+                if (result)
+                {
+                    job.Status = (int)JobStatus.Deleted;
+                    job.NextRunTime = null;
+                    result = _jobStore.UpdateJob(job);
+                }
+                return BaseResponse.GetResponse(result);
+            }
+            return BaseResponse.GetResponse("任务在停止状态下才能删除");
         }
 
         [NonAction]
@@ -210,11 +277,16 @@ namespace SchedulerZ.Manager.API.Controllers
             //更新状态
             if (status)
             {
+                job.Status = (int)JobStatus.Running;
+                job.NodeHost = service.Address;
+                job.NodePort = service.Port;
 
+                status = _jobStore.UpdateJob(job);
+                result.Success = status;
+                result.Message = result.Success ? "启动成功" : "更新任务状态失败";
+                return result;
             }
-
-            result.Success = status;
-            result.Message = result.Success ? "启动成功" : "启动失败";
+            result.Message = "启动失败";
             return result;
         }
     }

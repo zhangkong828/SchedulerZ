@@ -18,7 +18,7 @@ namespace SchedulerZ.Store.MySQL.Impl
 
         public JobEntity QueryJob(string id)
         {
-            return _context.Jobs.AsNoTracking().SingleOrDefault(x => x.Id == id);
+            return _context.Jobs.AsNoTracking().Where(x => x.Status != -1).SingleOrDefault(x => x.Id == id);
         }
 
         public List<JobEntity> QueryJobList<TOrderKey>(int pageIndex, int pageSize, List<Expression<Func<JobEntity, bool>>> wheres, Expression<Func<JobEntity, TOrderKey>> orderBy, bool isAsc, out int total)

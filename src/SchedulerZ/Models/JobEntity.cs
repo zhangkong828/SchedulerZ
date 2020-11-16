@@ -99,6 +99,9 @@ namespace SchedulerZ.Models
         /// 总运行成功次数
         /// </summary>
         public int TotalRunCount { get; set; }
+
+        public string NodeHost { get; set; }
+        public int NodePort { get; set; }
     }
 
     /// <summary>
