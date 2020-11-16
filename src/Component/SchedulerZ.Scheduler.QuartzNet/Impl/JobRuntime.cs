@@ -18,5 +18,11 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
         {
             Instance.Execute(jobContext);
         }
+
+        public void Dispose()
+        {
+            DomainManager.Remove(JobView.Id);
+            Instance = null;
+        }
     }
 }

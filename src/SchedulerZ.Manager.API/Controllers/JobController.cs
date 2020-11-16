@@ -205,21 +205,16 @@ namespace SchedulerZ.Manager.API.Controllers
         /// 删除任务
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<BaseResponse>> DeleteJob(string id)
+        public ActionResult<BaseResponse> DeleteJob(string id)
         {
             var job = _jobStore.QueryJob(id);
             if (job == null) return BaseResponse.GetResponse("任务不存在");
 
             if (job.Status == (int)JobStatus.Stop)
             {
-                var service = new ServiceRouteDescriptor(job.NodeHost, job.NodePort);
-                var result = await _schedulerRemoting.DeleteJob(job.Id, service);
-                if (result)
-                {
-                    job.Status = (int)JobStatus.Deleted;
-                    job.NextRunTime = null;
-                    result = _jobStore.UpdateJob(job);
-                }
+                job.Status = (int)JobStatus.Deleted;
+                job.NextRunTime = null;
+                var result = _jobStore.UpdateJob(job);
                 return BaseResponse.GetResponse(result);
             }
             return BaseResponse.GetResponse("任务在停止状态下才能删除");

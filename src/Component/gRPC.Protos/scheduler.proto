@@ -10,7 +10,6 @@ service SchedulerService{
 	rpc PauseJob(Job) returns(SchedulerResponse);
 	rpc ResumeJob(Job) returns(SchedulerResponse);
 	rpc StopJob(Job) returns(SchedulerResponse);
-	rpc DeleteJob(Job) returns(SchedulerResponse);
 	rpc RunJobOnceNow(Job) returns(SchedulerResponse);
 }
 

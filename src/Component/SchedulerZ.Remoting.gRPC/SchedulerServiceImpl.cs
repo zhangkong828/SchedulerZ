@@ -43,12 +43,6 @@ namespace SchedulerZ.Remoting.gRPC
             return new SchedulerResponse() { Success = result };
         }
 
-        public override async Task<SchedulerResponse> DeleteJob(Job request, ServerCallContext context)
-        {
-            var result = await _schedulerManager.DeleteJob(request.Id);
-            return new SchedulerResponse() { Success = result };
-        }
-
         public override async Task<SchedulerResponse> RunJobOnceNow(Job request, ServerCallContext context)
         {
             var result = await _schedulerManager.RunJobOnceNow(request.Id);

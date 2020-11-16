@@ -1,17 +1,34 @@
-﻿using System;
+﻿using SchedulerZ.Domain;
+using SchedulerZ.Models;
+using SchedulerZ.Utility;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace SchedulerZ
 {
     public class JobContext
     {
-        private JobBase _instance;
 
-        public JobContext(JobBase instance)
+        public JobContext(JobEntity jobView, AssemblyDomain domain)
         {
-            _instance = instance;
+            JobView = jobView;
+            Domain = domain;
+
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(JobView.CustomParamsJson))
+                    JobDataMap = Utils.JsonDeserialize<List<JobParam>>(JobView.CustomParamsJson).ToDictionary(x => x.Key, x => x.Value);
+            }
+            catch
+            {
+                JobDataMap = new Dictionary<string, object>();
+            }
         }
+
+        public JobEntity JobView { get; set; }
+        public AssemblyDomain Domain { get; set; }
 
         public Dictionary<string, object> JobDataMap { private get; set; }
 
@@ -30,5 +47,11 @@ namespace SchedulerZ
                 return default;
             }
         }
+    }
+
+    public class JobParam
+    {
+        public string Key { get; set; }
+        public object Value { get; set; }
     }
 }

@@ -27,22 +27,6 @@ namespace SchedulerZ.Scheduler.QuartzNet
             return CronExpression.IsValidExpression(cronExpression);
         }
 
-        public async Task<bool> DeleteJob(string jobId)
-        {
-            JobKey jk = new JobKey(jobId);
-            if (await _scheduler.CheckExists(jk))
-            {
-                var tk = new TriggerKey(jobId);
-                await _scheduler.UnscheduleJob(tk);
-                await _scheduler.DeleteJob(jk);
-                //卸载Job  TODO
-
-                _logger.Info($"Job[{jobId}] is delete");
-                return true;
-            }
-            return false;
-        }
-
         public async Task<bool> PauseJob(string jobId)
         {
             JobKey jk = new JobKey(jobId);
@@ -107,8 +91,14 @@ namespace SchedulerZ.Scheduler.QuartzNet
             JobKey jk = new JobKey(jobId);
             if (await _scheduler.CheckExists(jk))
             {
-                var tk = new TriggerKey(jobId);
-                await _scheduler.UnscheduleJob(tk);
+                var job = await _scheduler.GetJobDetail(jk);
+                var instance = job.JobDataMap["JobRuntime"] as JobRuntime;
+                if (instance != null)
+                {
+                    instance.Instance?.Dispose();
+                    instance.Dispose();
+                }
+                await _scheduler.DeleteJob(jk);
                 _logger.Info($"Job[{jobId}] is stop");
                 return true;
             }

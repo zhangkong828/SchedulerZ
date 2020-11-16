@@ -15,9 +15,7 @@ namespace SchedulerZ.Scheduler
         Task<bool> ResumeJob(string jobId);
 
         Task<bool> StopJob(string jobId);
-
-        Task<bool> DeleteJob(string jobId);
-
+        
         Task<bool> RunJobOnceNow(string jobId);
 
         bool ValidExpression(string cronExpression);

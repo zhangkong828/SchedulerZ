@@ -49,13 +49,6 @@ namespace SchedulerZ.Remoting.gRPC.Client
             var response = client.StopJob(new Job() { Id = jobId });
             return Task.FromResult(response.Success);
         }
-        public Task<bool> DeleteJob(string jobId, ServiceRouteDescriptor service)
-        {
-            var client = _clientFactory.Get(service);
-
-            var response = client.DeleteJob(new Job() { Id = jobId });
-            return Task.FromResult(response.Success);
-        }
 
         public Task<bool> RunJobOnceNow(string jobId, ServiceRouteDescriptor service)
         {

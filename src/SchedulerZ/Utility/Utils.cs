@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
@@ -48,6 +49,24 @@ namespace SchedulerZ.Utility
             if (objs.Length == 0) return str;
             System.ComponentModel.DescriptionAttribute da = (System.ComponentModel.DescriptionAttribute)objs[0];
             return da.Description;
+        }
+
+        public static string JsonSerialize(object obj)
+        {
+            return JsonConvert.SerializeObject(obj);
+        }
+
+        public static string JsonSerializeIgnoreNullValue(object obj)
+        {
+            JsonSerializerSettings jsetting = new JsonSerializerSettings();
+            jsetting.NullValueHandling = NullValueHandling.Ignore;
+            jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+            return JsonConvert.SerializeObject(obj, jsetting);
+        }
+
+        public static T JsonDeserialize<T>(string json)
+        {
+            return JsonConvert.DeserializeObject<T>(json);
         }
     }
 }
