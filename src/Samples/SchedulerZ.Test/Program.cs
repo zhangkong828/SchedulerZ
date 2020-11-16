@@ -31,7 +31,7 @@ namespace SchedulerZ.Test
                                     })
                                     .UseConsulServiceRoute(config =>
                                     {
-                                        config.Host = "192.168.31.101";
+                                        config.Host = "192.168.1.203";
                                     })
                                     .UseGrpcRemotingClient()
                                     .BuildServiceProvider();
@@ -40,19 +40,19 @@ namespace SchedulerZ.Test
 
             //通过 负载 拿到可用service
             var loadBalancer = serviceProvider.GetService<ILoadBalancerFactory>().Get();
-            var service = loadBalancer.Lease("test").GetAwaiter().GetResult();
+            var service = loadBalancer.Lease("worker").GetAwaiter().GetResult();
             Console.WriteLine($"{service.Name}|{service.Address}:{service.Port}");
 
             //远程调用
             var remoting = serviceProvider.GetService<ISchedulerRemoting>();
             var job = new JobEntity()
             {
-                Id = "test",
                 Name = "HelloWorldJob",
                 Remark = "这是一个测试Job",
                 CronExpression = "0/5 * * * * ? ",
                 AssemblyName = "SchedulerZ.HelloWorldJob",
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
+                CustomParamsJson = "[{\"key\":\"name\",\"value\":\"zk\"}]"
             };
 
             remoting.StartJob(job, service);

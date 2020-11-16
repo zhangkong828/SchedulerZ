@@ -1,0 +1,14 @@
+{
+  "SchedulerZ": {
+
+  },
+  //MySql
+  "MySqlStore": {
+    "ConnectionString": "Server=192.168.1.203;User Id=root;Password=123456;Database=SchedulerZ"
+  },
+  //Consul б╥си
+  "ConsulServiceRoute": {
+    "Host": "192.168.1.203",
+    "Port": 8500
+  }
+}

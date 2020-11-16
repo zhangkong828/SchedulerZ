@@ -14,7 +14,7 @@
   //Consul 路由
   "ConsulServiceRoute": {
     "Scheme": "http",
-    "Host": "192.168.31.101",
+    "Host": "192.168.1.203",
     "Port": 8500,
     "ServiceCheckInterval": 10000,
     "ServiceCriticalInterval": 3000,
@@ -23,10 +23,10 @@
     //需要注册的服务,如果没有 删除该节点
     "RegisterService": {
       "Name": "worker",
-      "Address": "192.168.31.200",
+      "Address": "192.168.1.202",
       "Port": 10001,
       "HealthCheckType": "TCP",
-      "HealthCheck": "192.168.31.200:10001"
+      "HealthCheck": "192.168.1.202:10001"
     }
   },
   //Grpc Service

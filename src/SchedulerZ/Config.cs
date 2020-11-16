@@ -40,16 +40,19 @@ namespace SchedulerZ
 
         public static T GetValue<T>(string key, T defaultValue)
         {
+            if (Configuration == null) return default;
             return Configuration.GetValue<T>(key, defaultValue);
         }
 
         public static T Get<T>(string key) where T : class
         {
+            if (Configuration == null) return default;
             return Configuration.GetSection(key).Get<T>();
         }
 
         public static bool IsExists(string key)
         {
+            if (Configuration == null) return false;
             return Configuration.GetSection(key).Exists();
         }
 

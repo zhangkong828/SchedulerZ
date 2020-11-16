@@ -34,6 +34,46 @@
             健康检查
             </summary>
         </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.CreateJob(SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest)">
+            <summary>
+            创建Job
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.EditJob(SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest)">
+            <summary>
+            编辑Job
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.StartJob(System.String)">
+            <summary>
+            启动任务
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.RunOnceNowJob(System.String)">
+            <summary>
+            立即运行一次
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.PauseJob(System.String)">
+            <summary>
+            暂停任务
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.ResumeJob(System.String)">
+            <summary>
+            恢复任务
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.StopJob(System.String)">
+            <summary>
+            停止任务
+            </summary>
+        </member>
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.DeleteJob(System.String)">
+            <summary>
+            删除任务
+            </summary>
+        </member>
         <member name="M:SchedulerZ.Manager.API.Controllers.SystemController.QueryUserList(SchedulerZ.Manager.API.Model.Request.UserListRequest)">
             <summary>
             用户列表
@@ -190,6 +230,51 @@
         <member name="P:SchedulerZ.Manager.API.Model.Request.LoginRequest.Password">
             <summary>
             密码
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.Remark">
+            <summary>
+            Job描述
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.IsSimple">
+            <summary>
+            是否简易Job(周期运行)
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.CronExpression">
+            <summary>
+            cron表达式
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.RepeatCount">
+            <summary>
+            重复次数
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.IntervalSeconds">
+            <summary>
+            间隔秒数
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.CustomParamsJson">
+            <summary>
+            自定义参数
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.StartTime">
+            <summary>
+            生效时间
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.EndTime">
+            <summary>
+            失效时间
+            </summary>
+        </member>
+        <member name="P:SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest.RunNow">
+            <summary>
+            是否立即执行
             </summary>
         </member>
         <member name="M:SchedulerZ.Manager.API.Utility.FormatHelper.EncodeBase64(System.Text.Encoding,System.String)">

@@ -92,11 +92,11 @@ namespace SchedulerZ.Scheduler.QuartzNet
             if (await _scheduler.CheckExists(jk))
             {
                 var job = await _scheduler.GetJobDetail(jk);
-                var instance = job.JobDataMap["JobRuntime"] as JobRuntime;
-                if (instance != null)
+                var jobRuntime = job.JobDataMap["JobRuntime"] as JobRuntime;
+                if (jobRuntime != null)
                 {
-                    instance.Instance?.Dispose();
-                    instance.Dispose();
+                    jobRuntime.Instance?.Dispose();
+                    jobRuntime.Dispose();
                 }
                 await _scheduler.DeleteJob(jk);
                 _logger.Info($"Job[{jobId}] is stop");
