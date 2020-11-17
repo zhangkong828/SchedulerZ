@@ -12,9 +12,11 @@ namespace SchedulerZ.Remoting.gRPC.Client
     public class SchedulerRemoting : ISchedulerRemoting
     {
         private readonly IGrpcClientFactory<SchedulerService.SchedulerServiceClient> _clientFactory;
-        public SchedulerRemoting(IGrpcClientFactory<SchedulerService.SchedulerServiceClient> clientFactory)
+        private readonly IGrpcClientFactory<FileService.FileServiceClient> _fileClientFactory;
+        public SchedulerRemoting(IGrpcClientFactory<SchedulerService.SchedulerServiceClient> clientFactory, IGrpcClientFactory<FileService.FileServiceClient> fileClientFactory)
         {
             _clientFactory = clientFactory;
+            _fileClientFactory = fileClientFactory;
         }
 
         public Task<bool> StartJob(JobEntity job, ServiceRouteDescriptor service)
@@ -56,6 +58,16 @@ namespace SchedulerZ.Remoting.gRPC.Client
 
             var response = client.RunJobOnceNow(new Job() { Id = jobId });
             return Task.FromResult(response.Success);
+        }
+
+        public async Task<bool> UploadFile(string filePath, ServiceRouteDescriptor service)
+        {
+            var client = _fileClientFactory.Get(service);
+
+            var filePaths = new List<string>();
+            filePaths.Add(filePath);
+            var response = await FileTransfer.FileUpload(client, filePaths, Guid.NewGuid().ToString());
+            return response.IsSuccess;
         }
     }
 }

@@ -16,7 +16,9 @@ namespace SchedulerZ.Remoting
         Task<bool> ResumeJob(string jobId, ServiceRouteDescriptor service);
 
         Task<bool> StopJob(string jobId, ServiceRouteDescriptor service);
-        
+
         Task<bool> RunJobOnceNow(string jobId, ServiceRouteDescriptor service);
+
+        Task<bool> UploadFile(string filePath, ServiceRouteDescriptor service);
     }
 }

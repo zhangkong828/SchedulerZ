@@ -16,8 +16,8 @@ service SchedulerService{
 }
 
 service FileService{
-	rpc JobExists(Job) returns(FileResponse);
-	rpc UploadFile(stream UploadRequest) returns(FileResponse);
+	rpc DownloadFile (FileRequest) returns (stream FileReply);
+	rpc UploadFile(stream FileReply) returns(FileResponse);
 }
 
 message Job{
@@ -47,11 +47,22 @@ message SchedulerResponse{
 	bool Success=1;
 }
 
-message UploadRequest{
-	bytes content = 1;
-}
 
 message FileResponse{
-	bool Success=1;
-	string Message=2;
+    string FileName=1;//文件名
+    string Mark = 2;//携带的包
 }
+
+//请求下载文件时，所需下载文件的文件名称集合
+message FileRequest{
+    repeated string FileNames=1;//文件名集合
+    string Mark = 2;//携带的包
+}
+
+//下载和上传文件时的应答数据
+message FileReply{
+    string FileName=1;//文件名
+    int32 Block = 2;//标记---第几个数据
+    bytes Content = 3;//数据
+    string Mark = 4;//携带的包
+ }
