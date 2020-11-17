@@ -20,7 +20,7 @@ namespace SchedulerZ.Remoting.gRPC
 
         public override async Task<SchedulerResponse> StartJob(Job request, ServerCallContext context)
         {
-            var jobEntity = Utils.MapperPropertyValue<Job, JobEntity>(request);
+            var jobEntity = Utils.MapperGrpcJob<Job, JobEntity>(request);
             var result = await _schedulerManager.StartJob(jobEntity);
             return new SchedulerResponse() { Success = result };
         }

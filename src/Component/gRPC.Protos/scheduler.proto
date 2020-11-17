@@ -3,6 +3,7 @@
 option csharp_namespace = "SchedulerZ.gRPC";
 
 import "google/protobuf/empty.proto";
+import "google/protobuf/duration.proto"; 
 package Scheduler;
 
 service SchedulerService{
@@ -30,6 +31,15 @@ message Job{
 	string ClassName=9;
 	int64 StartTime=10;
 	int64 EndTime=11;
+	int64 CreateTime=12;
+	string FilePath=13;
+	string CustomParamsJson=14;
+	int32 Status=15;
+	int64 LastRunTime=16;
+	int64 NextRunTime=17;
+	int32 TotalRunCount=18;
+	string NodeHost=19;
+	int32 NodePort=20;
 }
 
 message SchedulerResponse{

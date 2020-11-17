@@ -8,28 +8,45 @@ namespace SchedulerZ.Utility
 {
     public class Utils
     {
-        /// <summary>
-        /// 将属性名相同的原对象属性值映射到目标对象的属性值上
-        /// </summary>
-        /// <typeparam name="Source">原对象类型</typeparam>
-        /// <typeparam name="Target">目标对象类型</typeparam>
-        /// <param name="s">原对象</param>
-        /// <returns></returns>
-        public static Target MapperPropertyValue<Source, Target>(Source s)
+        public static Target MapperGrpcJob<Source, Target>(Source s)
         {
             Target d = Activator.CreateInstance<Target>();
             try
             {
-                var Types = s.GetType();//获得类型
+                var Types = s.GetType();
                 var Typed = typeof(Target);
-                foreach (PropertyInfo sp in Types.GetProperties())//获得类型的属性字段
+                foreach (PropertyInfo sp in Types.GetProperties())
                 {
                     foreach (PropertyInfo dp in Typed.GetProperties())
                     {
-                        if (dp.Name.ToLower() == sp.Name.ToLower())//判断属性名是否相同
+                        if (dp.Name.ToLower() == sp.Name.ToLower())
                         {
                             if (dp.PropertyType == sp.PropertyType)
-                                dp.SetValue(d, sp.GetValue(s, null), null);//获得s对象属性的值复制给d对象的属性
+                                dp.SetValue(d, sp.GetValue(s, null), null);
+                            else
+                            {
+                                if (dp.PropertyType.IsGenericType && dp.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>) && sp.PropertyType.FullName == "System.Int64")
+                                {
+                                    var value = (long)sp.GetValue(s, null);
+                                    if (value > 0)
+                                    {
+                                        var datetime = ConvertToDateTime(value);
+                                        dp.SetValue(d, datetime, null);
+                                    }
+                                }
+                                else if (dp.PropertyType.FullName == "System.Int64" && sp.PropertyType.IsGenericType && sp.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
+                                {
+                                    var value = sp.GetValue(s, null);
+                                    if (value != null)
+                                    {
+                                        if (DateTime.TryParse(value.ToString(), out DateTime datetime))
+                                        {
+                                            var timeStamp = ConvertToTimeStamp(datetime);
+                                            dp.SetValue(d, timeStamp, null);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -67,6 +84,41 @@ namespace SchedulerZ.Utility
         public static T JsonDeserialize<T>(string json)
         {
             return JsonConvert.DeserializeObject<T>(json);
+        }
+
+        /// <summary>
+        /// 日期转换为时间戳
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="isMilliseconds">是否毫秒</param>
+        /// <returns></returns>
+        public static long ConvertToTimeStamp(DateTime time, bool isMilliseconds = true)
+        {
+            System.DateTime startTime = TimeZoneInfo.ConvertTimeFromUtc(new System.DateTime(1970, 1, 1), TimeZoneInfo.Local);
+            if (isMilliseconds)
+            {
+                return (int)(time - startTime).TotalMilliseconds;
+            }
+            return (int)(time - startTime).TotalSeconds;
+        }
+
+        /// <summary>
+        /// 时间戳转换为日期
+        /// </summary>
+        /// <param name="timeStamp"></param>
+        /// <param name="isMilliseconds">是否毫秒</param>
+        /// <returns></returns>
+        public static DateTime ConvertToDateTime(long timeStamp, bool isMilliseconds = true)
+        {
+            DateTime dtStart = TimeZoneInfo.ConvertTimeFromUtc(new System.DateTime(1970, 1, 1), TimeZoneInfo.Local);
+            if (isMilliseconds)
+            {
+                return dtStart.AddMilliseconds(timeStamp);
+            }
+            else
+            {
+                return dtStart.AddSeconds(timeStamp);
+            }
         }
     }
 }

@@ -21,7 +21,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
         {
             var client = _clientFactory.Get(service);
 
-            var jobRequest = Utils.MapperPropertyValue<JobEntity, Job>(job);
+            var jobRequest = Utils.MapperGrpcJob<JobEntity, Job>(job);
             var response = client.StartJob(jobRequest);
             return Task.FromResult(response.Success);
         }
