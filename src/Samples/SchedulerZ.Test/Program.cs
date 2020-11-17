@@ -52,7 +52,8 @@ namespace SchedulerZ.Test
                 CronExpression = "0/5 * * * * ? ",
                 AssemblyName = "SchedulerZ.HelloWorldJob",
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
-                CustomParamsJson = "[{\"key\":\"name\",\"value\":\"zk\"}]"
+                CustomParamsJson = "[{\"key\":\"name\",\"value\":\"zk\"}]",
+                FilePath = "111"
             };
 
             remoting.StartJob(job, service);

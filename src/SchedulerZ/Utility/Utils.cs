@@ -47,6 +47,7 @@ namespace SchedulerZ.Utility
                                     }
                                 }
                             }
+                            break;
                         }
                     }
                 }
