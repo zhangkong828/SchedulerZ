@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SchedulerZ.Caching;
+using SchedulerZ.Route.Consul.Caching;
 using SchedulerZ.Route.Consul.ClientProvider;
 using SchedulerZ.Route.Consul.ClientProvider.Impl;
 using System;
@@ -22,6 +24,12 @@ namespace SchedulerZ.Route.Consul
             services.AddSingleton<IConsulClientProvider, DefaultConsulClientProvider>();
             services.AddSingleton<IServiceRoute, ConsulServiceRoute>();
 
+            //是否启用consul的KV缓存
+            if (config.EnableCaching)
+            {
+                services.AddSingleton<ICaching, ConsulCaching>();
+                services.AddSingleton<ICachingProvider, ConsulCachingProvider>();
+            }
 
             //是否有需要注册的服务
             if (Config.IsExists("ConsulServiceRoute:RegisterService") || registerServiceDelegate != null)
