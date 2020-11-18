@@ -31,10 +31,6 @@ namespace SchedulerZ.Route.Consul
         /// </summary>
         public int NodeCheckTimeOut { get; set; } = 5000;
 
-        /// <summary>
-        /// 是否启用缓存（KV）
-        /// </summary>
-        public bool EnableCaching { get; set; } = false;
 
     }
 
