@@ -20,5 +20,11 @@ namespace SchedulerZ.Remoting
         Task<bool> RunJobOnceNow(string jobId, ServiceRouteDescriptor service);
 
         Task<bool> UploadFile(string filePath, ServiceRouteDescriptor service);
+
+        Task<bool> UploadFile(List<string> filePaths, ServiceRouteDescriptor service);
+
+        Task<bool> DownloadFile(string fileName, string saveDirectoryPath, ServiceRouteDescriptor service);
+
+        Task<bool> DownloadFile(List<string> fileNames, string saveDirectoryPath, ServiceRouteDescriptor service);
     }
 }

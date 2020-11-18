@@ -26,7 +26,7 @@ namespace SchedulerZ.Remoting.gRPC
         public override async Task DownloadFile(FileRequest request, IServerStreamWriter<FileReply> responseStream, ServerCallContext context)
         {
             List<string> lstSuccFiles = new List<string>();//传输成功的文件
-            int chunkSize = 1024 * 1024;//每次读取的数据
+            int chunkSize = 1024 * 1024 * 10;//每次读取的数据
             var buffer = new byte[chunkSize];//数据缓冲区
             FileStream fs = null;//文件流
             try
@@ -34,7 +34,7 @@ namespace SchedulerZ.Remoting.gRPC
                 for (int i = 0; i < request.FileNames.Count; i++)
                 {
                     string fileName = request.FileNames[i];
-                    string filePath = Path.GetFullPath($".//Files\\{fileName}");
+                    string filePath = $"{AppContext.BaseDirectory}\\{Config.Options.JobDirectory}\\{fileName}".Replace('\\', Path.DirectorySeparatorChar);
                     FileReply reply = new FileReply
                     {
                         FileName = fileName,
@@ -78,7 +78,7 @@ namespace SchedulerZ.Remoting.gRPC
                 await responseStream.WriteAsync(new FileReply
                 {
                     FileName = string.Empty,
-                    Block = -2,//告诉客户端，文件已经传输完成
+                    Block = -2,
                     Content = Google.Protobuf.ByteString.Empty,
                     Mark = request.Mark
                 });
@@ -94,7 +94,6 @@ namespace SchedulerZ.Remoting.gRPC
             Console.WriteLine($"{request.Mark}，文件传输完成。共计【{lstSuccFiles.Count / request.FileNames.Count}】");
         }
 
-
         /// <summary>
         /// 上传文件
         /// </summary>
@@ -102,7 +101,7 @@ namespace SchedulerZ.Remoting.gRPC
         /// <param name="responseStream">响应流</param>
         /// <param name="context">站点上下文</param>
         /// <returns></returns>
-        public override async Task<FileResponse> UploadFile(IAsyncStreamReader<FileReply> requestStream, ServerCallContext context)
+        public override async Task UploadFile(IAsyncStreamReader<FileReply> requestStream, IServerStreamWriter<FileResponse> responseStream, ServerCallContext context)
         {
             List<string> lstFilesName = new List<string>();//文件名
             List<FileReply> lstContents = new List<FileReply>();//数据集合
@@ -127,7 +126,7 @@ namespace SchedulerZ.Remoting.gRPC
                     {
                         Console.WriteLine($"文件【{reply.FileName}】取消传输！");
                         lstContents.Clear();
-                        fs?.Close();//释放文件流
+                        fs?.Close();
                         if (!string.IsNullOrEmpty(savePath) && File.Exists(savePath))//如果传输不成功，删除该文件
                         {
                             File.Delete(savePath);
@@ -147,14 +146,18 @@ namespace SchedulerZ.Remoting.gRPC
                         savePath = string.Empty;
 
                         //告知客户端，已经完成传输
-                        return new FileResponse() { FileName = reply.FileName, Mark = mark };
+                        await responseStream.WriteAsync(new FileResponse
+                        {
+                            FileName = reply.FileName,
+                            Mark = mark
+                        });
                     }
                     else
                     {
                         //有新文件
                         if (string.IsNullOrEmpty(savePath))
                         {
-                            savePath = $"{AppContext.BaseDirectory}\\{Config.Options.JobDirectory}\\{reply.FileName}".Replace('\\', Path.DirectorySeparatorChar); 
+                            savePath = $"{AppContext.BaseDirectory}\\{Config.Options.JobDirectory}\\{reply.FileName}".Replace('\\', Path.DirectorySeparatorChar);
                             fs = new FileStream(savePath, FileMode.Create, FileAccess.ReadWrite);
                             Console.WriteLine($"{mark}，上传文件：{savePath}，{DateTime.UtcNow.ToString("HH:mm:ss:ffff")}");
                         }
@@ -175,8 +178,6 @@ namespace SchedulerZ.Remoting.gRPC
             {
                 fs?.Dispose();
             }
-
-            return new FileResponse();
         }
     }
 }

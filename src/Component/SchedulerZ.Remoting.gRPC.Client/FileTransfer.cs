@@ -40,12 +40,12 @@ namespace SchedulerZ.Remoting.gRPC.Client
             var result = new TransferResult<List<string>>() { Message = $"文件保存路径不正确：{saveDirectoryPath}" };
             if (!Directory.Exists(saveDirectoryPath))
             {
-                return await Task.Run(() => result);//文件路径不存在
+                return result;//文件路径不存在
             }
             if (fileNames.Count == 0)
             {
                 result.Message = "未包含任何文件";
-                return await Task.Run(() => result);//文件路径不存在
+                return result;//文件路径不存在
             }
             result.Message = "未能连接到服务器";
             FileRequest request = new FileRequest() { Mark = mark };//请求数据
@@ -75,7 +75,7 @@ namespace SchedulerZ.Remoting.gRPC.Client
                         }
                         else if (reaponseStream.Current.Block == -1)//当前文件传输错误
                         {
-                            Console.WriteLine($"文件【{reaponseStream.Current.FileName}】传输失败！");//写入日志
+                            Console.WriteLine($"文件【{reaponseStream.Current.FileName}】传输失败！");
                             lstContents.Clear();
                             fs?.Close();
                             if (!string.IsNullOrEmpty(savePath) && File.Exists(savePath))//如果传输不成功，删除该文件
@@ -204,8 +204,9 @@ namespace SchedulerZ.Remoting.gRPC.Client
                                 reply.Content = Google.Protobuf.ByteString.Empty;
                                 await stream.RequestStream.WriteAsync(reply);//发送结束标记
 
-                                var response = await stream.ResponseAsync;
-                                if (response != null && response.Mark == mark)
+                                //等待服务器回传
+                                await stream.ResponseStream.MoveNext(cancellationToken);
+                                if (stream.ResponseStream.Current != null && stream.ResponseStream.Current.Mark == mark)
                                 {
                                     lstSuccFiles.Add(filePath);//记录成功的文件
                                 }

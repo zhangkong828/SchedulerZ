@@ -58,7 +58,11 @@ namespace SchedulerZ.Test
 
             // remoting.StartJob(job, service);
 
-            remoting.UploadFile(@"D:\github\SchedulerZ\src\Jobs\SchedulerZ.HelloWorldJob\bin\Debug\netcoreapp3.1\SchedulerZ.HelloWorldJob.zip", service);
+            //上传
+            //remoting.UploadFile(@"D:\github\SchedulerZ\src\Jobs\SchedulerZ.HelloWorldJob\bin\Debug\netcoreapp3.1\SchedulerZ.HelloWorldJob.zip", service);
+
+            //下载
+            remoting.DownloadFile("SchedulerZ.HelloWorldJob.zip", @"d:\", service);
 
             Console.ReadKey();
         }

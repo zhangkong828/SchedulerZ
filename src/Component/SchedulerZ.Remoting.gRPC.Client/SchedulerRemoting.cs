@@ -62,11 +62,29 @@ namespace SchedulerZ.Remoting.gRPC.Client
 
         public async Task<bool> UploadFile(string filePath, ServiceRouteDescriptor service)
         {
+            var filePaths = new List<string>(1) { filePath };
+            return await UploadFile(filePaths, service);
+        }
+
+        public async Task<bool> UploadFile(List<string> filePaths, ServiceRouteDescriptor service)
+        {
             var client = _fileClientFactory.Get(service);
 
-            var filePaths = new List<string>();
-            filePaths.Add(filePath);
             var response = await FileTransfer.FileUpload(client, filePaths, Guid.NewGuid().ToString());
+            return response.IsSuccess;
+        }
+
+        public async Task<bool> DownloadFile(string fileName, string saveDirectoryPath, ServiceRouteDescriptor service)
+        {
+            var fileNames = new List<string>(1) { fileName };
+            return await DownloadFile(fileNames, saveDirectoryPath, service);
+        }
+
+        public async Task<bool> DownloadFile(List<string> fileNames, string saveDirectoryPath, ServiceRouteDescriptor service)
+        {
+            var client = _fileClientFactory.Get(service);
+
+            var response = await FileTransfer.FileDownload(client, fileNames, Guid.NewGuid().ToString(), saveDirectoryPath);
             return response.IsSuccess;
         }
     }

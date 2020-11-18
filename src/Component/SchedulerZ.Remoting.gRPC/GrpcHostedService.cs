@@ -14,13 +14,15 @@ namespace SchedulerZ.Remoting.gRPC
         private static Server _grpcServer;
 
         private readonly SchedulerService.SchedulerServiceBase _schedulerServiceBase;
+        private readonly FileService.FileServiceBase _fileServiceBase;
         private readonly GrpcServiceConfig _config;
-        public GrpcHostedService(SchedulerService.SchedulerServiceBase schedulerServiceBase, GrpcServiceConfig config)
+        public GrpcHostedService(SchedulerService.SchedulerServiceBase schedulerServiceBase, FileService.FileServiceBase fileServiceBase, GrpcServiceConfig config)
         {
             _schedulerServiceBase = schedulerServiceBase;
+            _fileServiceBase = fileServiceBase;
             _config = config;
         }
-        
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             return Task.Factory.StartNew(() =>
@@ -33,7 +35,7 @@ namespace SchedulerZ.Remoting.gRPC
 
                 _grpcServer = new Server(channelOptions)
                 {
-                    Services = { SchedulerService.BindService(_schedulerServiceBase) },
+                    Services = { SchedulerService.BindService(_schedulerServiceBase), FileService.BindService(_fileServiceBase) },
                     Ports = { new ServerPort(_config.Host, _config.Port, ServerCredentials.Insecure) }
                 };
 
