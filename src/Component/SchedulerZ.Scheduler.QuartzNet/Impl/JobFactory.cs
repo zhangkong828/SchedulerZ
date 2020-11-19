@@ -3,6 +3,8 @@ using SchedulerZ.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
+using System.Linq;
 using System.Text;
 
 namespace SchedulerZ.Scheduler.QuartzNet.Impl
@@ -11,12 +13,13 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
     {
         private const string DefaultJobBaseAssemblyName = "SchedulerZ";
 
-        public static JobRuntime CreateJobRuntime(string jobDirectory, JobEntity jobView)
+        public static JobRuntime CreateJobRuntime(JobEntity jobView)
         {
-            var domain = DomainManager.Create(jobView.Id);
+            var assemblyPath = GetJobAssemblyPath(jobView);
+            if (string.IsNullOrWhiteSpace(assemblyPath))
+                throw new FileNotFoundException($"{jobView.FilePath}不存在");
 
-            DeleteJobBaseAssemblyFromOutput(jobDirectory, jobView);
-            var assemblyPath = JobFactory.GetJobAssemblyPath(jobDirectory, jobView);
+            var domain = DomainManager.Create(jobView.Id);
             var assembly = domain.LoadFile(assemblyPath);
 
             Type type = assembly.GetType(jobView.ClassName, true, true);
@@ -34,20 +37,28 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
             };
         }
 
-        private static void DeleteJobBaseAssemblyFromOutput(string jobDirectory, JobEntity jobView)
+        public static string GetJobAssemblyPath(JobEntity jobView)
         {
-            var dllPath = $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
-            if (File.Exists(dllPath))
-                File.Delete(dllPath);
-
-            var pdbPath = $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.AssemblyName}\\{DefaultJobBaseAssemblyName}.pdb".Replace('\\', Path.DirectorySeparatorChar);
-            if (File.Exists(pdbPath))
-                File.Delete(pdbPath);
+            //job解压缩后的目录
+            var directoryPath = $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.Id}{jobView.Name}".Replace('\\', Path.DirectorySeparatorChar);
+            if (!Directory.Exists(directoryPath))
+            {
+                var zipPath = $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\{jobView.FilePath}".Replace('\\', Path.DirectorySeparatorChar);
+                if (!File.Exists(zipPath)) return null;
+                //将指定zip解压缩到对应的目录下
+                ZipFile.ExtractToDirectory(zipPath, directoryPath, true);
+            }
+            DeleteJobBaseAssemblyFromOutput(directoryPath);
+            return $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.Id}{jobView.Name}\\{jobView.AssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
         }
 
-        public static string GetJobAssemblyPath(string jobDirectory, JobEntity jobView)
+        private static void DeleteJobBaseAssemblyFromOutput(string directoryPath)
         {
-            return $"{Directory.GetCurrentDirectory()}\\{Config.Options.JobDirectory}\\src\\{jobView.AssemblyName}\\{jobView.AssemblyName}.dll".Replace('\\', Path.DirectorySeparatorChar);
+            var files = Directory.GetFiles(directoryPath).Where(x => x.EndsWith(".pdb") || x.EndsWith($"{DefaultJobBaseAssemblyName}.dll"));
+            foreach (var file in files)
+            {
+                File.Delete(file);
+            }
         }
 
     }

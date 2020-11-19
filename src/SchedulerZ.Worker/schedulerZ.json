@@ -2,13 +2,8 @@
   "SchedulerZ": {
 
   },
-  //MySql
-  "MySqlStore": {
-    "ConnectionString": "Server=192.168.1.203;User Id=root;Password=123456;Database=SchedulerZ"
-  },
   //QuartzNet
   "QuartzNet": {
-    "JobDirectory": "Jobs",
     "ThreadPoolCount": 20
   },
   //Consul б╥си

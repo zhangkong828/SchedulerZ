@@ -135,7 +135,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         private async Task Start(JobEntity jobView)
         {
-            var jobRuntime = JobFactory.CreateJobRuntime(_config.JobDirectory, jobView);
+            var jobRuntime = JobFactory.CreateJobRuntime(jobView);
 
             JobDataMap map = new JobDataMap
             {
