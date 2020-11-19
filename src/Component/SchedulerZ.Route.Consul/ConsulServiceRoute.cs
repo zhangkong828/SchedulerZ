@@ -143,5 +143,33 @@ namespace SchedulerZ.Route.Consul
             }
             return nodes;
         }
+
+        public async Task<string> GetKV(string key)
+        {
+            var client = _consulClientProvider.GetClient();
+            if (client == null) return null;
+
+            var result = await client.KV.Get(key);
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                return Encoding.UTF8.GetString(result.Response.Value);
+            }
+            return null;
+        }
+
+        public async Task<bool> SetKV(string key, string value)
+        {
+            var client = _consulClientProvider.GetClient();
+            if (client == null) return false;
+
+            var val = new KVPair(key);
+            val.Value = Encoding.UTF8.GetBytes(value);
+            var result = await client.KV.Put(val);
+            if (result.StatusCode == HttpStatusCode.OK)
+            {
+                return result.Response;
+            }
+            return false;
+        }
     }
 }

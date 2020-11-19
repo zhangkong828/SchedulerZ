@@ -33,5 +33,9 @@ namespace SchedulerZ.Route
         /// </summary>
         Task<IEnumerable<NodeDescriptor>> QueryNodes();
 
+        Task<string> GetKV(string key);
+
+        Task<bool> SetKV(string key, string value);
+
     }
 }

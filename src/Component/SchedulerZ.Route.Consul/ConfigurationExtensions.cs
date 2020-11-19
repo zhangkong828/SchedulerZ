@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using SchedulerZ.Caching;
-using SchedulerZ.Route.Consul.Caching;
 using SchedulerZ.Route.Consul.ClientProvider;
 using SchedulerZ.Route.Consul.ClientProvider.Impl;
 using System;

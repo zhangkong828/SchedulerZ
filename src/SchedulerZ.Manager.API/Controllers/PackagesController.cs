@@ -18,6 +18,8 @@ using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Request;
 using SchedulerZ.Manager.API.Model.Response;
 using SchedulerZ.Manager.API.Utility;
+using SchedulerZ.Remoting;
+using SchedulerZ.Route;
 
 namespace SchedulerZ.Manager.API.Controllers
 {
@@ -28,13 +30,14 @@ namespace SchedulerZ.Manager.API.Controllers
         private readonly IHostEnvironment _hostEnvironment;
         private readonly ILogger<PackagesController> _logger;
 
-        private readonly CSRedisClient _redisClient;
-        private readonly IEasyCachingProvider _cachingProvider;
-        public PackagesController(ILogger<PackagesController> logger, IHostEnvironment hostEnvironment, CSRedisClient redisClient)
+        private readonly ISchedulerRemoting _schedulerRemoting;
+        private readonly IServiceRoute _serviceRoute;
+        public PackagesController(ILogger<PackagesController> logger, IHostEnvironment hostEnvironment, ISchedulerRemoting schedulerRemoting, IServiceRoute serviceRoute)
         {
             _logger = logger;
             _hostEnvironment = hostEnvironment;
-            _redisClient = redisClient;
+            _schedulerRemoting = schedulerRemoting;
+            _serviceRoute = serviceRoute;
 
             _jobDirectory = Config.Options.JobDirectory;
             var allowedFileExtensions = Config.Options.JobAllowedFileExtension;
@@ -42,7 +45,7 @@ namespace SchedulerZ.Manager.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<BaseResponse> UploadPackage()
+        public async Task<ActionResult<BaseResponse>> UploadPackage()
         {
             var files = Request.Form.Files;
 
@@ -50,6 +53,7 @@ namespace SchedulerZ.Manager.API.Controllers
             foreach (var file in files)
             {
                 var result = new UploadPackageResponse();
+                var uploadPath = "";
                 try
                 {
                     var fileExtension = Path.GetExtension(file.FileName);
@@ -68,12 +72,12 @@ namespace SchedulerZ.Manager.API.Controllers
                         Directory.CreateDirectory(uploadDirectory);
                     }
 
-                    var uploadPath = Path.Combine(uploadDirectory, result.FileName);
+                    uploadPath = Path.Combine(uploadDirectory, result.FileName);
                     var webPath = string.Concat("/", _jobDirectory, result.FileName);
 
                     using (var fileStream = new FileStream(uploadPath, FileMode.Create))
                     {
-                        file.CopyTo(fileStream);
+                        await file.CopyToAsync(fileStream);
                         result.Success = true;
                         result.Url = webPath;
                     }
@@ -86,6 +90,15 @@ namespace SchedulerZ.Manager.API.Controllers
                     result.ErrorMessage = ex.Message;
                 }
                 response.Add(result);
+
+                if (result.Success)
+                {
+                    var services = await _serviceRoute.QueryServices();
+                    foreach (var service in services)
+                    {
+                        await _schedulerRemoting.UploadFile(uploadPath, service);
+                    }
+                }
             }
 
             return BaseResponse<List<UploadPackageResponse>>.GetBaseResponse(response);

@@ -19,8 +19,9 @@ namespace SchedulerZ.Remoting.gRPC
             services.AddSingleton(config);
 
             services.AddSingleton<SchedulerService.SchedulerServiceBase, SchedulerServiceImpl>();
-            services.AddSingleton<FileService.FileServiceBase,FileServiceImpl>();
+            services.AddSingleton<FileService.FileServiceBase, FileServiceImpl>();
             services.AddHostedService<GrpcHostedService>();
+            services.AddHostedService<FileHostedService>();
 
             return services;
         }
