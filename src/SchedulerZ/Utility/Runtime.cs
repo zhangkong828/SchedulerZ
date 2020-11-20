@@ -7,6 +7,10 @@ namespace SchedulerZ
 {
     public class Runtime
     {
+        /// <summary>
+        /// 是否Mono环境
+        /// </summary>
+        public static bool Mono { get; } = Type.GetType("Mono.Runtime") != null;
 
         /// <summary>
         /// 是否Windows环境

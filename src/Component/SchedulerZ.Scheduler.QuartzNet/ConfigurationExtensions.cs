@@ -15,7 +15,6 @@ namespace SchedulerZ.Scheduler.QuartzNet
             var config = Config.Get<QuartzNetConfig>("QuartzNet") ?? new QuartzNetConfig();
             configDelegate?.Invoke(config);
 
-            Check.NotNullOrEmpty(config.JobDirectory, "Job目录");
             Check.Positive(config.ThreadPoolCount, "线程池线程数量");
 
             services.AddSingleton(config);

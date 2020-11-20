@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Logging\Default\ConsoleLoggerProvider.cs~RF9b6672a4.TMP" />
+    <None Remove="Logging\Console\ConsoleLoggerProvider.cs~RF9b6672a4.TMP" />
   </ItemGroup>
 
   <ItemGroup>
