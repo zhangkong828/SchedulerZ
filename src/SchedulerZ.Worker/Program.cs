@@ -26,8 +26,7 @@ namespace SchedulerZ.Worker
                         })
                         .ConfigureServices((context, services) =>
                         {
-                            services.UseDefaultLogging()
-                                    .UseConsulServiceRoute()
+                            services.UseConsulServiceRoute()
                                     .UseGrpcRemoting()
                                     .UseQuartzNetScheduler();
                         })

@@ -8,7 +8,7 @@ namespace SchedulerZ.Logging
 {
     public class ConsoleLogger : Logger
     {
-        public bool UseColor { get; set; } = true;
+        public bool UseColor { get; set; } = Config.LoggerOptions.ConsoleLoggerUseColor;
 
         protected override void WriteLog(LogLevel level, string message, Exception ex)
         {

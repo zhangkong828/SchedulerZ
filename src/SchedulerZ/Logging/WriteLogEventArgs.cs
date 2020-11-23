@@ -74,7 +74,7 @@ namespace SchedulerZ.Logging
 
         public override string ToString()
         {
-            if (Exception != null) Message += Exception.GetMessage();
+            if (Exception != null) Message = $"{Message} {Exception.GetMessage()}";
 
             var name = ThreadName;
             if (name.IsNullOrEmpty()) name = TaskID >= 0 ? TaskID + "" : "-";
@@ -83,7 +83,7 @@ namespace SchedulerZ.Logging
 
             return string.Format("{0:HH:mm:ss.fff} {1,2} {2} {3} {4}", Time, ThreadID, IsThreadPoolThread ? 'Y' : 'N', name, Message);
         }
-        
+
         [ThreadStatic]
         private static string _threadName;
 

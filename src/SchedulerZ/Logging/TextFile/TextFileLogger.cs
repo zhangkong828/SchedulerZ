@@ -18,17 +18,17 @@ namespace SchedulerZ.Logging
         /// <summary>
         /// 日志文件格式。默认{0:yyyy_MM_dd}.log
         /// </summary>
-        public string FileFormat { get; set; } = "{0:yyyy_MM_dd}.log";
+        public string FileFormat { get; set; }
 
         /// <summary>
         /// 日志文件上限。超过上限后拆分新日志文件，默认10MB，0表示不限制大小
         /// </summary>
-        public int MaxBytes { get; set; } = 10;
+        public int MaxBytes { get; set; }
 
         /// <summary>
         /// 日志文件备份。超过备份数后，最旧的文件将被删除，默认100，0表示不限制个数
         /// </summary>
-        public int Backups { get; set; } = 100;
+        public int Backups { get; set; }
 
         private readonly bool _isFile = false;
 
@@ -47,8 +47,9 @@ namespace SchedulerZ.Logging
             if (!fileFormat.IsNullOrEmpty())
                 FileFormat = fileFormat;
 
-            //MaxBytes = set.LogFileMaxBytes;
-            //Backups = set.LogFileBackups;
+            FileFormat = Config.LoggerOptions.FileLoggerFormat;
+            MaxBytes = Config.LoggerOptions.FileLoggerMaxBytes;
+            Backups = Config.LoggerOptions.FileLoggerBackups;
 
             _Timer = new Timer(DoWriteAndClose, null, 0_000, 5_000);
         }
@@ -62,9 +63,9 @@ namespace SchedulerZ.Logging
         /// <param name="path">日志目录或日志文件路径</param>
         /// <param name="fileFormat"></param>
         /// <returns></returns>
-        public static TextFileLogger Create(string path, string fileFormat = null)
+        public static TextFileLogger Create(string path = null, string fileFormat = null)
         {
-            if (path.IsNullOrEmpty()) path = "Log";
+            if (path.IsNullOrEmpty()) path = Config.LoggerOptions.FileLoggerPath;
 
             var key = (path + fileFormat).ToLower();
             return cache.GetOrAdd(key, k => new TextFileLogger(path, false, fileFormat));
@@ -166,7 +167,7 @@ namespace SchedulerZ.Logging
             var now = DateTime.Now;
             if (!_isFile && GetLogFile() != CurrentLogFile)
             {
-                writer.Dispose();
+                writer?.Dispose();
                 writer = null;
             }
 

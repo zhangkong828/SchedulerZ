@@ -6,53 +6,88 @@ using System.Threading;
 
 namespace SchedulerZ
 {
-    public class TraceLogger: ILogger
+    public class TraceLogger : ILogger
     {
-        public List<ILogger> _loggers { get; set; } = new List<ILogger>();
+        private static readonly object _obj = new object();
+        private static TraceLogger _instance;
+        private List<ILogger> _loggers { get; set; }
 
-        private static ILogger _Log;
-
-        public static ILogger Log { get { InitLog(); return _Log; } set { _Log = value; } }
-
-        static readonly object _lock = new object();
-        static int _initing = 0;
-
-        /// <summary>文本日志目录</summary>
-        public static string LogPath { get; set; } = "logs";
-
-        static bool Init()
+        public static TraceLogger Instance
         {
-            if (_Log != null && _Log != Logger.Null) return true;
-            if (_initing > 0 && _initing == Thread.CurrentThread.ManagedThreadId) return false;
-
-            lock (_lock)
+            get
             {
-                if (_Log != null && _Log != Logger.Null) return true;
-
-                _initing = Thread.CurrentThread.ManagedThreadId;
-
-                _Log = TextFileLogger.Create(LogPath);
-
-
-                if (!set.NetworkLog.IsNullOrEmpty())
+                if (_instance == null)
                 {
-                    var nlog = new NetworkLog(set.NetworkLog);
-                    _Log = new CompositeLog(_Log, nlog);
+                    lock (_obj)
+                    {
+                        if (_instance == null)
+                            _instance = new TraceLogger();
+                    }
                 }
-
-                _initing = 0;
+                return _instance;
             }
-
-            return true;
         }
 
-        void Write(LogLevel level, Exception ex, string format, params object[] args)
+        private TraceLogger()
+        {
+            _loggers = new List<ILogger>();
+
+            //控制台日志
+            var consoleLogger = new ConsoleLogger();
+            _loggers.Add(consoleLogger);
+
+            //文件日志
+            var textFileLogger = TextFileLogger.Create();
+            _loggers.Add(textFileLogger);
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+
+        }
+
+        private void OnProcessExit(object sender, EventArgs e)
+        {
+            var log = GetLogger<TextFileLogger>();
+            log?.Dispose();
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex) Write(LogLevel.Fatal, ex, "Current Domain Unhandled Exception");
+            if (e.IsTerminating)
+            {
+                Write(LogLevel.Fatal, null, "Abnormal Exit");
+
+                var log = GetLogger<TextFileLogger>();
+                log?.Dispose();
+            }
+        }
+
+        public TLogger GetLogger<TLogger>() where TLogger : class, ILogger
+        {
+            foreach (var item in _loggers)
+            {
+                if (item != null)
+                {
+                    if (item is TLogger) return item as TLogger;
+                }
+            }
+            return null;
+        }
+
+        public void AddLogger(ILogger logger)
+        {
+            if (_loggers != null)
+                _loggers.Add(logger);
+        }
+
+        public void Write(LogLevel level, Exception ex, string format, params object[] args)
         {
             if (_loggers != null)
             {
                 foreach (var logger in _loggers)
                 {
-                    logger(level, message, ex);
+                    logger.Write(level, ex, string.Format(format, args));
                 }
             }
         }

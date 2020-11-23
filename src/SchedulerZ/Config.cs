@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using SchedulerZ.Configurations;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,11 +8,12 @@ namespace SchedulerZ
 {
     public class Config
     {
-        public static ConfigOptions Options { get; internal set; } = new ConfigOptions();
+        public static LoggerOptions LoggerOptions { get; set; } = new LoggerOptions();
+        public static ConfigOptions Options { get; set; } = new ConfigOptions();
         public static DbConnector DbConnector { get; set; }
 
 
-        public static IConfigurationRoot Configuration { get; internal set; }
+        public static IConfigurationRoot Configuration { get; set; }
 
         public static string GetValue(string key, string defaultValue = null)
         {

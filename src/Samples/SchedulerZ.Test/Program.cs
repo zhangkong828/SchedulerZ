@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SchedulerZ.Configurations;
 using SchedulerZ.LoadBalancer;
 using SchedulerZ.Logging;
 using SchedulerZ.Models;
@@ -23,8 +24,15 @@ namespace SchedulerZ.Test
 
         static void Main(string[] args)
         {
+            var configurationBuilder = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("schedulerZ.json", optional: true, reloadOnChange: true);
+
+            Config.Configuration = configurationBuilder.Build();
+            Config.Options = Config.Get<ConfigOptions>("SchedulerZ") ?? new ConfigOptions();
+            Config.LoggerOptions = Config.Get<LoggerOptions>("SchedulerZ:Logger") ?? new LoggerOptions();
+
             var serviceProvider = new ServiceCollection()
-                                    .UseDefaultLogging()
                                     .UseLoadBalancer(config =>
                                     {
                                         config.Type = "RoundRobinLoadBalancer";
@@ -36,7 +44,8 @@ namespace SchedulerZ.Test
                                     .UseGrpcRemotingClient()
                                     .BuildServiceProvider();
 
-            _logger = serviceProvider.GetService<ILoggerProvider>().CreateLogger("Main");
+            _logger = TraceLogger.Instance;
+
 
             //通过 负载 拿到可用service
             var loadBalancer = serviceProvider.GetService<ILoadBalancerFactory>().Get();
@@ -56,7 +65,7 @@ namespace SchedulerZ.Test
                 FilePath = "111"
             };
 
-            remoting.StartJob(job, service);
+            //remoting.StartJob(job, service);
 
             //上传
             //remoting.UploadFile(@"D:\github\SchedulerZ\src\Jobs\SchedulerZ.HelloWorldJob\bin\Debug\netcoreapp3.1\SchedulerZ.HelloWorldJob.zip", service);

@@ -15,11 +15,11 @@ namespace SchedulerZ.Scheduler.QuartzNet
         private readonly ILogger _logger;
         private readonly QuartzNetConfig _config;
         private readonly IScheduler _scheduler;
-        public QuartzNetHostedService(QuartzNetConfig config, IScheduler scheduler, ILoggerProvider loggerProvider)
+        public QuartzNetHostedService(QuartzNetConfig config, IScheduler scheduler)
         {
             _config = config;
             _scheduler = scheduler;
-            _logger = loggerProvider.CreateLogger("QuartzNetHostedService");
+            _logger = TraceLogger.Instance;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)

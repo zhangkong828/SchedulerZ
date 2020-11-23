@@ -11,14 +11,14 @@ namespace SchedulerZ.Logging
     public abstract class Logger : ILogger
     {
         /// <summary>
-        /// 是否启用日志 默认true
+        /// 是否启用日志
         /// </summary>
-        public virtual bool Enable { get; set; } = true;
+        public virtual bool Enable { get; set; } = Config.LoggerOptions.Enable;
 
         /// <summary>
-        /// 日志等级，只输出大于等于该级别的日志，默认Info
+        /// 日志等级，只输出大于等于该级别的日志
         /// </summary>
-        public virtual LogLevel Level { get; set; } = LogLevel.Info;
+        public virtual LogLevel Level { get; set; } = Config.LoggerOptions.LogLevel;
 
 
         public virtual void Write(LogLevel level, Exception ex, string format, params object[] args)

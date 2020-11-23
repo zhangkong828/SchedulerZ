@@ -23,5 +23,7 @@ namespace SchedulerZ.Logging
         void Fatal(string message);
         void Fatal(string format, params object[] args);
         void Fatal(string message, Exception ex);
+
+        void Write(LogLevel level, Exception ex, string format, params object[] args);
     }
 }

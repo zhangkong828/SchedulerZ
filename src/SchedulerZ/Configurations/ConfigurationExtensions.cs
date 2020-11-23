@@ -17,7 +17,7 @@ namespace SchedulerZ.Configurations
 
             Config.Configuration = configurationBuilder.Build();
             Config.Options = Config.Get<ConfigOptions>("SchedulerZ") ?? new ConfigOptions();
-
+            Config.LoggerOptions = Config.Get<LoggerOptions>("SchedulerZ:Logger") ?? new LoggerOptions();
             return builder;
         }
     }
