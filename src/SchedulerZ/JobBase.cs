@@ -1,7 +1,5 @@
 ﻿using SchedulerZ.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SchedulerZ
 {
@@ -15,13 +13,13 @@ namespace SchedulerZ
 
         public JobBase()
         {
-            Logger = TraceLogger.Instance;
         }
 
         public abstract void Run(JobContext context);
 
         public void Execute(JobContext context)
         {
+            Logger = TraceLogger.GetLogger(context.JobView.Name);
             if (!_isRunning)
             {
                 _isRunning = true;
@@ -48,7 +46,7 @@ namespace SchedulerZ
 
         protected virtual void Dispose(bool disposing)
         {
-
+            Logger.Release();
         }
     }
 }

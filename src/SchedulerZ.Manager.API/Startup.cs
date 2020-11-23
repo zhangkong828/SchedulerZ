@@ -19,7 +19,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using SchedulerZ.Logging.Log4Net;
 using SchedulerZ.Manager.API.Filter;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Route.Consul;
@@ -81,7 +80,6 @@ namespace SchedulerZ.Manager.API
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.UseLog4Net();
 
             //Swagger
             services.AddSwaggerGen(options =>

@@ -1,4 +1,5 @@
 ﻿using SchedulerZ.Domain;
+using SchedulerZ.Logging;
 using SchedulerZ.Models;
 using SchedulerZ.Utility;
 using System;
@@ -10,7 +11,6 @@ namespace SchedulerZ
 {
     public class JobContext
     {
-
         public JobContext(JobEntity jobView, AssemblyDomain domain)
         {
             JobView = jobView;

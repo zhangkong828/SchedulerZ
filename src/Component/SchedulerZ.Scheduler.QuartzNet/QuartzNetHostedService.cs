@@ -12,14 +12,13 @@ namespace SchedulerZ.Scheduler.QuartzNet
 {
     public class QuartzNetHostedService : IHostedService
     {
-        private readonly ILogger _logger;
+        private readonly ILogger _logger = TraceLogger.GetLogger();
         private readonly QuartzNetConfig _config;
         private readonly IScheduler _scheduler;
         public QuartzNetHostedService(QuartzNetConfig config, IScheduler scheduler)
         {
             _config = config;
             _scheduler = scheduler;
-            _logger = TraceLogger.Instance;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)

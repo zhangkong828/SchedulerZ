@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace SchedulerZ.Manager.API.Filter
 {
-    public class GlobalActionFilter: ActionFilterAttribute
+    public class GlobalActionFilter : ActionFilterAttribute
     {
         private readonly ILogger _log;
-        public GlobalActionFilter(ILoggerProvider loggerProvider)
+        public GlobalActionFilter()
         {
-            _log = loggerProvider.CreateLogger("Operation");
+            _log = TraceLogger.GetLogger("Operation");
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)

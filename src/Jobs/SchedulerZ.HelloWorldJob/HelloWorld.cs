@@ -8,7 +8,7 @@ namespace SchedulerZ.HelloWorldJob
         public override void Run(JobContext context)
         {
             var name = context.GetJobData<string>("name");
-            var msg = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} Hello {name}";
+            var msg = $"Hello {name}";
             Logger.Info(msg);
         }
 

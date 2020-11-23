@@ -81,7 +81,7 @@ namespace SchedulerZ.Logging
             if (name.EqualIgnoreCase("Threadpool worker")) name = "P";
             if (name.EqualIgnoreCase("IO Threadpool worker")) name = "IO";
 
-            return string.Format("{0:HH:mm:ss.fff} {1} {2} {3} {4} {5}", Time, Level.ToString(), ThreadID, IsThreadPoolThread ? 'P' : 'N', name, Message);
+            return string.Format("{0:HH:mm:ss.fff} [{1}] {2} {3} {4} {5}", Time, Level.ToString(), ThreadID, IsThreadPoolThread ? 'P' : 'N', name, Message);
         }
 
         [ThreadStatic]

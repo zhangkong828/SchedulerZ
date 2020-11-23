@@ -37,8 +37,6 @@ namespace SchedulerZ.Logging
         /// </summary>
         private bool _isFirst = false;
 
-        public TextFileLogger() { }
-
         internal TextFileLogger(string path, bool isfile, string fileFormat = null)
         {
             LogPath = path;
@@ -58,7 +56,7 @@ namespace SchedulerZ.Logging
         private static readonly ConcurrentDictionary<string, TextFileLogger> cache = new ConcurrentDictionary<string, TextFileLogger>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// 每个目录的日志实例应该只有一个，所以采用静态创建
+        /// 每个目录的日志实例
         /// </summary>
         /// <param name="path">日志目录或日志文件路径</param>
         /// <param name="fileFormat"></param>
@@ -72,7 +70,7 @@ namespace SchedulerZ.Logging
         }
 
         /// <summary>
-        /// 每个目录的日志实例应该只有一个，所以采用静态创建
+        /// 每个目录的日志实例
         /// </summary>
         /// <param name="path">日志目录或日志文件路径</param>
         /// <returns></returns>
@@ -97,7 +95,10 @@ namespace SchedulerZ.Logging
             if (Interlocked.CompareExchange(ref _writing, 1, 0) == 0) WriteAndClose(DateTime.MinValue);
         }
 
-
+        public override void Release()
+        {
+            this.Dispose();
+        }
 
         private StreamWriter LogWriter;
         private string CurrentLogFile;

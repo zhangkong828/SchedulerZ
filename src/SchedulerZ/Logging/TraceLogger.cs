@@ -1,5 +1,6 @@
 ﻿using SchedulerZ.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -8,88 +9,68 @@ namespace SchedulerZ
 {
     public class TraceLogger : ILogger
     {
-        private static readonly object _obj = new object();
-        private static TraceLogger _instance;
-        private List<ILogger> _loggers { get; set; }
+        private static readonly ConcurrentDictionary<string, TraceLogger> _loggers = new ConcurrentDictionary<string, TraceLogger>(StringComparer.OrdinalIgnoreCase);
 
-        public static TraceLogger Instance
+        public static TraceLogger GetLogger()
         {
-            get
-            {
-                if (_instance == null)
-                {
-                    lock (_obj)
-                    {
-                        if (_instance == null)
-                            _instance = new TraceLogger();
-                    }
-                }
-                return _instance;
-            }
+            return GetLogger(null);
         }
 
-        private TraceLogger()
+        public static TraceLogger GetLogger(string name)
         {
-            _loggers = new List<ILogger>();
+            var path = Config.LoggerOptions.FileLoggerPath;
+            if (!string.IsNullOrWhiteSpace(name))
+                path = path.CombinePath(name);
 
-            //控制台日志
-            var consoleLogger = new ConsoleLogger();
-            _loggers.Add(consoleLogger);
+            return _loggers.GetOrAdd(path, key => new TraceLogger(path));
+        }
 
-            //文件日志
-            var textFileLogger = TextFileLogger.Create();
-            _loggers.Add(textFileLogger);
-
+        static TraceLogger()
+        {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-
         }
 
-        private void OnProcessExit(object sender, EventArgs e)
+        static void OnProcessExit(object sender, EventArgs e)
         {
-            var log = GetLogger<TextFileLogger>();
-            log?.Dispose();
+            foreach (var logger in _loggers.Values)
+            {
+                logger.Release();
+            }
         }
 
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            if (e.ExceptionObject is Exception ex) Write(LogLevel.Fatal, ex, "Current Domain Unhandled Exception");
+            if (e.ExceptionObject is Exception ex)
+            {
+                if (_loggers.TryGetValue(Config.LoggerOptions.FileLoggerPath, out TraceLogger logger))
+                    logger.Write(LogLevel.Fatal, ex, "Current Domain Unhandled Exception");
+            }
+
             if (e.IsTerminating)
             {
-                Write(LogLevel.Fatal, null, "Abnormal Exit");
-
-                var log = GetLogger<TextFileLogger>();
-                log?.Dispose();
-            }
-        }
-
-        public TLogger GetLogger<TLogger>() where TLogger : class, ILogger
-        {
-            foreach (var item in _loggers)
-            {
-                if (item != null)
+                foreach (var logger in _loggers.Values)
                 {
-                    if (item is TLogger) return item as TLogger;
+                    logger.Release();
                 }
             }
-            return null;
         }
+        
 
-        public void AddLogger(ILogger logger)
+        private readonly ConsoleLogger _consoleLogger;
+        private readonly TextFileLogger _textFileLogger;
+        private TraceLogger(string path)
         {
-            if (_loggers != null)
-                _loggers.Add(logger);
+            _consoleLogger = new ConsoleLogger();
+            _textFileLogger = new TextFileLogger(path, false);
         }
 
         public void Write(LogLevel level, Exception ex, string format, params object[] args)
         {
-            if (_loggers != null)
-            {
-                foreach (var logger in _loggers)
-                {
-                    logger.Write(level, ex, string.Format(format, args));
-                }
-            }
+            if (Config.LoggerOptions.EnableConsoleLogger)
+                _consoleLogger.Write(level, ex, string.Format(format, args));
+
+            _textFileLogger.Write(level, ex, string.Format(format, args));
         }
 
         public void Trace(string message) => Write(LogLevel.Trace, null, message);
@@ -111,5 +92,10 @@ namespace SchedulerZ
         public void Fatal(string message) => Write(LogLevel.Fatal, null, message);
         public void Fatal(string format, params object[] args) => Write(LogLevel.Fatal, null, format, args);
         public void Fatal(string message, Exception ex) => Write(LogLevel.Fatal, ex, message);
+
+        public void Release()
+        {
+            _textFileLogger.Release();
+        }
     }
 }

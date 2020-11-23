@@ -181,5 +181,7 @@ namespace SchedulerZ.Logging
 
             return sb.ToString();
         }
+
+        public virtual void Release() { }
     }
 }

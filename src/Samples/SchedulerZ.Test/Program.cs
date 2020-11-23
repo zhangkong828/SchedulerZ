@@ -44,13 +44,15 @@ namespace SchedulerZ.Test
                                     .UseGrpcRemotingClient()
                                     .BuildServiceProvider();
 
-            _logger = TraceLogger.Instance;
+            _logger = TraceLogger.GetLogger();
+            var _testLogger = TraceLogger.GetLogger("test");
 
-
+            _logger.Info("adas");
+            _testLogger.Error("asdad22");
             //通过 负载 拿到可用service
-            var loadBalancer = serviceProvider.GetService<ILoadBalancerFactory>().Get();
-            var service = loadBalancer.Lease("worker").GetAwaiter().GetResult();
-            Console.WriteLine($"{service.Name}|{service.Address}:{service.Port}");
+            //var loadBalancer = serviceProvider.GetService<ILoadBalancerFactory>().Get();
+            //var service = loadBalancer.Lease("worker").GetAwaiter().GetResult();
+            //Console.WriteLine($"{service.Name}|{service.Address}:{service.Port}");
 
             //远程调用
             var remoting = serviceProvider.GetService<ISchedulerRemoting>();
@@ -65,7 +67,7 @@ namespace SchedulerZ.Test
                 FilePath = "SchedulerZ.HelloWorldJob.zip"
             };
 
-            remoting.StartJob(job, service);
+            //remoting.StartJob(job, service);
 
             //上传
             //remoting.UploadFile(@"D:\github\SchedulerZ\src\Jobs\SchedulerZ.HelloWorldJob\bin\Debug\netcoreapp3.1\SchedulerZ.HelloWorldJob.zip", service);

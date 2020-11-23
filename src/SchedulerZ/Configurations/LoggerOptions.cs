@@ -17,6 +17,11 @@ namespace SchedulerZ.Configurations
         /// </summary>
         public LogLevel LogLevel { get; set; } = LogLevel.Info;
 
+
+        /// <summary>
+        /// 是否启用控制台日志 默认true
+        /// </summary>
+        public bool EnableConsoleLogger { get; set; } = true;
         /// <summary>
         /// 控制台日志 是否使用不同颜色显示，默认true
         /// </summary>

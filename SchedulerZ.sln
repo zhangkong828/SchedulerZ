@@ -19,8 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Component", "Component", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Route.Consul", "src\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj", "{1F9BFD47-C3F1-4004-961F-D8BE703243DF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Logging.Log4Net", "src\Component\SchedulerZ.Logging.Log4Net\SchedulerZ.Logging.Log4Net.csproj", "{5021B292-F48B-4781-8C68-AA1FD693A71D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Remoting.gRPC", "src\Component\SchedulerZ.Remoting.gRPC\SchedulerZ.Remoting.gRPC.csproj", "{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Scheduler.QuartzNet", "src\Component\SchedulerZ.Scheduler.QuartzNet\SchedulerZ.Scheduler.QuartzNet.csproj", "{24FB7DE4-122F-4D6E-BFA5-00DD0A3C2DEC}"
@@ -33,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Store.MySQL", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Store.SQLServer", "src\Component\SchedulerZ.Store.SQLServer\SchedulerZ.Store.SQLServer.csproj", "{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Caching.Redis", "src\Component\SchedulerZ.Caching.Redis\SchedulerZ.Caching.Redis.csproj", "{445100DB-3D29-4EC3-B84A-87443D8A907B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Caching.Redis", "src\Component\SchedulerZ.Caching.Redis\SchedulerZ.Caching.Redis.csproj", "{445100DB-3D29-4EC3-B84A-87443D8A907B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +59,6 @@ Global
 		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F9BFD47-C3F1-4004-961F-D8BE703243DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5021B292-F48B-4781-8C68-AA1FD693A71D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -101,7 +95,6 @@ Global
 		{989A7095-C76B-4E8E-AB57-F79C294414E8} = {CE84D4B9-4B88-4CDB-A1B2-5AC04F9A8CDA}
 		{9A7885C1-6CA5-46E6-9EA2-C377855657BA} = {40817258-C355-41EA-8780-AA90782A33D6}
 		{1F9BFD47-C3F1-4004-961F-D8BE703243DF} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
-		{5021B292-F48B-4781-8C68-AA1FD693A71D} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{D1BD2AFC-F844-4D43-9A87-884BB4B2B507} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{24FB7DE4-122F-4D6E-BFA5-00DD0A3C2DEC} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{0BAEA4E9-12CF-45DB-A52E-0EEFDB113DF0} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}

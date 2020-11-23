@@ -12,9 +12,9 @@ namespace SchedulerZ.Manager.API.Filter
     public class GlobalExceptionFilter : IExceptionFilter
     {
         private readonly ILogger _log;
-        public GlobalExceptionFilter(ILoggerProvider loggerProvider)
+        public GlobalExceptionFilter()
         {
-            _log = loggerProvider.CreateLogger("Exception");
+            _log = TraceLogger.GetLogger("Exception");
         }
 
         public void OnException(ExceptionContext context)
