@@ -9,7 +9,14 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
 {
     public class JobListener : IJobListener
     {
-        public string Name { get { return "SchedulerZ.JobListener"; } }
+        private readonly Action<IJobExecutionContext> _callBack;
+        public JobListener(string jobId, Action<IJobExecutionContext> callBack)
+        {
+            Name = $"SchedulerZ.JobListener.{jobId}";
+            _callBack = callBack;
+        }
+
+        public string Name { get; set; }
 
         public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
@@ -25,6 +32,7 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
         {
             //子任务 TODO
 
+            _callBack?.Invoke(context);
             return Task.CompletedTask;
         }
     }

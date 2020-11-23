@@ -1,4 +1,5 @@
 ﻿using Quartz;
+using Quartz.Impl.Matchers;
 using Quartz.Impl.Triggers;
 using SchedulerZ.Logging;
 using SchedulerZ.Models;
@@ -98,6 +99,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
                     jobRuntime.Dispose();
                 }
                 await _scheduler.DeleteJob(jk);
+                _scheduler.ListenerManager.RemoveJobListener(jk.Name);
                 _logger.Info($"Job[{jobId}] is stop");
                 return true;
             }
@@ -143,8 +145,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
             IJobDetail job = JobBuilder.Create().OfType(typeof(JobImplementation)).WithIdentity(jobView.Id).UsingJobData(map).Build();
 
-            //添加触发器
-            //_scheduler.ListenerManager.AddJobListener(new JobRunListener(view.Schedule.Id.ToString(), callBack),KeyMatcher<JobKey>.KeyEquals(new JobKey(view.Schedule.Id.ToString())));
+            _scheduler.ListenerManager.AddJobListener(new JobListener(jobView.Id, JobWasExecuteCallBack), KeyMatcher<JobKey>.KeyEquals(new JobKey(jobView.Id)));
 
             if (!jobView.IsSimple)
             {
@@ -192,5 +193,10 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         }
 
+
+        private void JobWasExecuteCallBack(IJobExecutionContext context)
+        {
+
+        }
     }
 }
