@@ -176,8 +176,8 @@ namespace SchedulerZ.Logging
             sb.AppendFormat("#GC: IsServerGC={0}, LatencyMode={1}\r\n", GCSettings.IsServerGC, GCSettings.LatencyMode);
 
             sb.AppendFormat("#Date: {0:yyyy-MM-dd}\r\n", DateTime.Now);
-            sb.AppendFormat("#字段: 时间 线程ID 线程池Y/网页W/普通N/定时T 线程名/任务ID 消息内容\r\n");
-            sb.AppendFormat("#Fields: Time ThreadID Kind Name Message\r\n");
+            sb.AppendFormat("#字段: 时间 日志级别 线程ID 线程池P/网页W/普通N/定时T 线程名/任务ID 消息内容\r\n");
+            sb.AppendFormat("#Fields: Time LogLevel ThreadID Kind Name Message\r\n");
 
             return sb.ToString();
         }

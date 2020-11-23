@@ -62,10 +62,10 @@ namespace SchedulerZ.Test
                 AssemblyName = "SchedulerZ.HelloWorldJob",
                 ClassName = "SchedulerZ.HelloWorldJob.HelloWorld",
                 CustomParamsJson = "[{\"key\":\"name\",\"value\":\"zk\"}]",
-                FilePath = "111"
+                FilePath = "SchedulerZ.HelloWorldJob.zip"
             };
 
-            //remoting.StartJob(job, service);
+            remoting.StartJob(job, service);
 
             //上传
             //remoting.UploadFile(@"D:\github\SchedulerZ\src\Jobs\SchedulerZ.HelloWorldJob\bin\Debug\netcoreapp3.1\SchedulerZ.HelloWorldJob.zip", service);

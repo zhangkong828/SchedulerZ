@@ -1,6 +1,8 @@
 {
   "SchedulerZ": {
-
+    "Logger": {
+      "LogLevel": "Debug"
+    }
   },
   //QuartzNet
   "QuartzNet": {

@@ -1,8 +1,7 @@
 {
   "SchedulerZ": {
     "Logger": {
-      "LogLevel": "Info",
-      "FileLoggerPath": "logs"
+      "LogLevel": "Debug"
     }
   },
   //MySql
