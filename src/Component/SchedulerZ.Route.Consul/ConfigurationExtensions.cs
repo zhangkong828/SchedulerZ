@@ -37,6 +37,9 @@ namespace SchedulerZ.Route.Consul
 
                 services.AddSingleton(registerServiceConfig);
                 services.AddHostedService<ConsulHostedService>();
+
+                Config.NodeHost = registerServiceConfig.Address;
+                Config.NodePort = registerServiceConfig.Port;
             }
 
             return services;

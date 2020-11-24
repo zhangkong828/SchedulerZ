@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Component\SchedulerZ.Remoting.gRPC\SchedulerZ.Remoting.gRPC.csproj" />
     <ProjectReference Include="..\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj" />
     <ProjectReference Include="..\Component\SchedulerZ.Scheduler.QuartzNet\SchedulerZ.Scheduler.QuartzNet.csproj" />
+    <ProjectReference Include="..\Component\SchedulerZ.Store.MySQL\SchedulerZ.Store.MySQL.csproj" />
     <ProjectReference Include="..\SchedulerZ\SchedulerZ.csproj" />
   </ItemGroup>
 

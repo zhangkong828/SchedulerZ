@@ -30,8 +30,6 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
 
         public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
         {
-            //子任务 TODO
-
             _callBack?.Invoke(context);
             return Task.CompletedTask;
         }

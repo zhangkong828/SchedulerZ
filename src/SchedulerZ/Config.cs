@@ -12,6 +12,9 @@ namespace SchedulerZ
         public static ConfigOptions Options { get; set; } = new ConfigOptions();
         public static DbConnector DbConnector { get; set; }
 
+        public static string NodeHost { get; set; }
+        public static int NodePort { get; set; }
+
 
         public static IConfigurationRoot Configuration { get; set; }
 

@@ -31,15 +31,12 @@ namespace SchedulerZ.Manager.API.Controllers
     {
         private readonly ILogger<JobController> _logger;
 
-        private readonly CSRedisClient _redisClient;
-        private readonly IEasyCachingProvider _cachingProvider;
         private readonly IJobStore _jobStore;
         private readonly ISchedulerRemoting _schedulerRemoting;
         private readonly ILoadBalancerFactory _loadBalancerFactory;
         public JobController(ILogger<JobController> logger, CSRedisClient redisClient, IJobStore jobStore, ISchedulerRemoting schedulerRemoting, ILoadBalancerFactory loadBalancerFactory)
         {
             _logger = logger;
-            _redisClient = redisClient;
 
             _jobStore = jobStore;
             _schedulerRemoting = schedulerRemoting;

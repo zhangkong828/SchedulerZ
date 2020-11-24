@@ -4,6 +4,8 @@ using Quartz.Impl.Triggers;
 using SchedulerZ.Logging;
 using SchedulerZ.Models;
 using SchedulerZ.Scheduler.QuartzNet.Impl;
+using SchedulerZ.Store;
+using SchedulerZ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,10 +18,12 @@ namespace SchedulerZ.Scheduler.QuartzNet
         private readonly ILogger _logger = TraceLogger.GetLogger();
         private readonly QuartzNetConfig _config;
         private readonly IScheduler _scheduler;
-        public SchedulerManager(QuartzNetConfig config, IScheduler scheduler)
+        private readonly IJobStore _jobStore;
+        public SchedulerManager(QuartzNetConfig config, IScheduler scheduler, IJobStore jobStore)
         {
             _config = config;
             _scheduler = scheduler;
+            _jobStore = jobStore;
         }
 
         public bool ValidExpression(string cronExpression)
@@ -33,11 +37,6 @@ namespace SchedulerZ.Scheduler.QuartzNet
             if (await _scheduler.CheckExists(jk))
             {
                 await _scheduler.PauseJob(jk);
-                //var jobDetail = await _scheduler.GetJobDetail(jk);
-                //if (jobDetail.JobType.GetInterface("IInterruptableJob") != null)
-                //{
-                //    await _scheduler.Interrupt(jk);
-                //}
                 _logger.Info($"Job[{jobId}] is paused");
                 return true;
             }
@@ -162,11 +161,11 @@ namespace SchedulerZ.Scheduler.QuartzNet
                 };
                 if (jobView.StartTime.HasValue)
                 {
-                    trigger.StartTimeUtc = TimeZoneInfo.ConvertTimeToUtc(jobView.StartTime.Value);
+                    trigger.StartTimeUtc = Utils.ConvertToDateTimeOffset(jobView.StartTime.Value);
                 }
                 if (jobView.EndTime.HasValue)
                 {
-                    trigger.EndTimeUtc = TimeZoneInfo.ConvertTimeToUtc(jobView.EndTime.Value);
+                    trigger.EndTimeUtc = Utils.ConvertToDateTimeOffset(jobView.EndTime.Value);
                 }
                 await _scheduler.ScheduleJob(job, trigger);
             }
@@ -176,12 +175,12 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
                 if (jobView.StartTime.HasValue)
                 {
-                    var start = TimeZoneInfo.ConvertTimeToUtc(jobView.StartTime.Value);
+                    var start = Utils.ConvertToDateTimeOffset(jobView.StartTime.Value);
                     triggerBuilder = triggerBuilder.StartAt(start);
                 }
                 if (jobView.EndTime.HasValue)
                 {
-                    var end = TimeZoneInfo.ConvertTimeToUtc(jobView.EndTime.Value);
+                    var end = Utils.ConvertToDateTimeOffset(jobView.EndTime.Value);
                     triggerBuilder = triggerBuilder.EndAt(end);
                 }
 
@@ -196,7 +195,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         private void JobWasExecuteCallBack(IJobExecutionContext context)
         {
-
+            _jobStore.UpdateRunJob(context.JobDetail.Key.Name, context.FireTimeUtc.LocalDateTime, context.NextFireTimeUtc.GetValueOrDefault().LocalDateTime);
         }
     }
 }

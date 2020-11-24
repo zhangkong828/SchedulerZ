@@ -121,5 +121,10 @@ namespace SchedulerZ.Utility
                 return dtStart.AddSeconds(timeStamp);
             }
         }
+
+        public static DateTimeOffset ConvertToDateTimeOffset(DateTime dateTime)
+        {
+            return dateTime.ToUniversalTime() <= DateTimeOffset.MinValue.UtcDateTime ? DateTimeOffset.MinValue : new DateTimeOffset(dateTime);
+        }
     }
 }

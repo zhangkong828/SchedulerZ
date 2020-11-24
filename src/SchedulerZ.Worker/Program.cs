@@ -11,6 +11,7 @@ using System.IO;
 using System.Reflection;
 using SchedulerZ.Remoting.gRPC;
 using SchedulerZ.Configurations;
+using SchedulerZ.Store.MySQL;
 
 namespace SchedulerZ.Worker
 {
@@ -26,7 +27,8 @@ namespace SchedulerZ.Worker
                         })
                         .ConfigureServices((context, services) =>
                         {
-                            services.UseConsulServiceRoute()
+                            services.UseMySQL()
+                                    .UseConsulServiceRoute()
                                     .UseGrpcRemoting()
                                     .UseQuartzNetScheduler();
                         })

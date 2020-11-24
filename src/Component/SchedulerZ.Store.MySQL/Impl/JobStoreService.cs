@@ -51,11 +51,28 @@ namespace SchedulerZ.Store.MySQL.Impl
             _context.Jobs.Update(job);
             return _context.SaveChanges() > 0;
         }
-               
+
         public bool UpdateJob(JobEntity entity)
         {
             _context.Jobs.Update(entity);
             return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdateRunJob(string id, DateTime lastRunTime, DateTime nextRunTime)
+        {
+            var job = _context.Jobs.Find(id);
+            if (job == null) return false;
+
+            job.LastRunTime = lastRunTime;
+            job.NextRunTime = nextRunTime;
+            job.TotalRunCount += 1;
+            _context.Jobs.Update(job);
+            return _context.SaveChanges() > 0;
+        }
+
+        public List<JobEntity> QueryRunningJob(string nodeHost, int nodePort)
+        {
+            return _context.Jobs.AsNoTracking().Where(x => x.Status == (int)JobStatus.Running && x.NodeHost == nodeHost && x.NodePort == nodePort).ToList();
         }
     }
 }
