@@ -27,7 +27,8 @@ namespace SchedulerZ.Worker
                         })
                         .ConfigureServices((context, services) =>
                         {
-                            services.UseMySQL()
+                            services.UseSchedulerZ()
+                                    .UseMySQL()
                                     .UseConsulServiceRoute()
                                     .UseGrpcRemoting()
                                     .UseQuartzNetScheduler();

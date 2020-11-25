@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using CSRedis;
-using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using SchedulerZ.Caching;
 using SchedulerZ.Manager.API.Model;
 using SchedulerZ.Manager.API.Model.Dto;
 using SchedulerZ.Manager.API.Model.Request;
@@ -26,20 +25,19 @@ namespace SchedulerZ.Manager.API.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IAccountStore _accountStoreService;
+        private readonly ICaching _caching;
         private readonly ILogger<AccountController> _logger;
 
         private readonly JWTConfig _jwtConfig;
 
-        private readonly CSRedisClient _redisClient;
-        private readonly IEasyCachingProvider _cachingProvider;
-        public AccountController(IMapper mapper, IAccountStore accountStoreService, ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions, IEasyCachingProviderFactory cacheFactory, CSRedisClient redisClient)
+        public AccountController(IMapper mapper, IAccountStore accountStoreService, ICachingProvider cachingProvider, ILogger<AccountController> logger, IOptions<JWTConfig> jwtOptions)
         {
             _mapper = mapper;
             _accountStoreService = accountStoreService;
+            _caching = cachingProvider.CreateCaching();
+
             _logger = logger;
             _jwtConfig = jwtOptions.Value;
-            _cachingProvider = cacheFactory.GetCachingProvider("default");
-            _redisClient = redisClient;
         }
 
         /// <summary>
@@ -59,13 +57,12 @@ namespace SchedulerZ.Manager.API.Controllers
 
             var tokenCacheKey = CacheKey.Token(user.Id.ToString());
 
-            var token = _redisClient.Get<Token>(tokenCacheKey);
+            var token = _caching.Get<Token>(tokenCacheKey);
             if (token == null)
             {
                 //新登录用户 创建新Token
                 token = GenerateToken(user);
-                var expireSeconds = _jwtConfig.RefreshTokenExpiresDays * 24 * 60 * 60;
-                _redisClient.Set(tokenCacheKey, token, expireSeconds);
+                _caching.Set(tokenCacheKey, token, TimeSpan.FromDays(_jwtConfig.RefreshTokenExpiresDays));
             }
             else
             {
@@ -80,8 +77,8 @@ namespace SchedulerZ.Manager.API.Controllers
                     token.AccessTokenExpires = newToken.AccessTokenExpires;
 
                     var refreshTokenExpires = FormatHelper.ConvertToDateTime(token.RefreshTokenExpires);
-                    var expireSeconds = (int)(refreshTokenExpires - DateTime.Now).TotalSeconds;
-                    _redisClient.Set(tokenCacheKey, token, expireSeconds);
+                    var expireTimeSpan = refreshTokenExpires - DateTime.Now;
+                    _caching.Set(tokenCacheKey, token, expireTimeSpan);
                 }
             }
             UpdateLastLoginInfo(user);
@@ -142,7 +139,7 @@ namespace SchedulerZ.Manager.API.Controllers
                 if (!string.IsNullOrWhiteSpace(uId) && long.TryParse(uId, out long userId))
                 {
                     var tokenCacheKey = CacheKey.Token(userId.ToString());
-                    var token = _redisClient.Get<Token>(tokenCacheKey);
+                    var token = _caching.Get<Token>(tokenCacheKey);
                     if (token != null && token.RefreshToken == request.RefreshToken)
                     {
                         var user = _accountStoreService.QueryUserById(userId);
@@ -153,8 +150,8 @@ namespace SchedulerZ.Manager.API.Controllers
                             token.AccessTokenExpires = newToken.AccessTokenExpires;
 
                             var refreshTokenExpires = FormatHelper.ConvertToDateTime(token.RefreshTokenExpires);
-                            var expireSeconds = (int)(refreshTokenExpires - DateTime.Now).TotalSeconds;
-                            _redisClient.Set(tokenCacheKey, token, expireSeconds);
+                            var expireTimeSpan = refreshTokenExpires - DateTime.Now;
+                            _caching.Set(tokenCacheKey, token, expireTimeSpan);
 
                             return BaseResponse<Token>.GetBaseResponse(token);
                         }
@@ -171,7 +168,7 @@ namespace SchedulerZ.Manager.API.Controllers
         [HttpPost]
         public ActionResult<BaseResponse> Logout()
         {
-            _redisClient.Del(CacheKey.Token(GetUserId().ToString()));
+            _caching.Remove(CacheKey.Token(GetUserId().ToString()));
             return BaseResponse.GetBaseResponse(ResponseStatusType.Success);
         }
 

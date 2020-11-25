@@ -14,7 +14,7 @@ namespace SchedulerZ.LoadBalancer
     {
         public static IServiceCollection UseLoadBalancer(this IServiceCollection services, Action<LoadBalancerConfig> configDelegate = null)
         {
-            var config = new LoadBalancerConfig();
+            var config = Config.Get<LoadBalancerConfig>("SchedulerZ:LoadBalancer") ?? new LoadBalancerConfig();
             configDelegate?.Invoke(config);
 
             services.AddSingleton(config);

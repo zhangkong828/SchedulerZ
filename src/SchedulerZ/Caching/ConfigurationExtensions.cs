@@ -8,7 +8,7 @@ namespace SchedulerZ.Caching
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection UseDefaultLogging(this IServiceCollection services)
+        public static IServiceCollection UseDefaultCaching(this IServiceCollection services)
         {
             services.AddSingleton<ICachingProvider, MemoryCacheProvider>();
 

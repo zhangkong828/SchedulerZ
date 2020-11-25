@@ -6,7 +6,7 @@ namespace SchedulerZ.LoadBalancer
 {
     public class LoadBalancerConfig
     {
-        public string Type { get; set; } = "FirstLoadBalancer";
+        public string Type { get; set; } = "RandomLoadBalancer";
 
         public string Key { get; set; }
 

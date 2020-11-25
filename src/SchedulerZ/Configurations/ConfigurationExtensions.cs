@@ -1,4 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using SchedulerZ.Caching;
+using SchedulerZ.LoadBalancer;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,6 +22,14 @@ namespace SchedulerZ.Configurations
             Config.Options = Config.Get<ConfigOptions>("SchedulerZ") ?? new ConfigOptions();
             Config.LoggerOptions = Config.Get<LoggerOptions>("SchedulerZ:Logger") ?? new LoggerOptions();
             return builder;
+        }
+
+        public static IServiceCollection UseSchedulerZ(this IServiceCollection services)
+        {
+            services.UseDefaultCaching();
+            services.UseLoadBalancer();
+
+            return services;
         }
     }
 }

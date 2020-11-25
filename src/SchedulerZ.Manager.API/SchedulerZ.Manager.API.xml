@@ -34,14 +34,14 @@
             健康检查
             </summary>
         </member>
-        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.CreateJob(SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest)">
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.JobList(SchedulerZ.Manager.API.Model.Request.JobListRequest)">
             <summary>
-            创建Job
+            任务列表
             </summary>
         </member>
-        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.EditJob(SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest)">
+        <member name="M:SchedulerZ.Manager.API.Controllers.JobController.ModifyJob(SchedulerZ.Manager.API.Model.Request.SchedulerJobRequest)">
             <summary>
-            编辑Job
+            修改Job
             </summary>
         </member>
         <member name="M:SchedulerZ.Manager.API.Controllers.JobController.StartJob(System.String)">

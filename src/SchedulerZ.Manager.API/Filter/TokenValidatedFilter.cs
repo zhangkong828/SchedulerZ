@@ -1,5 +1,5 @@
-﻿using CSRedis;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using SchedulerZ.Caching;
 using SchedulerZ.Manager.API.Model;
 using System;
 using System.Collections.Generic;
@@ -17,11 +17,11 @@ namespace SchedulerZ.Manager.API.Filter
             var userId = context.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Sid)?.Value;
             if (!string.IsNullOrWhiteSpace(userId))
             {
-                var redisClient = context.HttpContext.RequestServices.GetService(typeof(CSRedisClient)) as CSRedisClient;
-                if (redisClient != null)
+                var cachingProvider = context.HttpContext.RequestServices.GetService(typeof(ICachingProvider)) as ICachingProvider;
+                if (cachingProvider != null)
                 {
                     var key = CacheKey.Token(userId);
-                    var token = redisClient.Get<Token>(key);
+                    var token = cachingProvider.CreateCaching().Get<Token>(key);
                     if (token != null)
                     {
                         var accessToken = (context.SecurityToken as JwtSecurityToken).RawData;

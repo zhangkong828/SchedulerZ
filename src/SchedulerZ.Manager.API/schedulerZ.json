@@ -6,6 +6,10 @@
   "MySqlStore": {
     "ConnectionString": "Server=192.168.1.203;User Id=root;Password=123456;Database=SchedulerZ"
   },
+  //RedisCache
+  "RedisCache": {
+    "Connection": "192.168.1.180:6379,password=123456"
+  },
   //Consul б╥си
   "ConsulServiceRoute": {
     "Host": "192.168.1.203",

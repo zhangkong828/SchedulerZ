@@ -7,7 +7,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CSRedis;
-using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -25,15 +24,11 @@ namespace SchedulerZ.Manager.API.Controllers
     public class RouteController : BaseApiController
     {
         private readonly ILogger<RouteController> _logger;
-
-        private readonly CSRedisClient _redisClient;
-        private readonly IEasyCachingProvider _cachingProvider;
-
+        
         private readonly IServiceRoute _serviceRoute;
-        public RouteController(ILogger<RouteController> logger, IHostEnvironment hostEnvironment, CSRedisClient redisClient, IServiceRoute serviceRoute)
+        public RouteController(ILogger<RouteController> logger, IHostEnvironment hostEnvironment, IServiceRoute serviceRoute)
         {
             _logger = logger;
-            _redisClient = redisClient;
 
             _serviceRoute = serviceRoute;
         }

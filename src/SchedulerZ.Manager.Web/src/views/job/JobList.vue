@@ -11,9 +11,10 @@
           <a-col :md="8" :sm="24">
             <a-form-model-item label="状态">
               <a-select v-model.number="queryParam.status" placeholder="请选择" default-value="0">
-                <a-select-option :value="0">全部</a-select-option>
-                <a-select-option :value="1">正常</a-select-option>
-                <a-select-option :value="2">禁用</a-select-option>
+                <a-select-option :value="-1">全部</a-select-option>
+                <a-select-option :value="0">已停止</a-select-option>
+                <a-select-option :value="1">运行中</a-select-option>
+                <a-select-option :value="2">已暂停</a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
@@ -26,7 +27,9 @@
         </a-row>
       </a-form-model>
     </div>
-
+    <div class="table-operator">
+      <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
+    </div>
     <s-table
       ref="table"
       row-key="id"
@@ -65,30 +68,111 @@
         <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="用户名"
-          prop="username"
+          label="备注"
         >
-          <a-input placeholder="用户名" v-model="form.username"/>
+          <a-input placeholder="备注" type="textarea" v-model="form.remark"/>
         </a-form-model-item>
 
         <a-form-model-item
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
-          label="状态"
-          prop="status"
+          label="程序集名称"
+          prop="assemblyName"
         >
-          <a-select v-model="form.status">
-            <a-select-option :value="1">正常</a-select-option>
-            <a-select-option :value="2">禁用</a-select-option>
-          </a-select>
+          <a-input placeholder="程序集名称" v-model="form.assemblyName"/>
         </a-form-model-item>
 
-        <a-form-model-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="角色">
-          <a-select style="width: 100%" mode="multiple" v-model="form.roleIds" :allowClear="true">
-            <a-select-option v-for="(role, index) in roleList" :key="index" :value="role.id">{{
-              role.name
-            }}</a-select-option>
-          </a-select>
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="类名"
+          prop="className"
+        >
+          <a-input placeholder="类名" v-model="form.className"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="任务文件"
+          prop="filePath"
+        >
+          <a-upload
+            name="file"
+            :fileList="files"
+            accept="application/zip"
+            :customRequest="customUploadRequest"
+            :remove="handleRemoveFile"
+          >
+            <a-button> <a-icon type="upload" /> 上传zip</a-button>
+          </a-upload>
+          <a-input type="hidden" v-model="form.filePath"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="自定义参数"
+        >
+          <a-input placeholder="自定义参数" type="textarea" v-model="form.customParamsJson"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+          v-if="!form.show"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="cron表达式"
+          prop="cronExpression"
+        >
+          <a-input placeholder="cron表达式" v-model="form.cronExpression"/>
+          <a-button type="primary" @click="showCrontabDialog">生成cron</a-button>
+          <a-modal title="生成cron" :visible.sync="showCron">
+            <crontab @hide="showCron=false" @fill="crontabFill" :expression="cronExpression"></crontab>
+          </a-modal>
+        </a-form-model-item>
+
+        <a-form-model-item
+          v-if="form.show"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="间隔秒数"
+          prop="intervalSeconds"
+        >
+          <a-input placeholder="间隔秒数" v-model.number="form.intervalSeconds"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+          v-if="form.show"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="重复次数"
+          prop="repeatCount"
+        >
+          <a-input placeholder="重复次数" v-model.number="form.repeatCount"/>
+        </a-form-model-item>
+
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="简易任务"
+        >
+          <a-switch v-model="form.show" />
+        </a-form-model-item>
+
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="生效时间"
+        >
+          <a-date-picker show-time placeholder="生效时间" />
+        </a-form-model-item>
+
+        <a-form-model-item
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          label="失效时间"
+        >
+          <a-date-picker show-time placeholder="失效时间" />
         </a-form-model-item>
 
       </a-form-model>
@@ -99,22 +183,19 @@
 
 <script>
 import { STable } from '@/components'
-import { getUserList, modifyUser, deleteUser, getRoleList } from '@/api/system'
+import { Crontab } from '@/components/Crontab'
+import { getJobList, modifyJob, deleteJob, uploadPackage } from '@/api/job'
 
 const STATUS = {
-  1: '正常',
-  2: '禁用'
+  0: '已停止',
+  1: '运行中',
+  2: '已暂停'
 }
 
 const columns = [
   {
     title: '#',
     dataIndex: 'id'
-  },
-  {
-    title: '头像',
-    dataIndex: 'avatar',
-     scopedSlots: { customRender: 'avatar' }
   },
   {
     title: '名称',
@@ -150,7 +231,8 @@ const columns = [
 export default {
   name: 'TableList',
   components: {
-    STable
+    STable,
+    Crontab
   },
   data () {
     return {
@@ -166,11 +248,26 @@ export default {
       mdl: {},
       form: {},
       rules: {
-        username: [
-          { required: true, message: '必填项', trigger: 'blur' }
-        ],
         name: [
-          { required: true, message: '必填项', trigger: 'blur' }
+          { required: true, message: '必填项', trigger: 'blur', whitespace: true }
+        ],
+        assemblyName: [
+          { required: true, message: '必填项', trigger: 'blur', whitespace: true }
+        ],
+        className: [
+          { required: true, message: '必填项', trigger: 'blur', whitespace: true }
+        ],
+        cronExpression: [
+          { required: true, message: '必填项', trigger: 'blur', whitespace: true }
+        ],
+        intervalSeconds: [
+          { required: true, message: '请填写有效值', trigger: 'blur', type: 'integer' }
+        ],
+        repeatCount: [
+          { required: true, message: '请填写有效值', trigger: 'blur', type: 'integer' }
+        ],
+        filePath: [
+          { required: true, message: '请上传文件', trigger: 'change', whitespace: true }
         ]
       },
       roleList: [],
@@ -181,15 +278,18 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
-        return getUserList(requestParameters)
+        return getJobList(requestParameters)
           .then(res => {
-            console.log('getUserList', res)
+            console.log('getJobList', res)
             res.data.list.map(item => {
               item.roleIds = item.roles.map(role => { return role.id })
             })
             return res.data
           })
-      }
+      },
+      files: [],
+      cronExpression: '',
+      showCron: false
     }
   },
   filters: {
@@ -198,37 +298,62 @@ export default {
     }
   },
   created () {
-    this.loadRoleList()
   },
   methods: {
-    loadRoleList () {
-      getRoleList({ 'pageindex': 1, 'pagesize': 10 }).then(res => {
-        this.roleList = res.data.list
+    customUploadRequest (data) {
+      console.log(data)
+      const formData = new FormData()
+      formData.append('file', data.file)
+      uploadPackage(formData).then((res) => {
+        if (res.code === 1 && res.data && res.data.length > 0) {
+          var file = res.data[0]
+          if (file.success) {
+            this.files.push({ uid: data.file.uid, name: file.fileName, status: 'done' })
+            this.form.filePath = file.fileName
+          }
+        } else {
+          this.$message.error(res.message)
+        }
       })
+    },
+    handleRemoveFile (file) {
+      this.files = []
+      this.form.filePath = ''
+    },
+    showCrontabDialog () {
+      this.cronExpression = this.cronExpression
+      this.showCron = true
+    },
+    crontabFill (value) {
+     this.cronExpression = value
+    },
+    handleAdd () {
+      this.handleEdit({ id: '', show: false })
     },
     handleEdit (record) {
       this.form = Object.assign({}, record)
       this.visible = true
     },
     handleDelete (record) {
-      deleteUser(record.id).then(res => {
+      deleteJob(record.id).then(res => {
         this.$refs.table.refresh()
       })
     },
     handleOk (e) {
-      const _this = this
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
-          modifyUser(this.form)
+          console.log(this.form)
+          modifyJob(this.form)
             .then((res) => {
-              _this.$refs.table.refresh()
-              _this.visible = false
+              this.$refs.table.refresh()
+              this.visible = false
             })
         }
       })
     },
     handleCancel () {
       this.visible = false
+      this.$refs.ruleForm.resetFields()
     }
   },
   watch: {

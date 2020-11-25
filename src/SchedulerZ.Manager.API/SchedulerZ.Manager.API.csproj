@@ -30,13 +30,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="CSRedisCore" Version="3.6.5" />
-    <PackageReference Include="EasyCaching.InMemory" Version="0.8.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Component\SchedulerZ.Caching.Redis\SchedulerZ.Caching.Redis.csproj" />
+    <ProjectReference Include="..\Component\SchedulerZ.Remoting.gRPC.Client\SchedulerZ.Remoting.gRPC.Client.csproj" />
     <ProjectReference Include="..\Component\SchedulerZ.Route.Consul\SchedulerZ.Route.Consul.csproj" />
     <ProjectReference Include="..\Component\SchedulerZ.Store.MySQL\SchedulerZ.Store.MySQL.csproj" />
   </ItemGroup>

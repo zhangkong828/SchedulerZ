@@ -33,10 +33,7 @@ namespace SchedulerZ.Test
             Config.LoggerOptions = Config.Get<LoggerOptions>("SchedulerZ:Logger") ?? new LoggerOptions();
 
             var serviceProvider = new ServiceCollection()
-                                    .UseLoadBalancer(config =>
-                                    {
-                                        config.Type = "RoundRobinLoadBalancer";
-                                    })
+                                    .UseSchedulerZ()
                                     .UseConsulServiceRoute(config =>
                                     {
                                         config.Host = "192.168.1.203";

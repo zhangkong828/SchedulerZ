@@ -6,8 +6,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using CSRedis;
-using EasyCaching.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -44,6 +42,7 @@ namespace SchedulerZ.Manager.API.Controllers
             _allowedFileExtension = string.IsNullOrWhiteSpace(allowedFileExtensions) ? new string[] { ".zip" } : allowedFileExtensions.Split(',', StringSplitOptions.RemoveEmptyEntries);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public async Task<ActionResult<BaseResponse>> UploadPackage()
         {
@@ -73,7 +72,7 @@ namespace SchedulerZ.Manager.API.Controllers
                     }
 
                     uploadPath = Path.Combine(uploadDirectory, result.FileName);
-                    var webPath = string.Concat("/", _jobDirectory, result.FileName);
+                    var webPath = string.Concat("/", _jobDirectory, "/", result.FileName);
 
                     using (var fileStream = new FileStream(uploadPath, FileMode.Create))
                     {
@@ -96,7 +95,9 @@ namespace SchedulerZ.Manager.API.Controllers
                     var services = await _serviceRoute.QueryServices();
                     foreach (var service in services)
                     {
-                        await _schedulerRemoting.UploadFile(uploadPath, service);
+                        if (service.Name == "worker")
+                            await _schedulerRemoting.UploadFile(uploadPath, service);
+
                     }
                 }
             }
@@ -104,6 +105,7 @@ namespace SchedulerZ.Manager.API.Controllers
             return BaseResponse<List<UploadPackageResponse>>.GetBaseResponse(response);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public ActionResult<BaseResponse> DownloadPackage(string packageName)
         {

@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-using CSRedis;
-using EasyCaching.Core.Configurations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -15,12 +13,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SchedulerZ.Caching.Redis;
+using SchedulerZ.Configurations;
+using SchedulerZ.LoadBalancer;
 using SchedulerZ.Manager.API.Filter;
 using SchedulerZ.Manager.API.Model;
+using SchedulerZ.Remoting.gRPC.Client;
 using SchedulerZ.Route.Consul;
 using SchedulerZ.Store.MySQL;
 
@@ -38,17 +41,7 @@ namespace SchedulerZ.Manager.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.UseMySQL();
-
             services.Configure<JWTConfig>(Configuration.GetSection("JWTConfig"));
-
-            services.AddEasyCaching(options =>
-            {
-                //use memory cache that named default
-                options.UseInMemory("default");
-            });
-
-            services.AddSingleton(_ => new CSRedisClient(Configuration.GetValue<string>("Redis:Connection")));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -128,8 +121,13 @@ namespace SchedulerZ.Manager.API
                     });
             });
 
-            services.UseConsulServiceRoute();
+            services.UseSchedulerZ()
+                    .UseMySQL()
+                    .UseRedisCache()
+                    .UseConsulServiceRoute()
+                    .UseGrpcRemotingClient();
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -148,6 +146,14 @@ namespace SchedulerZ.Manager.API
             });
 
             //app.UseHttpsRedirection();
+
+            var packagesPath = Path.Combine(env.ContentRootPath, Config.Options.JobDirectory);
+            packagesPath.EnsureDirectory(false);
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(packagesPath),
+                RequestPath = $"/{Config.Options.JobDirectory}"
+            });
 
             app.UseCors("AllowAllOrigins");
 
