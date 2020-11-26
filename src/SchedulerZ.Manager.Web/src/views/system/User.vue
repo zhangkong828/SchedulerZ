@@ -39,7 +39,14 @@
       <span slot="action" slot-scope="text, record">
         <a @click="handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
-        <a @click="handleDelete(record)">删除</a>
+        <a-popconfirm
+          title="确定要删除?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="handleDelete(record)"
+        >
+          <a href="#">删除</a>
+        </a-popconfirm>
       </span>
     </s-table>
 

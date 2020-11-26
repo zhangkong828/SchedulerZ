@@ -4,7 +4,7 @@
       <a-form-model layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-model-item label="名称">
+            <a-form-model-item label="Id/名称">
               <a-input placeholder="请输入" v-model="queryParam.name"/>
             </a-form-model-item>
           </a-col>
@@ -37,12 +37,18 @@
       :data="loadData"
       showPagination="auto"
     >
-      <a-avatar slot="avatar" size="large" shape="square" slot-scope="text" :src="text"/>
       <a-tag color="blue" slot="status" slot-scope="text">{{ text | statusFilter }}</a-tag>
       <span slot="action" slot-scope="text, record">
         <a @click="handleEdit(record)">编辑</a>
         <a-divider type="vertical" />
-        <a @click="handleDelete(record)">删除</a>
+        <a-popconfirm
+          title="确定要删除?"
+          ok-text="Yes"
+          cancel-text="No"
+          @confirm="handleDelete(record)"
+        >
+          <a href="#">删除</a>
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -197,26 +203,29 @@ const columns = [
     dataIndex: 'id'
   },
   {
-    title: '名称',
+    title: '任务名称',
     dataIndex: 'name'
   },
+   {
+    title: '上次运行时间',
+    dataIndex: 'lastRunTime'
+  },
+   {
+    title: '下次运行时间',
+    dataIndex: 'nextRunTime'
+  },
   {
-    title: '状态',
+    title: '总运行成功次数',
+    dataIndex: 'totalRunCount'
+  },
+  {
+    title: '任务状态',
     dataIndex: 'status',
     scopedSlots: { customRender: 'status' }
   },
   {
     title: '创建时间',
     dataIndex: 'createTime',
-    sorter: true
-  },
-   {
-    title: '最后登录IP',
-    dataIndex: 'lastLoginIp'
-  },
-   {
-    title: '最后登录时间',
-    dataIndex: 'lastLoginTime',
     sorter: true
   },
    {
@@ -328,6 +337,10 @@ export default {
     },
     handleEdit (record) {
       this.form = Object.assign({}, record)
+      this.files = []
+      if (this.form.filePath) {
+        this.files.push({ uid: (new Date()).valueOf(), name: this.form.filePath, status: 'done' })
+      }
       this.visible = true
     },
     handleDelete (record) {
