@@ -20,16 +20,17 @@ namespace SchedulerZ.Manager.API.Utility
             Target d = Activator.CreateInstance<Target>();
             try
             {
-                var Types = s.GetType();//获得类型
+                var Types = s.GetType();
                 var Typed = typeof(Target);
-                foreach (PropertyInfo sp in Types.GetProperties())//获得类型的属性字段
+                foreach (PropertyInfo sp in Types.GetProperties())
                 {
                     foreach (PropertyInfo dp in Typed.GetProperties())
                     {
-                        if (dp.Name.ToLower() == sp.Name.ToLower())//判断属性名是否相同
+                        if (dp.Name.ToLower() == sp.Name.ToLower())
                         {
                             if (dp.PropertyType == sp.PropertyType)
-                                dp.SetValue(d, sp.GetValue(s, null), null);//获得s对象属性的值复制给d对象的属性
+                                dp.SetValue(d, sp.GetValue(s, null), null);
+                            break;
                         }
                     }
                 }

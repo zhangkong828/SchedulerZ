@@ -79,6 +79,7 @@ namespace SchedulerZ.Manager.API.Controllers
             if (string.IsNullOrWhiteSpace(request.Id))
             {
                 var job = Utils.MapperPropertyValue<SchedulerJobRequest, JobEntity>(request);
+                job.Id = ObjectId.Default().NextString();
                 var result = _jobStore.AddJob(job);
                 if (result)
                 {

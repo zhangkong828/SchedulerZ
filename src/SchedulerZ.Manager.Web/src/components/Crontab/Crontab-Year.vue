@@ -1,42 +1,44 @@
 <template>
-  <a-form-model size="small">
-    <a-form-model-item>
-      <a-radio :label="1" v-model="radioValue">
-        不填，允许的通配符[, - * /]
-      </a-radio>
-    </a-form-model-item>
+  <a-form-model>
+    <a-radio-group v-model="radioValue">
+      <a-form-model-item>
+        <a-radio :value="1">
+          不填，允许的通配符[, - * /]
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio :label="2" v-model="radioValue">
-        每年
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="2">
+          每年
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio :label="3" v-model="radioValue">
-        周期从
-        <a-input v-model.number="cycle01" :min="fullYear" /> -
-        <a-input v-model.number="cycle02" :min="fullYear" />
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="3">
+          周期从
+          <a-input-number v-model.number="cycle01" :min="fullYear" /> -
+          <a-input-number v-model.number="cycle02" :min="fullYear" />
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio :label="4" v-model="radioValue">
-        从
-        <a-input v-model.number="average01" :min="fullYear" /> 年开始，每
-        <a-input v-model.number="average02" :min="fullYear" /> 年执行一次
-      </a-radio>
+      <a-form-model-item>
+        <a-radio :value="4">
+          从
+          <a-input-number v-model.number="average01" :min="fullYear" /> 年开始，每
+          <a-input-number v-model.number="average02" :min="1" /> 年执行一次
+        </a-radio>
 
-    </a-form-model-item>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio :label="5" v-model="radioValue">
-        指定
-        <el-select clearable v-model="checkboxList" placeholder="可多选" multiple>
-          <el-option v-for="item in 9" :key="item" :value="item - 1 + fullYear" :label="item -1 + fullYear" />
-        </el-select>
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="5">
+          指定
+          <a-select :allowClear="true" v-model="checkboxList" placeholder="可多选" mode="multiple">
+            <a-select-option v-for="item in 9" :key="item - 1 + fullYear">{{ item -1 + fullYear }}</a-select-option>
+          </a-select>
+        </a-radio>
+      </a-form-model-item>
+    </a-radio-group>
   </a-form-model>
 </template>
 
@@ -95,19 +97,19 @@ export default {
 		},
 		// 周期两个值变化时
 		cycleChange () {
-			if (this.radioValue === '3') {
+			if (this.radioValue === 3) {
 				this.$emit('update', 'year', this.cycleTotal)
 			}
 		},
 		// 平均两个值变化时
 		averageChange () {
-			if (this.radioValue === '4') {
+			if (this.radioValue === 4) {
 				this.$emit('update', 'year', this.averageTotal)
 			}
 		},
 		// checkbox值变化时
 		checkboxChange () {
-			if (this.radioValue === '5') {
+			if (this.radioValue === 5) {
 				this.$emit('update', 'year', this.checkboxString)
 			}
 		}

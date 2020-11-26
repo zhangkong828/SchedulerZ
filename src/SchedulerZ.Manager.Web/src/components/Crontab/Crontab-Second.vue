@@ -1,35 +1,37 @@
 <template>
-  <a-form-model size="small">
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="1">
-        秒，允许的通配符[, - * /]
-      </a-radio>
-    </a-form-model-item>
+  <a-form-model>
+    <a-radio-group v-model="radioValue">
+      <a-form-model-item>
+        <a-radio :value="1">
+          秒，允许的通配符[, - * /]
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="2">
-        周期从
-        <a-input v-model.number="cycle01" :min="0" :max="60" /> -
-        <a-input v-model.number="cycle02" :min="0" :max="60" /> 秒
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="2">
+          周期从
+          <a-input-number v-model.number="cycle01" :min="0" :max="60" /> -
+          <a-input-number v-model.number="cycle02" :min="0" :max="60" /> 秒
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="3">
-        从
-        <a-input v-model.number="average01" :min="0" :max="60" /> 秒开始，每
-        <a-input v-model.number="average02" :min="0" :max="60" /> 秒执行一次
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="3">
+          从
+          <a-input-number v-model.number="average01" :min="0" :max="60" /> 秒开始，每
+          <a-input-number v-model.number="average02" :min="0" :max="60" /> 秒执行一次
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="4">
-        指定
-        <a-select :allowClear="true" v-model="checkboxList" placeholder="可多选" multiple style="width:100%">
-          <a-select-option v-for="item in 60" :key="item" :value="item-1">{{ item-1 }}</a-select-option>
-        </a-select>
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="4">
+          指定
+          <a-select :allowClear="true" v-model="checkboxList" placeholder="可多选" mode="multiple" style="width:100%">
+            <a-select-option v-for="item in 60" :key="item-1">{{ item-1 }}</a-select-option>
+          </a-select>
+        </a-radio>
+      </a-form-model-item>
+    </a-radio-group>
   </a-form-model>
 </template>
 
@@ -70,19 +72,19 @@ export default {
 		},
 		// 周期两个值变化时
 		cycleChange () {
-			if (this.radioValue === '2') {
+			if (this.radioValue === 2) {
 				this.$emit('update', 'second', this.cycleTotal)
 			}
 		},
 		// 平均两个值变化时
 		averageChange () {
-			if (this.radioValue === '3') {
+			if (this.radioValue === 3) {
 				this.$emit('update', 'second', this.averageTotal)
 			}
 		},
 		// checkbox值变化时
 		checkboxChange () {
-			if (this.radioValue === '4') {
+			if (this.radioValue === 4) {
 				this.$emit('update', 'second', this.checkboxString)
 			}
 		},

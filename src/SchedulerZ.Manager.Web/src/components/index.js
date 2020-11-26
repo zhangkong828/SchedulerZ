@@ -26,7 +26,7 @@ import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
 
 import Dialog from '@/components/Dialog'
-
+import Crontab from '@/components/Crontab'
 export {
   AvatarList,
   Bar,
@@ -51,6 +51,6 @@ export {
   TagSelect,
   StandardFormRow,
   ArticleListContent,
-
-  Dialog
+  Dialog,
+  Crontab
 }

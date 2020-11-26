@@ -1,11 +1,11 @@
 <template>
   <div>
-    <a-tabs default-active-key="1">
-      <a-tab-pane tab="秒" v-if="shouldHide('second')">
+    <a-tabs v-model="defaultActiveTab">
+      <a-tab-pane key="1" tab="秒" :forceRender="true">
         <CrontabSecond @update="updateContabValue" :check="checkNumber" ref="cronsecond" />
       </a-tab-pane>
 
-      <a-tab-pane tab="分钟" v-if="shouldHide('min')">
+      <a-tab-pane key="2" tab="分钟" :forceRender="true">
         <CrontabMin
           @update="updateContabValue"
           :check="checkNumber"
@@ -14,7 +14,7 @@
         />
       </a-tab-pane>
 
-      <a-tab-pane tab="小时" v-if="shouldHide('hour')">
+      <a-tab-pane key="3" tab="小时" :forceRender="true">
         <CrontabHour
           @update="updateContabValue"
           :check="checkNumber"
@@ -23,7 +23,7 @@
         />
       </a-tab-pane>
 
-      <a-tab-pane tab="日" v-if="shouldHide('day')">
+      <a-tab-pane key="4" tab="日" :forceRender="true">
         <CrontabDay
           @update="updateContabValue"
           :check="checkNumber"
@@ -32,7 +32,7 @@
         />
       </a-tab-pane>
 
-      <a-tab-pane tab="月" v-if="shouldHide('mouth')">
+      <a-tab-pane key="5" tab="月" :forceRender="true">
         <CrontabMouth
           @update="updateContabValue"
           :check="checkNumber"
@@ -41,7 +41,7 @@
         />
       </a-tab-pane>
 
-      <a-tab-pane tab="周" v-if="shouldHide('week')">
+      <a-tab-pane key="6" tab="周" :forceRender="true">
         <CrontabWeek
           @update="updateContabValue"
           :check="checkNumber"
@@ -50,7 +50,7 @@
         />
       </a-tab-pane>
 
-      <a-tab-pane tab="年" v-if="shouldHide('year')">
+      <a-tab-pane key="7" tab="年" :forceRender="true">
         <CrontabYear
           @update="updateContabValue"
           :check="checkNumber"
@@ -99,9 +99,9 @@
       <CrontabResult :ex="contabValueString"></CrontabResult>
 
       <div class="pop_btn">
-        <el-button size="small" type="primary" @click="submitFill">确定</el-button>
-        <el-button size="small" type="warning" @click="clearCron">重置</el-button>
-        <el-button size="small" @click="hidePopup">取消</el-button>
+        <a-button type="primary" @click="submitFill">确定</a-button>
+        <a-button type="warning" @click="clearCron">重置</a-button>
+        <a-button @click="hidePopup">取消</a-button>
       </div>
     </div>
   </div>
@@ -130,6 +130,7 @@ export default {
   },
   data () {
     return {
+      defaultActiveTab: '1',
       tabTitles: ['秒', '分钟', '小时', '日', '月', '周', '年'],
       tabActive: 0,
       myindex: 0,
@@ -307,6 +308,8 @@ export default {
     },
     // 隐藏弹窗
     hidePopup () {
+      this.defaultActiveTab = '1'
+      this.resolveExp()
       this.$emit('hide')
     },
     // 填充表达式

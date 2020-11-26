@@ -126,8 +126,8 @@
         >
           <a-input placeholder="cron表达式" v-model="form.cronExpression"/>
           <a-button type="primary" @click="showCrontabDialog">生成cron</a-button>
-          <a-modal title="生成cron" :visible.sync="showCron">
-            <crontab @hide="showCron=false" @fill="crontabFill" :expression="cronExpression"></crontab>
+          <a-modal title="生成cron" v-model="showCron" width="620px" :footer="null" :closable="false">
+            <crontab ref="crontab" @hide="showCron=false" @fill="crontabFill" :expression="cronExpression"></crontab>
           </a-modal>
         </a-form-model-item>
 
@@ -182,8 +182,7 @@
 </template>
 
 <script>
-import { STable } from '@/components'
-import { Crontab } from '@/components/Crontab'
+import { STable, Crontab } from '@/components'
 import { getJobList, modifyJob, deleteJob, uploadPackage } from '@/api/job'
 
 const STATUS = {
@@ -281,9 +280,6 @@ export default {
         return getJobList(requestParameters)
           .then(res => {
             console.log('getJobList', res)
-            res.data.list.map(item => {
-              item.roleIds = item.roles.map(role => { return role.id })
-            })
             return res.data
           })
       },
@@ -321,11 +317,11 @@ export default {
       this.form.filePath = ''
     },
     showCrontabDialog () {
-      this.cronExpression = this.cronExpression
+      this.cronExpression = this.form.cronExpression
       this.showCron = true
     },
     crontabFill (value) {
-     this.cronExpression = value
+     this.form.cronExpression = value
     },
     handleAdd () {
       this.handleEdit({ id: '', show: false })

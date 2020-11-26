@@ -1,49 +1,50 @@
 <template>
-  <a-form-model size="small">
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="1">
-        周，允许的通配符[, - * / L #]
-      </a-radio>
-    </a-form-model-item>
+  <a-form-model>
+    <a-radio-group v-model="radioValue">
+      <a-form-model-item>
+        <a-radio :value="1">
+          周，允许的通配符[, - * / L #]
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="2">
-        不指定
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="2">
+          不指定
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="3">
-        周期从星期
-        <a-input v-model.number="cycle01" :min="1" :max="7" /> -
-        <a-input v-model.number="cycle02" :min="1" :max="7" />
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="3">
+          周期从星期
+          <a-input-number v-model.number="cycle01" :min="1" :max="7" /> -
+          <a-input-number v-model.number="cycle02" :min="1" :max="7" />
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="4">
-        第
-        <a-input v-model.number="average01" :min="1" :max="4" /> 周的星期
-        <a-input v-model.number="average02" :min="1" :max="7" />
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="4">
+          第
+          <a-input-number v-model.number="average01" :min="1" :max="4" /> 周的星期
+          <a-input-number v-model.number="average02" :min="1" :max="7" />
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="5">
-        本月最后一个星期
-        <a-input v-model="weekday" :min="1" :max="7" />
-      </a-radio>
-    </a-form-model-item>
+      <a-form-model-item>
+        <a-radio :value="5">
+          本月最后一个星期
+          <a-input-number v-model="weekday" :min="1" :max="7" />
+        </a-radio>
+      </a-form-model-item>
 
-    <a-form-model-item>
-      <a-radio v-model="radioValue" :label="6">
-        指定
-        <el-select clearable v-model="checkboxList" placeholder="可多选" multiple style="width:100%">
-          <el-option v-for="(item,index) of weekList" :key="index" :value="index+1">{{ item }}</el-option>
-        </el-select>
-      </a-radio>
-    </a-form-model-item>
-
+      <a-form-model-item>
+        <a-radio :value="6">
+          指定
+          <a-select :allowClear="true" v-model="checkboxList" placeholder="可多选" mode="multiple" style="width:100%">
+            <a-select-option v-for="(item,index) of weekList" :key="index+1">{{ item }}</a-select-option>
+          </a-select>
+        </a-radio>
+      </a-form-model-item>
+    </a-radio-group>
   </a-form-model>
 </template>
 
@@ -110,25 +111,25 @@ export default {
 
 		// 周期两个值变化时
 		cycleChange () {
-			if (this.radioValue === '3') {
+			if (this.radioValue === 3) {
 				this.$emit('update', 'week', this.cycleTotal)
 			}
 		},
 		// 平均两个值变化时
 		averageChange () {
-			if (this.radioValue === '4') {
+			if (this.radioValue === 4) {
 				this.$emit('update', 'week', this.averageTotal)
 			}
 		},
 		// 最近工作日值变化时
 		weekdayChange () {
-			if (this.radioValue === '5') {
+			if (this.radioValue === 5) {
 				this.$emit('update', 'week', this.weekday + 'L')
 			}
 		},
 		// checkbox值变化时
 		checkboxChange () {
-			if (this.radioValue === '6') {
+			if (this.radioValue === 6) {
 				this.$emit('update', 'week', this.checkboxString)
 			}
 		}

@@ -555,6 +555,7 @@ export default {
 	watch: {
 		'ex': 'expressionChange'
 	},
+	// eslint-disable-next-line vue/require-prop-types
 	props: ['ex'],
 	mounted: function () {
 		// 初始化 获取一次结果
