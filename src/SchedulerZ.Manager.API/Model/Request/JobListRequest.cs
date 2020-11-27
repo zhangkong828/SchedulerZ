@@ -10,7 +10,7 @@ namespace SchedulerZ.Manager.API.Model.Request
     {
         public string Name { get; set; }
 
-        public int Status { get; set; }
+        public int Status { get; set; } = -2;
 
         [Required]
         public int PageIndex { get; set; }

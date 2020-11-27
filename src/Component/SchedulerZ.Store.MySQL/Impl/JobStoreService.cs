@@ -66,7 +66,26 @@ namespace SchedulerZ.Store.MySQL.Impl
             job.LastRunTime = lastRunTime;
             job.NextRunTime = nextRunTime;
             job.TotalRunCount += 1;
-            _context.Jobs.Update(job);
+
+            _context.Set<JobEntity>().Attach(job);
+            _context.Entry(job).Property(x => x.LastRunTime).IsModified = true;
+            _context.Entry(job).Property(x => x.NextRunTime).IsModified = true;
+            _context.Entry(job).Property(x => x.TotalRunCount).IsModified = true;
+            return _context.SaveChanges() > 0;
+        }
+
+        public bool UpdateEntity<T>(T entity, Expression<Func<T, object>>[] updatedProperties)
+            where T : class
+        {
+            _context.Set<T>().Attach(entity);
+            if (updatedProperties.Any())
+            {
+                foreach (var property in updatedProperties)
+                {
+                    _context.Entry<T>(entity).Property(property).IsModified = true;
+                }
+            }
+
             return _context.SaveChanges() > 0;
         }
 

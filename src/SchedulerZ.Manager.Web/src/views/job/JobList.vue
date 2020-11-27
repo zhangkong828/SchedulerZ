@@ -10,8 +10,8 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-model-item label="状态">
-              <a-select v-model.number="queryParam.status" placeholder="请选择" default-value="0">
-                <a-select-option :value="-1">全部</a-select-option>
+              <a-select v-model.number="queryParam.status" placeholder="请选择" default-value="-2">
+                <a-select-option :value="-2">全部</a-select-option>
                 <a-select-option :value="0">已停止</a-select-option>
                 <a-select-option :value="1">运行中</a-select-option>
                 <a-select-option :value="2">已暂停</a-select-option>
@@ -36,19 +36,61 @@
       :columns="columns"
       :data="loadData"
       showPagination="auto"
+      :expandRowByClick="true"
     >
-      <a-tag color="blue" slot="status" slot-scope="text">{{ text | statusFilter }}</a-tag>
+      <a-tag :color="text==0?'red':(text==1?'green':'purple')" slot="status" slot-scope="text">{{ text | statusFilter }}</a-tag>
+      <span slot="nodeHost" slot-scope="text, record"><p v-if="record.nodeHost">{{ record.nodeHost+':'+record.nodePort }}</p></span>
+      <div slot="expandedRowRender" slot-scope="record" style="margin: 0">
+        <a-descriptions title="详细" :column="2">
+          <a-descriptions-item label="程序集名称">{{ record.assemblyName }}</a-descriptions-item>
+          <a-descriptions-item label="类名">{{ record.className }}</a-descriptions-item>
+          <a-descriptions-item label="文件名">{{ record.filePath }}</a-descriptions-item>
+          <a-descriptions-item label="备注">{{ record.remark }}</a-descriptions-item>
+          <a-descriptions-item label="自定义参数">{{ record.customParamsJson }}</a-descriptions-item>
+          <a-descriptions-item label=""></a-descriptions-item>
+          <a-descriptions-item label="简易任务">{{ record.isSimple?'是':'否' }}</a-descriptions-item>
+          <a-descriptions-item label=""></a-descriptions-item>
+          <a-descriptions-item label="cron表达式" v-if="!record.isSimple">{{ record.cronExpression }}</a-descriptions-item>
+          <a-descriptions-item label="" v-if="!record.isSimple"></a-descriptions-item>
+          <a-descriptions-item label="间隔秒数" v-if="record.isSimple">{{ record.intervalSeconds }}</a-descriptions-item>
+          <a-descriptions-item label="重复次数" v-if="record.isSimple">{{ record.repeatCount }}</a-descriptions-item>
+        </a-descriptions>
+      </div>
       <span slot="action" slot-scope="text, record">
-        <a @click="handleEdit(record)">编辑</a>
+        <a @click="handleEdit(record)" :disabled="record.status!==0">编辑</a>
         <a-divider type="vertical" />
         <a-popconfirm
           title="确定要删除?"
           ok-text="Yes"
           cancel-text="No"
+          :disabled="record.status!==0"
           @confirm="handleDelete(record)"
         >
-          <a href="#">删除</a>
+          <a href="#" :disabled="record.status!==0">删除</a>
         </a-popconfirm>
+        <a-divider type="vertical" />
+        <a-dropdown>
+          <a class="ant-dropdown-link">
+            操作任务 <a-icon type="down" />
+          </a>
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a @click="handleStartJob(record)" :disabled="record.status!==0">启动任务</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="handlePauseJob(record)" :disabled="record.status!==1">暂停任务</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="handleResumeJob(record)" :disabled="record.status!==2">恢复任务</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="handleStopJob(record)" :disabled="record.status<=0">停止任务</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="handleRunOnceNowJob(record)" :disabled="record.status!==1">立即运行一次</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </span>
     </s-table>
 
@@ -124,7 +166,7 @@
         </a-form-model-item>
 
         <a-form-model-item
-          v-if="!form.show"
+          v-if="!form.isSimple"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="cron表达式"
@@ -138,7 +180,7 @@
         </a-form-model-item>
 
         <a-form-model-item
-          v-if="form.show"
+          v-if="form.isSimple"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="间隔秒数"
@@ -148,7 +190,7 @@
         </a-form-model-item>
 
         <a-form-model-item
-          v-if="form.show"
+          v-if="form.isSimple"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           label="重复次数"
@@ -162,7 +204,7 @@
           :wrapperCol="wrapperCol"
           label="简易任务"
         >
-          <a-switch v-model="form.show" />
+          <a-switch v-model="form.isSimple" />
         </a-form-model-item>
 
         <a-form-model-item
@@ -170,7 +212,7 @@
           :wrapperCol="wrapperCol"
           label="生效时间"
         >
-          <a-date-picker show-time placeholder="生效时间" />
+          <a-date-picker show-time placeholder="生效时间" v-model="form.startTime"/>
         </a-form-model-item>
 
         <a-form-model-item
@@ -178,7 +220,7 @@
           :wrapperCol="wrapperCol"
           label="失效时间"
         >
-          <a-date-picker show-time placeholder="失效时间" />
+          <a-date-picker show-time placeholder="失效时间" v-model="form.endTime"/>
         </a-form-model-item>
 
       </a-form-model>
@@ -189,7 +231,7 @@
 
 <script>
 import { STable, Crontab } from '@/components'
-import { getJobList, modifyJob, deleteJob, uploadPackage } from '@/api/job'
+import { getJobList, modifyJob, deleteJob, uploadPackage, startJob, runOnceNowJob, pauseJob, resumeJob, stopJob } from '@/api/job'
 
 const STATUS = {
   0: '已停止',
@@ -228,9 +270,14 @@ const columns = [
     dataIndex: 'createTime',
     sorter: true
   },
+  {
+    title: '所属节点',
+    dataIndex: 'nodeHost',
+    scopedSlots: { customRender: 'nodeHost' }
+  },
    {
     title: '操作',
-    width: '150px',
+    width: '200px',
     dataIndex: 'action',
     scopedSlots: { customRender: 'action' }
   }
@@ -363,6 +410,41 @@ export default {
     handleCancel () {
       this.visible = false
       this.$refs.ruleForm.resetFields()
+    },
+    handleStartJob (record) {
+      startJob(record.id).then(res => {
+        if (res.data.success) {
+          this.$refs.table.refresh()
+        }
+        this.handleJobResult(res.data.success, res.data.message)
+      })
+    },
+    handlePauseJob (record) {
+      pauseJob(record.id).then(res => {
+        this.$refs.table.refresh()
+      })
+     },
+    handleResumeJob (record) {
+      resumeJob(record.id).then(res => {
+        this.$refs.table.refresh()
+      })
+    },
+    handleStopJob (record) {
+      stopJob(record.id).then(res => {
+        this.$refs.table.refresh()
+      })
+     },
+    handleRunOnceNowJob (record) {
+      runOnceNowJob(record.id).then(res => {
+        this.$refs.table.refresh()
+      })
+    },
+    handleJobResult (flag, message) {
+      var type = flag ? 'success' : 'error'
+      this.$notification[type]({
+        message: '操作结果',
+        description: message
+      })
     }
   },
   watch: {

@@ -162,7 +162,12 @@ namespace SchedulerZ.Manager.API.Controllers
                 {
                     job.Status = (int)JobStatus.Paused;
                     job.NextRunTime = null;
-                    result = _jobStore.UpdateJob(job);
+
+                    var updatedProperties = new Expression<Func<JobEntity, object>>[] {
+                        p => p.Status,
+                        p => p.NextRunTime
+                    };
+                    result = _jobStore.UpdateEntity(job, updatedProperties);
                     if (!result)
                         await _schedulerRemoting.ResumeJob(job.Id, service);
                 }
@@ -187,7 +192,10 @@ namespace SchedulerZ.Manager.API.Controllers
                 if (result)
                 {
                     job.Status = (int)JobStatus.Running;
-                    result = _jobStore.UpdateJob(job);
+                    var updatedProperties = new Expression<Func<JobEntity, object>>[] {
+                        p => p.Status
+                    };
+                    result = _jobStore.UpdateEntity(job, updatedProperties);
                     if (!result)
                         await _schedulerRemoting.PauseJob(job.Id, service);
                 }
@@ -213,7 +221,11 @@ namespace SchedulerZ.Manager.API.Controllers
                 {
                     job.Status = (int)JobStatus.Stop;
                     job.NextRunTime = null;
-                    result = _jobStore.UpdateJob(job);
+                    var updatedProperties = new Expression<Func<JobEntity, object>>[] {
+                        p => p.Status,
+                        p => p.NextRunTime
+                    };
+                    result = _jobStore.UpdateEntity(job, updatedProperties);
                     if (!result)
                         await _schedulerRemoting.ResumeJob(job.Id, service);
                 }
@@ -235,7 +247,11 @@ namespace SchedulerZ.Manager.API.Controllers
             {
                 job.Status = (int)JobStatus.Deleted;
                 job.NextRunTime = null;
-                var result = _jobStore.UpdateJob(job);
+                var updatedProperties = new Expression<Func<JobEntity, object>>[] {
+                        p => p.Status,
+                        p => p.NextRunTime
+                    };
+                var result = _jobStore.UpdateEntity(job, updatedProperties);
                 return BaseResponse.GetResponse(result);
             }
             return BaseResponse.GetResponse("任务在停止状态下才能删除");
@@ -297,7 +313,12 @@ namespace SchedulerZ.Manager.API.Controllers
                 job.NodeHost = service.Address;
                 job.NodePort = service.Port;
 
-                status = _jobStore.UpdateJob(job);
+                var updatedProperties = new Expression<Func<JobEntity, object>>[] {
+                    p => p.Status,
+                    p => p.NodeHost,
+                    p=>p.NodePort
+                };
+                status = _jobStore.UpdateEntity(job, updatedProperties);
                 result.Success = status;
                 result.Message = result.Success ? "启动成功" : "更新任务状态失败";
                 return result;

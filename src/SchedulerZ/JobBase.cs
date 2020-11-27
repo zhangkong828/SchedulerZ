@@ -19,7 +19,7 @@ namespace SchedulerZ
 
         public void Execute(JobContext context)
         {
-            Logger = TraceLogger.GetLogger(context.JobView.Name);
+            Logger = TraceLogger.GetLogger($"{context.JobView.Id}{context.JobView.Name}");
             if (!_isRunning)
             {
                 _isRunning = true;
@@ -46,7 +46,8 @@ namespace SchedulerZ
 
         protected virtual void Dispose(bool disposing)
         {
-            Logger.Release();
+            if (Logger != null)
+                Logger.Release();
         }
     }
 }

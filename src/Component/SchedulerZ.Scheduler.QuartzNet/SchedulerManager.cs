@@ -3,6 +3,7 @@ using Quartz.Impl.Matchers;
 using Quartz.Impl.Triggers;
 using SchedulerZ.Logging;
 using SchedulerZ.Models;
+using SchedulerZ.Route;
 using SchedulerZ.Scheduler.QuartzNet.Impl;
 using SchedulerZ.Store;
 using SchedulerZ.Utility;
@@ -19,11 +20,13 @@ namespace SchedulerZ.Scheduler.QuartzNet
         private readonly QuartzNetConfig _config;
         private readonly IScheduler _scheduler;
         private readonly IJobStore _jobStore;
-        public SchedulerManager(QuartzNetConfig config, IScheduler scheduler, IJobStore jobStore)
+        private readonly IServiceRoute _serviceRoute;
+        public SchedulerManager(QuartzNetConfig config, IScheduler scheduler, IJobStore jobStore, IServiceRoute serviceRoute)
         {
             _config = config;
             _scheduler = scheduler;
             _jobStore = jobStore;
+            _serviceRoute = serviceRoute;
         }
 
         public bool ValidExpression(string cronExpression)
@@ -135,7 +138,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         private async Task Start(JobEntity jobView)
         {
-            var jobRuntime = JobFactory.CreateJobRuntime(jobView);
+            var jobRuntime = await JobFactory.CreateJobRuntime(_serviceRoute, jobView);
 
             JobDataMap map = new JobDataMap
             {
