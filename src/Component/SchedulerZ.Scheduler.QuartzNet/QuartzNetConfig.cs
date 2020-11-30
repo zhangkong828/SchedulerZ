@@ -7,6 +7,5 @@ namespace SchedulerZ.Scheduler.QuartzNet
     public class QuartzNetConfig
     {
         public int ThreadPoolCount { get; set; } = 50;
-        public int MaxConcurrency { get; set; } = 20;
     }
 }

@@ -10,7 +10,7 @@
   },
   //QuartzNet
   "QuartzNet": {
-    "ThreadPoolCount": 20
+    "ThreadPoolCount": 50
   },
   //Consul б╥си
   "ConsulServiceRoute": {
