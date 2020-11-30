@@ -14,7 +14,7 @@ namespace SchedulerZ.Store
         bool UpdateJob(JobEntity entity);
         bool DeleteJob(string id);
 
-        bool UpdateRunJob(string id, DateTime lastRunTime, DateTime nextRunTime);
+        bool UpdateRunJob(string id, DateTimeOffset lastRunTime, DateTimeOffset? nextRunTime);
         bool UpdateEntity<T>(T entity, Expression<Func<T, object>>[] updatedProperties) where T : class;
         List<JobEntity> QueryRunningJob(string nodeHost, int nodePort);
     }

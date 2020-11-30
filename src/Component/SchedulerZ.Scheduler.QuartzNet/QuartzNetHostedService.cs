@@ -31,7 +31,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
         {
             if (!_scheduler.IsStarted)
             {
-                //_scheduler.ListenerManager.AddTriggerListener(new JobTriggerListener(_logger));
+                _scheduler.ListenerManager.AddTriggerListener(new JobTriggerListener(_logger));
 
                 await _scheduler.Start(cancellationToken);
                 await _scheduler.Clear();

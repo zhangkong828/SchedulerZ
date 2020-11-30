@@ -29,7 +29,7 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
         public Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
             var jobId = trigger.JobKey.Name;
-            _logger.Debug($"{jobId}开始");
+            //_logger.Debug($"{jobId}开始");
             return Task.CompletedTask;
         }
 
@@ -44,7 +44,7 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
         public Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default)
         {
             var jobId = trigger.JobKey.Name;
-            _logger.Debug($"{jobId}执行前");
+            //_logger.Debug($"{jobId}执行前");
             return Task.FromResult(false);
         }
 
@@ -59,7 +59,7 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
         public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default)
         {
             var jobId = trigger.JobKey.Name;
-            _logger.Debug($"{jobId}完成");
+            //_logger.Debug($"{jobId}完成");
             return Task.CompletedTask;
         }
 

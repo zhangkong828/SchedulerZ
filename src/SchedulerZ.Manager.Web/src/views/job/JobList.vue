@@ -257,7 +257,7 @@ const columns = [
     dataIndex: 'nextRunTime'
   },
   {
-    title: '总运行成功次数',
+    title: '总运行次数',
     dataIndex: 'totalRunCount'
   },
   {

@@ -58,18 +58,25 @@ namespace SchedulerZ.Store.MySQL.Impl
             return _context.SaveChanges() > 0;
         }
 
-        public bool UpdateRunJob(string id, DateTime lastRunTime, DateTime nextRunTime)
+        public bool UpdateRunJob(string id, DateTimeOffset lastRunTime, DateTimeOffset? nextRunTime)
         {
             var job = _context.Jobs.Find(id);
             if (job == null) return false;
 
-            job.LastRunTime = lastRunTime;
-            job.NextRunTime = nextRunTime;
+            job.LastRunTime = lastRunTime.LocalDateTime;
+            if (nextRunTime.HasValue)
+                job.NextRunTime = nextRunTime.GetValueOrDefault().LocalDateTime;
+            else
+            {
+                job.NextRunTime = null;
+                job.Status = (int)JobStatus.Stop;
+            }
             job.TotalRunCount += 1;
 
             _context.Set<JobEntity>().Attach(job);
             _context.Entry(job).Property(x => x.LastRunTime).IsModified = true;
             _context.Entry(job).Property(x => x.NextRunTime).IsModified = true;
+            _context.Entry(job).Property(x => x.Status).IsModified = true;
             _context.Entry(job).Property(x => x.TotalRunCount).IsModified = true;
             return _context.SaveChanges() > 0;
         }

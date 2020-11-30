@@ -6,8 +6,8 @@ using Quartz;
 
 namespace SchedulerZ.Scheduler.QuartzNet.Impl
 {
-    [PersistJobDataAfterExecution]
-    [DisallowConcurrentExecution]
+    //[PersistJobDataAfterExecution]
+    //[DisallowConcurrentExecution]
     public class JobImplementation : IJob
     {
         public JobImplementation()

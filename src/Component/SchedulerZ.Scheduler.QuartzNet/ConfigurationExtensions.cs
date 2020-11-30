@@ -25,7 +25,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
                 properties["quartz.scheduler.instanceName"] = "SchedulerZ.SchedulerManager";
                 properties["quartz.threadPool.type"] = "Quartz.Simpl.SimpleThreadPool, Quartz";
                 properties["quartz.threadPool.threadCount"] = config.ThreadPoolCount.ToString();
-                properties["quartz.threadPool.threadPriority"] = "Normal";
+                properties["quartz.threadPool.maxConcurrency "] = config.MaxConcurrency.ToString();
 
                 ISchedulerFactory factory = new StdSchedulerFactory(properties);
                 var scheduler = factory.GetScheduler().GetAwaiter().GetResult();

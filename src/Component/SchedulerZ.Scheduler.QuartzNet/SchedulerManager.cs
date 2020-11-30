@@ -40,7 +40,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
             if (await _scheduler.CheckExists(jk))
             {
                 await _scheduler.PauseJob(jk);
-                _logger.Info($"Job[{jobId}] is paused");
+                _logger.Info($"job[{jobId}] is paused");
                 return true;
             }
             return false;
@@ -52,7 +52,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
             if (await _scheduler.CheckExists(jk))
             {
                 await _scheduler.ResumeJob(jk);
-                _logger.Info($"Job[{jobId}] is resumed");
+                _logger.Info($"job[{jobId}] is resumed");
                 return true;
             }
             return false;
@@ -83,7 +83,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
             }
             catch (Exception ex)
             {
-                _logger.Error($"Start Job Fail", ex);
+                _logger.Error($"start job fail", ex);
                 return false;
             }
         }
@@ -102,7 +102,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
                 }
                 await _scheduler.DeleteJob(jk);
                 _scheduler.ListenerManager.RemoveJobListener(jk.Name);
-                _logger.Info($"Job[{jobId}] is stop");
+                _logger.Info($"job[{jobId}] is stop");
                 return true;
             }
             return false;
