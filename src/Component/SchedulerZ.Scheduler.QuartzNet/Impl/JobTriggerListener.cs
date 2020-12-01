@@ -73,7 +73,7 @@ namespace SchedulerZ.Scheduler.QuartzNet.Impl
         public Task TriggerMisfired(ITrigger trigger, CancellationToken cancellationToken = default)
         {
             var jobId = trigger.JobKey.Name;
-            _logger.Debug($"{jobId}错过");
+            _logger.Error($"{jobId} Trigger Misfired");
             return Task.CompletedTask;
         }
     }

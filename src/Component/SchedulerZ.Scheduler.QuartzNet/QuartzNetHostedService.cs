@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Quartz;
 using SchedulerZ.Logging;
+using SchedulerZ.Models;
 using SchedulerZ.Scheduler.QuartzNet.Impl;
 using SchedulerZ.Store;
 using System;
@@ -60,11 +61,13 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         private void RecoveryRunning()
         {
-            //查询绑定了本节点且在运行中的任务
+            //绑定本节点且在运行中或已暂停的任务
             var jobs = _jobStore.QueryRunningJob(Config.NodeHost, Config.NodePort);
             jobs.AsParallel().ForAll(async job =>
             {
                 await _schedulerManager.StartJob(job);
+                if (job.Status == (int)JobStatus.Paused)
+                    await _schedulerManager.PauseJob(job.Id);
             });
         }
     }

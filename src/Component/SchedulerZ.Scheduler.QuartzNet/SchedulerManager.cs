@@ -100,12 +100,18 @@ namespace SchedulerZ.Scheduler.QuartzNet
                     jobRuntime.Instance?.Dispose();
                     jobRuntime.Dispose();
                 }
-                await _scheduler.DeleteJob(jk);
-                _scheduler.ListenerManager.RemoveJobListener(jk.Name);
-                _logger.Info($"job[{jobId}] is stop");
-                return true;
+                var result = await _scheduler.DeleteJob(jk);
+                var removeResult = _scheduler.ListenerManager.RemoveJobListener(jk.Name);
+                if (result && removeResult)
+                    _logger.Info($"job[{jobId}] is stop");
+                else
+                {
+                    if (result)
+                        _logger.Info($"job[{jobId}] is stop. but job listener remove fail");
+                }
+                return result;
             }
-            return false;
+            return true;
         }
 
 
@@ -198,7 +204,7 @@ namespace SchedulerZ.Scheduler.QuartzNet
 
         private void JobWasExecuteCallBack(IJobExecutionContext context)
         {
-            _jobStore.UpdateRunJob(context.JobDetail.Key.Name, context.FireTimeUtc.LocalDateTime, context.NextFireTimeUtc.GetValueOrDefault().LocalDateTime);
+            _jobStore.UpdateRunJob(context.JobDetail.Key.Name, context.FireTimeUtc, context.NextFireTimeUtc);
         }
     }
 }

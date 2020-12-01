@@ -98,7 +98,7 @@ namespace SchedulerZ.Store.MySQL.Impl
 
         public List<JobEntity> QueryRunningJob(string nodeHost, int nodePort)
         {
-            return _context.Jobs.AsNoTracking().Where(x => x.Status == (int)JobStatus.Running && x.NodeHost == nodeHost && x.NodePort == nodePort).ToList();
+            return _context.Jobs.AsNoTracking().Where(x => (x.Status == (int)JobStatus.Running || x.Status == (int)JobStatus.Paused) && x.NodeHost == nodeHost && x.NodePort == nodePort).ToList();
         }
     }
 }
