@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Store.SQLServer"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchedulerZ.Caching.Redis", "src\Component\SchedulerZ.Caching.Redis\SchedulerZ.Caching.Redis.csproj", "{445100DB-3D29-4EC3-B84A-87443D8A907B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerZ.Job.FundTest", "src\Samples\SchedulerZ.Job.FundTest\SchedulerZ.Job.FundTest.csproj", "{16ECA49E-B181-4966-AD22-68493DCF471F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{445100DB-3D29-4EC3-B84A-87443D8A907B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{445100DB-3D29-4EC3-B84A-87443D8A907B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{445100DB-3D29-4EC3-B84A-87443D8A907B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16ECA49E-B181-4966-AD22-68493DCF471F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16ECA49E-B181-4966-AD22-68493DCF471F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16ECA49E-B181-4966-AD22-68493DCF471F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16ECA49E-B181-4966-AD22-68493DCF471F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{0F2B4C8F-B67D-4883-9EFC-9890572CF80A} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{E4F33FCE-4D8D-45E7-87F2-C203BC111BDF} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
 		{445100DB-3D29-4EC3-B84A-87443D8A907B} = {B4AD6BF4-3BCD-42A9-9D47-74402473D453}
+		{16ECA49E-B181-4966-AD22-68493DCF471F} = {40817258-C355-41EA-8780-AA90782A33D6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {65504834-0038-42F2-9846-6115F45CC269}
