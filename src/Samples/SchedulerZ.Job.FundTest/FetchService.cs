@@ -1,5 +1,6 @@
 ﻿using SchedulerZ.Job.FundTest.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -28,7 +29,37 @@ namespace SchedulerZ.Job.FundTest
             //await GetAllFund();
             //var company=await GetCompanyInfo("http://fund.eastmoney.com/Company/f10/jbgk_80000225.html");
             //var fund = await GetFundInfo("http://fundf10.eastmoney.com/jbgk_003561.html");
+            ConcurrentDictionary<FundCompany, List<Fund>> dic = new ConcurrentDictionary<FundCompany, List<Fund>>();
 
+            var companys = await GetAllFund();
+            var result = Parallel.ForEach(companys, async company =>
+              {
+                  var companyInfo = await TaskHelper.RetryOnFault(() => GetCompanyInfo(company.Url), 3, () => Task.Delay(1000));
+
+                  if (companyInfo != null)
+                  {
+                      Console.WriteLine(companyInfo.Name);
+                      var funds = new List<Fund>();
+                      foreach (var item in company.Funds)
+                      {
+                          var fundInfo = await TaskHelper.RetryOnFault(() => GetFundInfo(item.Url), 3, () => Task.Delay(1000));
+                          if (fundInfo != null)
+                          {
+                              fundInfo.Code = item.Code;
+                              Console.WriteLine($"[{fundInfo.Code}]{fundInfo.Name}");
+                              funds.Add(fundInfo);
+                          }
+                          await Task.Delay(500);
+                      }
+
+                      dic.TryAdd(companyInfo, funds);
+                  }
+              });
+
+            if (result.IsCompleted)
+            {
+                Console.WriteLine($"over! total company:{dic.Keys.Count}");
+            }
 
         }
 
@@ -37,7 +68,7 @@ namespace SchedulerZ.Job.FundTest
             var companys = new List<CompanyRequest>();
 
             var url = "http://fund.eastmoney.com/allfund_com.html";
-            var result = await Get(url);
+            var result = await Get(url, "GB2312");
 
             var ul_topReg = new Regex("class=\"ul_top\".+?>(.+?)</ul>");
             var num_rightReg = new Regex("class=\"num_right\".+?>(.+?)</ul>");
@@ -80,8 +111,8 @@ namespace SchedulerZ.Job.FundTest
         private async Task<FundCompany> GetCompanyInfo(string url)
         {
             FundCompany company = null;
-            var result = await Get(url, "utf-8");
-
+            var result = await Get(url);
+            if (string.IsNullOrEmpty(result)) throw new NullReferenceException();
             var company_infoReg = new Regex("class=\"company-info\">([\\s\\S]+?)</div>");
             var info = company_infoReg.Match(result).Groups[1].Value;
 
@@ -114,13 +145,13 @@ namespace SchedulerZ.Job.FundTest
                     if (value == "---") value = string.Empty;
                     value = value.Trim();
 
-                    Console.WriteLine($"[{name}] {value}");
+                    //Console.WriteLine($"[{name}] {value}");
 
                     #region Set Value
 
                     if (name == "法定名称")
                         company.Name = value;
-                    else if (name== "英文名称")
+                    else if (name == "英文名称")
                         company.NameEN = value;
                     else if (name == "公司属性")
                         company.Attributes = value;
@@ -154,6 +185,7 @@ namespace SchedulerZ.Job.FundTest
                     #endregion
                 }
             }
+            if (company == null || string.IsNullOrWhiteSpace(company.Name)) throw new NullReferenceException();
             return company;
         }
 
@@ -161,7 +193,8 @@ namespace SchedulerZ.Job.FundTest
         {
             Fund fund = null;
 
-            var result = await Get(url, "utf-8");
+            var result = await Get(url);
+            if (string.IsNullOrEmpty(result)) throw new NullReferenceException();
             var txt_contReg = new Regex("class=\"txt_cont\">([\\s\\S]+?)</div>");
             var info = txt_contReg.Match(result).Groups[1].Value;
             info = info.Replace("<th>基金类型</th><td>", "</td><th>基金类型</th><td>").Replace("<th>份额规模</th><td>", "</td><th>份额规模</th><td>");
@@ -190,7 +223,7 @@ namespace SchedulerZ.Job.FundTest
                         td = Regex.Match(td, "<span.+?>(.+?)</span>").Groups[1].Value;
                     }
 
-                    Console.WriteLine($"[{th}] {td}");
+                    //Console.WriteLine($"[{th}] {td}");
 
                     #region Set Value
 
@@ -252,10 +285,11 @@ namespace SchedulerZ.Job.FundTest
                     #endregion
                 }
             }
+            if (fund == null || string.IsNullOrWhiteSpace(fund.Name)) throw new NullReferenceException();
             return fund;
         }
 
-        private async Task<string> Get(string url, string encoding = "GB2312")
+        private async Task<string> Get(string url, string encoding = "utf-8")
         {
             try
             {
@@ -270,7 +304,7 @@ namespace SchedulerZ.Job.FundTest
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                //
             }
             return await Task.FromResult(string.Empty);
         }
