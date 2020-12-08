@@ -12,7 +12,7 @@ namespace SchedulerZ.Job.FundTest
         /// <summary>
         /// 基金数量
         /// </summary>
-        public int FundNumber { get; set; }
+        public string FundNumber { get; set; }
 
         /// <summary>
         /// 基金管理规模
@@ -22,6 +22,6 @@ namespace SchedulerZ.Job.FundTest
         /// <summary>
         /// 经理人数
         /// </summary>
-        public int ManagerNumber { get; set; }
+        public string ManagerNumber { get; set; }
     }
 }

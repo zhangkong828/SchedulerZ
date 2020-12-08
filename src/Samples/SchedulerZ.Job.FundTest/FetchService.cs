@@ -26,9 +26,10 @@ namespace SchedulerZ.Job.FundTest
         public async Task GetPage()
         {
             //await GetAllFund();
-            //Console.WriteLine(result);
-            //await GetCompanyInfo("http://fund.eastmoney.com/Company/f10/jbgk_80000225.html");
-            await GetFundInfo("http://fundf10.eastmoney.com/jbgk_003561.html");
+            //var company=await GetCompanyInfo("http://fund.eastmoney.com/Company/f10/jbgk_80000225.html");
+            //var fund = await GetFundInfo("http://fundf10.eastmoney.com/jbgk_003561.html");
+
+
         }
 
         private async Task<List<CompanyRequest>> GetAllFund()
@@ -76,8 +77,9 @@ namespace SchedulerZ.Job.FundTest
             return companys;
         }
 
-        private async Task GetCompanyInfo(string url)
+        private async Task<FundCompany> GetCompanyInfo(string url)
         {
+            FundCompany company = null;
             var result = await Get(url, "utf-8");
 
             var company_infoReg = new Regex("class=\"company-info\">([\\s\\S]+?)</div>");
@@ -89,6 +91,7 @@ namespace SchedulerZ.Job.FundTest
             var values = category_valueReg.Matches(info);
             if (names.Count == values.Count)
             {
+                company = new FundCompany() { Id = Guid.NewGuid().ToString("n") };
                 for (int i = 0; i < names.Count; i++)
                 {
                     var name = names[i].Groups[1].Value;
@@ -112,12 +115,52 @@ namespace SchedulerZ.Job.FundTest
                     value = value.Trim();
 
                     Console.WriteLine($"[{name}] {value}");
+
+                    #region Set Value
+
+                    if (name == "法定名称")
+                        company.Name = value;
+                    else if (name== "英文名称")
+                        company.NameEN = value;
+                    else if (name == "公司属性")
+                        company.Attributes = value;
+                    else if (name == "成立日期")
+                        company.Establishment = value;
+                    else if (name == "注册资本")
+                        company.RegisteredCapital = value;
+                    else if (name == "法人代表")
+                        company.LegalRepresentative = value;
+                    else if (name == "注册地址")
+                        company.RegisteredAddress = value;
+                    else if (name == "办公地址")
+                        company.BusinessAddress = value;
+                    else if (name == "网站地址")
+                        company.WebSite = value;
+                    else if (name == "电话号码")
+                        company.PhoneNumber = value;
+                    else if (name == "传真号码")
+                        company.FaxNumber = value;
+                    else if (name == "客服邮箱")
+                        company.Email = value;
+                    else if (name == "经营范围")
+                        company.BusinessScope = value;
+                    else if (name == "基金数量")
+                        company.FundNumber = value;
+                    else if (name == "管理规模")
+                        company.AssetsUnderManagement = value;
+                    else if (name == "经理人数")
+                        company.ManagerNumber = value;
+
+                    #endregion
                 }
             }
+            return company;
         }
 
-        private async Task GetFundInfo(string url)
+        private async Task<Fund> GetFundInfo(string url)
         {
+            Fund fund = null;
+
             var result = await Get(url, "utf-8");
             var txt_contReg = new Regex("class=\"txt_cont\">([\\s\\S]+?)</div>");
             var info = txt_contReg.Match(result).Groups[1].Value;
@@ -129,6 +172,7 @@ namespace SchedulerZ.Job.FundTest
             var tds = tdReg.Matches(info);
             if (ths.Count == tds.Count)
             {
+                fund = new Fund() { Id = Guid.NewGuid().ToString("n") };
                 for (int i = 0; i < ths.Count; i++)
                 {
                     var th = ths[i].Groups[1].Value;
@@ -147,8 +191,68 @@ namespace SchedulerZ.Job.FundTest
                     }
 
                     Console.WriteLine($"[{th}] {td}");
+
+                    #region Set Value
+
+                    if (th == "基金全称")
+                        fund.FullName = td;
+                    else if (th == "基金简称")
+                        fund.Name = td;
+                    else if (th == "基金代码")
+                        fund.Code = td;
+                    else if (th == "基金类型")
+                    {
+                        switch (td)
+                        {
+                            case "混合型":
+                                fund.Type = (int)FundType.HybridFund;
+                                break;
+                            case "股票型":
+                                fund.Type = (int)FundType.StockFund;
+                                break;
+                            case "货币型":
+                                fund.Type = (int)FundType.MonetaryFund;
+                                break;
+                            case "债券型":
+                                fund.Type = (int)FundType.BondFund;
+                                break;
+                        }
+                    }
+                    else if (th == "发行日期")
+                        fund.IssueDate = td;
+                    else if (th == "成立日期/规模")
+                        fund.EstablishmentDate = td;
+                    else if (th == "资产规模")
+                        fund.AssetSize = td;
+                    else if (th == "份额规模")
+                        fund.ShareSize = td;
+                    else if (th == "基金管理人")
+                        fund.FundCompanyName = td;
+                    else if (th == "基金托管人")
+                        fund.FundRrustee = td;
+                    else if (th == "基金经理人")
+                        fund.FundManager = td;
+                    else if (th == "成立来分红")
+                        fund.Dividend = td;
+                    else if (th == "管理费率")
+                        fund.ManagementFeeRate = td;
+                    else if (th == "托管费率")
+                        fund.CustodianFeeRate = td;
+                    else if (th == "销售服务费率")
+                        fund.SalesServiceRate = td;
+                    else if (th == "最高认购费率")
+                        fund.MaximumSubscriptionRate = td;
+                    else if (th == "最高申购费率")
+                        fund.MaximunPurchaseRate = td;
+                    else if (th == "最高赎回费率")
+                        fund.MaximunRedemptionRate = td;
+                    else if (th == "业绩比较基准")
+                        fund.PerformanceBenchmark = td;
+
+                    #endregion
                 }
             }
+            return fund;
         }
 
         private async Task<string> Get(string url, string encoding = "GB2312")

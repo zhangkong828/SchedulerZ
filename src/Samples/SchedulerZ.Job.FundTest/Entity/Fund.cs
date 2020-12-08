@@ -116,18 +116,18 @@ namespace SchedulerZ.Job.FundTest
         /// <summary>
         /// 股票型基金
         /// </summary>
-        StockFund,
+        StockFund = 1,
         /// <summary>
         /// 货币型基金
         /// </summary>
-        MonetaryFund,
+        MonetaryFund = 2,
         /// <summary>
         /// 债券型基金
         /// </summary>
-        BondFund,
+        BondFund = 3,
         /// <summary>
         /// 混合型基金
         /// </summary>
-        HybridFund
+        HybridFund = 4
     }
 }
