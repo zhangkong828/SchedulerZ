@@ -31,36 +31,37 @@ namespace SchedulerZ.Job.FundTest
             //var fund = await GetFundInfo("http://fundf10.eastmoney.com/jbgk_003561.html");
             ConcurrentDictionary<FundCompany, List<Fund>> dic = new ConcurrentDictionary<FundCompany, List<Fund>>();
 
-            var companys = await GetAllFund();
-            var result = Parallel.ForEach(companys, async company =>
-              {
-                  var companyInfo = await TaskHelper.RetryOnFault(() => GetCompanyInfo(company.Url), 3, () => Task.Delay(1000));
+            //var companys = await GetAllFund();
+            //var result = Parallel.ForEach(companys, async company =>
+            //  {
+            //      var companyInfo = await TaskHelper.RetryOnFault(() => GetCompanyInfo(company.Url), 3, () => Task.Delay(1000));
 
-                  if (companyInfo != null)
-                  {
-                      Console.WriteLine(companyInfo.Name);
-                      var funds = new List<Fund>();
-                      foreach (var item in company.Funds)
-                      {
-                          var fundInfo = await TaskHelper.RetryOnFault(() => GetFundInfo(item.Url), 3, () => Task.Delay(1000));
-                          if (fundInfo != null)
-                          {
-                              fundInfo.Code = item.Code;
-                              Console.WriteLine($"[{fundInfo.Code}]{fundInfo.Name}");
-                              funds.Add(fundInfo);
-                          }
-                          await Task.Delay(500);
-                      }
+            //      if (companyInfo != null)
+            //      {
+            //          Console.WriteLine(companyInfo.Name);
+            //          var funds = new List<Fund>();
+            //          foreach (var item in company.Funds)
+            //          {
+            //              var fundInfo = await TaskHelper.RetryOnFault(() => GetFundInfo(item.Url), 3, () => Task.Delay(1000));
+            //              if (fundInfo != null)
+            //              {
+            //                  fundInfo.Code = item.Code;
+            //                  Console.WriteLine($"[{fundInfo.Code}]{fundInfo.Name}");
+            //                  funds.Add(fundInfo);
+            //              }
+            //              await Task.Delay(500);
+            //          }
 
-                      dic.TryAdd(companyInfo, funds);
-                  }
-              });
+            //          dic.TryAdd(companyInfo, funds);
+            //      }
+            //  });
 
-            if (result.IsCompleted)
-            {
-                Console.WriteLine($"over! total company:{dic.Keys.Count}");
-            }
+            //if (result.IsCompleted)
+            //{
+            //    Console.WriteLine($"over! total company:{dic.Keys.Count}");
+            //}
 
+            await GetFundIOPV("320007");
         }
 
         private async Task<List<CompanyRequest>> GetAllFund()
@@ -287,6 +288,12 @@ namespace SchedulerZ.Job.FundTest
             }
             if (fund == null || string.IsNullOrWhiteSpace(fund.Name)) throw new NullReferenceException();
             return fund;
+        }
+
+        private async Task GetFundIOPV(string code)
+        {
+            var url = $"https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize={code.Length}&appType=ttjj&product=EFund&plat=Android&deviceid={Guid.NewGuid().ToString("n")}&Version=1&Fcodes={code}";
+            var result = await Get(url);
         }
 
         private async Task<string> Get(string url, string encoding = "utf-8")
