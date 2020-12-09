@@ -31,6 +31,7 @@ namespace SchedulerZ.Job.FundTest
             //await GetAllFund();
             //var company=await GetCompanyInfo("http://fund.eastmoney.com/Company/f10/jbgk_80000225.html");
             //var fund = await GetFundInfo("http://fundf10.eastmoney.com/jbgk_003561.html");
+
             ConcurrentDictionary<FundCompany, List<Fund>> dic = new ConcurrentDictionary<FundCompany, List<Fund>>();
 
             //var companys = await GetAllFund();
