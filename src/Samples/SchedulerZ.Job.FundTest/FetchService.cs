@@ -1,7 +1,9 @@
 ﻿using SchedulerZ.Job.FundTest.Model;
+using SchedulerZ.Utility;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -290,10 +292,30 @@ namespace SchedulerZ.Job.FundTest
             return fund;
         }
 
-        private async Task GetFundIOPV(string code)
+        private async Task<IOPVData> GetFundIOPV(string code)
         {
+            IOPVData data = null;
+            var result = await GetFundIOPVs(code);
+            if (result != null)
+            {
+                data = result.Where(x => x.FCODE == code).FirstOrDefault();
+            }
+            return data;
+        }
+
+        private async Task<List<IOPVData>> GetFundIOPVs(string code)
+        {
+            List<IOPVData> datas = null;
             var url = $"https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize={code.Length}&appType=ttjj&product=EFund&plat=Android&deviceid={Guid.NewGuid().ToString("n")}&Version=1&Fcodes={code}";
             var result = await Get(url);
+            if (string.IsNullOrEmpty(result)) throw new NullReferenceException();
+
+            var response = Utils.JsonDeserialize<IOPVResponse>(result);
+            if (response.ErrCode == 0 && response.Success)
+            {
+                datas = response.Datas;
+            }
+            return datas;
         }
 
         private async Task<string> Get(string url, string encoding = "utf-8")
