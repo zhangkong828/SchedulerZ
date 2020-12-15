@@ -52,6 +52,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Dockerfile">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SchedulerZ.Manager.API.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
