@@ -31,7 +31,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          file: src/SchedulerZ.Manager.API/Dockerfile
+          file: ./src/SchedulerZ.Manager.API/Dockerfile
           tags: user/app:latest
       -
         name: Image digest
