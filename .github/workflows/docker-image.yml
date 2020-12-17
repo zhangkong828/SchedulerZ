@@ -32,7 +32,7 @@ jobs:
         with:
           push: true
           file: ./src/SchedulerZ.Manager.API/Dockerfile
-          tags: zhangkong828/SchedulerZ.Manager.API:latest
+          tags: schedulerz.manager.api:latest
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
