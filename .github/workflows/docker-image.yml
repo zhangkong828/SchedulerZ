@@ -32,9 +32,8 @@ jobs:
         with:
           context: .
           push: true
-          load: true
           file: ./src/SchedulerZ.Manager.API/Dockerfile
-          tags: schedulerz.manager.api:latest
+          tags: schedulerz.manager.api
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
