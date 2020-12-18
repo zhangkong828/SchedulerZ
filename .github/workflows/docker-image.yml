@@ -14,26 +14,10 @@ jobs:
         name: Check out the repo
         uses: actions/checkout@v2
       -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      -
-        name: Login to DockerHub
-        uses: docker/login-action@v1 
+        name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      -
-        name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: ./src/SchedulerZ.Manager.API/Dockerfile
-          tags: schedulerz.manager.api
-      -
-        name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+          name: zhangkong/schedulerz.manager.api
+          dockerfile: ./src/SchedulerZ.Manager.API/Dockerfile
