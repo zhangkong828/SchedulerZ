@@ -24,4 +24,4 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           name: zhangkong/schedulerz.manager.api
           dockerfile: ./src/SchedulerZ.Manager.API/Dockerfile
-          tags: "${{ env.SUBMIT_DATE }}"
+          tags: "latest,${{ env.SUBMIT_DATE }}"
