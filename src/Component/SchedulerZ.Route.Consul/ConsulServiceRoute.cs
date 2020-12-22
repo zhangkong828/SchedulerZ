@@ -44,6 +44,7 @@ namespace SchedulerZ.Route.Consul
 
         public async Task<bool> RegisterService(ServiceRouteDescriptor service)
         {
+            Console.WriteLine(service.Id);
             var client = _consulClientProvider.GetClient();
             if (client == null) return false;
 
@@ -93,12 +94,12 @@ namespace SchedulerZ.Route.Consul
 
         private string GenCheckId(ServiceRouteDescriptor service)
         {
-            return $"{service.Id}";
+            return $"c{service.Id}";
         }
 
         private string GenCheckName(ServiceRouteDescriptor service)
         {
-            return $"{service.Name}";
+            return $"c{service.Name}";
         }
 
         public async Task<IEnumerable<ServiceRouteDescriptor>> QueryServices()
