@@ -44,7 +44,6 @@ namespace SchedulerZ.Route.Consul
 
         public async Task<bool> RegisterService(ServiceRouteDescriptor service)
         {
-            Console.WriteLine(service.Id);
             var client = _consulClientProvider.GetClient();
             if (client == null) return false;
 
