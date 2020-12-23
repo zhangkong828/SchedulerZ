@@ -23,4 +23,4 @@ RUN dotnet publish "SchedulerZ.Manager.API.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "SchedulerZ.Manager.API.dll","--server.urls","http://*:11000"]
+CMD ["dotnet", "SchedulerZ.Manager.API.dll","--server.urls","http://*:11000"]
