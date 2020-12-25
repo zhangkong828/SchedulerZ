@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SchedulerZ.Worker": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
