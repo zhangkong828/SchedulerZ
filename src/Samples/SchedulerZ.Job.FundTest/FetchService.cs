@@ -52,7 +52,7 @@ namespace SchedulerZ.Job.FundTest
             //                  Console.WriteLine($"[{fundInfo.Code}]{fundInfo.Name}");
             //                  funds.Add(fundInfo);
             //              }
-            //              await Task.Delay(500);
+            //              await Task.Delay(700);
             //          }
 
             //          dic.TryAdd(companyInfo, funds);
@@ -116,7 +116,7 @@ namespace SchedulerZ.Job.FundTest
         {
             FundCompany company = null;
             var result = await Get(url);
-            if (string.IsNullOrEmpty(result)) throw new NullReferenceException();
+            if (string.IsNullOrEmpty(result)) throw new Exception();
             var company_infoReg = new Regex("class=\"company-info\">([\\s\\S]+?)</div>");
             var info = company_infoReg.Match(result).Groups[1].Value;
 
@@ -189,7 +189,7 @@ namespace SchedulerZ.Job.FundTest
                     #endregion
                 }
             }
-            if (company == null || string.IsNullOrWhiteSpace(company.Name)) throw new NullReferenceException();
+            if (company == null || string.IsNullOrWhiteSpace(company.Name)) throw new Exception();
             return company;
         }
 
@@ -198,7 +198,7 @@ namespace SchedulerZ.Job.FundTest
             Fund fund = null;
 
             var result = await Get(url);
-            if (string.IsNullOrEmpty(result)) throw new NullReferenceException();
+            if (string.IsNullOrEmpty(result)) throw new Exception();
             var txt_contReg = new Regex("class=\"txt_cont\">([\\s\\S]+?)</div>");
             var info = txt_contReg.Match(result).Groups[1].Value;
             info = info.Replace("<th>基金类型</th><td>", "</td><th>基金类型</th><td>").Replace("<th>份额规模</th><td>", "</td><th>份额规模</th><td>");
@@ -289,7 +289,7 @@ namespace SchedulerZ.Job.FundTest
                     #endregion
                 }
             }
-            if (fund == null || string.IsNullOrWhiteSpace(fund.Name)) throw new NullReferenceException();
+            if (fund == null || string.IsNullOrWhiteSpace(fund.Name)) throw new Exception();
             return fund;
         }
 
@@ -309,7 +309,7 @@ namespace SchedulerZ.Job.FundTest
             List<IOPVData> datas = null;
             var url = $"https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?pageIndex=1&pageSize={code.Length}&appType=ttjj&product=EFund&plat=Android&deviceid={Guid.NewGuid().ToString("n")}&Version=1&Fcodes={code}";
             var result = await Get(url);
-            if (string.IsNullOrEmpty(result)) throw new NullReferenceException();
+            if (string.IsNullOrEmpty(result)) throw new Exception();
 
             var response = Utils.JsonDeserialize<IOPVResponse>(result);
             if (response.ErrCode == 0 && response.Success)

@@ -23,7 +23,7 @@ namespace SchedulerZ.Job.FundTest
             for (int i = 0; i < maxTries; i++)
             {
                 try { return await function().ConfigureAwait(false); }
-                catch { if (i == maxTries - 1) throw; }
+                catch { if (i == maxTries - 1) break; }
                 await retryWhen().ConfigureAwait(false);
             }
             return default(T);
