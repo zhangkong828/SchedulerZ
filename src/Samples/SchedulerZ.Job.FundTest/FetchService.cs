@@ -38,7 +38,6 @@ namespace SchedulerZ.Job.FundTest
             //var result = Parallel.ForEach(companys, async company =>
             //  {
             //      var companyInfo = await TaskHelper.RetryOnFault(() => GetCompanyInfo(company.Url), 3, () => Task.Delay(1000));
-
             //      if (companyInfo != null)
             //      {
             //          Console.WriteLine(companyInfo.Name);
