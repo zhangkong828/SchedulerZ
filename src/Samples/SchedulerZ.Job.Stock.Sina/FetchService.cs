@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SchedulerZ.Utility;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -48,24 +49,31 @@ namespace SchedulerZ.Job.Stock.Sina
             return await Task.FromResult(string.Empty);
         }
 
-        public Task GetPage()
+        public async Task GetPage()
         {
-            throw new NotImplementedException();
+            await QueryStock("茅台");
         }
 
         private async Task QueryStock(string key)
         {
-            List<IOPVData> datas = null;
             var url = $"http://suggest3.sinajs.cn/suggest/type=&key={key}&name=callbacksuggestdata";
-            var result = await Get(url);
+            var result = await Get(url, "GBK");
             if (string.IsNullOrEmpty(result)) throw new Exception();
 
-            var response = Utils.JsonDeserialize<IOPVResponse>(result);
-            if (response.ErrCode == 0 && response.Success)
+            var text = result.Match("=\"(.+?)\"");
+            if (string.IsNullOrEmpty(text)) throw new Exception();
+
+            foreach (var item in text.Split(";", StringSplitOptions.RemoveEmptyEntries))
             {
-                datas = response.Datas;
+                var stk = item.Split(",");
             }
-            return datas;
+            
+            //var response = Utils.JsonDeserialize<IOPVResponse>(result);
+            //if (response.ErrCode == 0 && response.Success)
+            //{
+            //    datas = response.Datas;
+            //}
+            //return datas;
         }
     }
 }

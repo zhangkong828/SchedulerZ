@@ -3,11 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace SchedulerZ
 {
     public static class stringHelper
     {
+        public static bool IsMatch(this string input, string pattern)
+        {
+            return Regex.IsMatch(input, pattern);
+        }
+
+        public static string Match(this string input, string pattern)
+        {
+            var match = Regex.Match(input, pattern);
+            if (match.Success)
+            {
+                var value = match.Groups[1].Value;
+                if (!string.IsNullOrWhiteSpace(value))
+                    return value.Trim();
+            }
+            return null;
+        }
+
         /// <summary>
         /// 忽略大小写的字符串相等比较，判断是否以任意一个待比较字符串相等
         /// </summary>
