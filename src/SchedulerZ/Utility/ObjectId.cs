@@ -138,6 +138,28 @@ namespace SchedulerZ.Utility
             return ConvertTo62(NextId());
         }
 
+        public string NextMixString()
+        {
+            string Key = NextString();
+            int s = 0;
+            foreach (char c in Key)
+            {
+                s += (int)c;
+            }
+            int Len = Key.Length;
+            int x = (s % Len);
+            char[] arr = Key.ToCharArray();
+            char[] newarr = new char[arr.Length];
+            Array.Copy(arr, x, newarr, 0, Len - x);
+            Array.Copy(arr, 0, newarr, Len - x, x);
+            string NewKey = "";
+            foreach (char c in newarr)
+            {
+                NewKey += c;
+            }
+            return NewKey;
+        }
+
         // 防止产生的时间比之前的时间还要小（由于NTP回拨等问题）,保持增量的趋势.
         protected virtual long TilNextMillis(long lastTimestamp)
         {
