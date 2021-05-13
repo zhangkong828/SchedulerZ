@@ -1,4 +1,5 @@
-﻿using SchedulerZ.Utility;
+﻿using SchedulerZ.Job.Stock.Sina.Entity;
+using SchedulerZ.Utility;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -54,8 +55,9 @@ namespace SchedulerZ.Job.Stock.Sina
             await QueryStock("茅台");
         }
 
-        private async Task QueryStock(string key)
+        private async Task<List<Instrument>> QueryStock(string key)
         {
+            var list = new List<Instrument>();
             var url = $"http://suggest3.sinajs.cn/suggest/type=&key={key}&name=callbacksuggestdata";
             var result = await Get(url, "GBK");
             if (string.IsNullOrEmpty(result)) throw new Exception();
@@ -66,14 +68,14 @@ namespace SchedulerZ.Job.Stock.Sina
             foreach (var item in text.Split(";", StringSplitOptions.RemoveEmptyEntries))
             {
                 var stk = item.Split(",");
+                var instrument = new Instrument();
+                instrument.Code = stk[2];
+                instrument.Symbol = stk[3];
+                instrument.Name = stk[6];
+                list.Add(instrument);
             }
-            
-            //var response = Utils.JsonDeserialize<IOPVResponse>(result);
-            //if (response.ErrCode == 0 && response.Success)
-            //{
-            //    datas = response.Datas;
-            //}
-            //return datas;
+
+            return list;
         }
     }
 }

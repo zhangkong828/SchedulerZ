@@ -77,10 +77,10 @@ namespace SchedulerZ.Job.Stock.Sina.Entity
 
     public class Instrument
     {
-        /// <summary>
-        /// 标的代码
-        /// </summary>
+        public string Code { get; set; }
+
         public string Symbol { get; set; }
+
 
         /// <summary>
         /// 品种类型
