@@ -52,7 +52,8 @@ namespace SchedulerZ.Job.Stock.Sina
 
         public async Task GetPage()
         {
-            await QueryStock("茅台");
+           // await QueryStock("茅台");
+            await QueryStockQuotation("sh600519");
         }
 
         private async Task<List<Instrument>> QueryStock(string key)
@@ -74,6 +75,21 @@ namespace SchedulerZ.Job.Stock.Sina
                 instrument.Name = stk[6];
                 list.Add(instrument);
             }
+
+            return list;
+        }
+
+        private async Task<List<Instrument>> QueryStockQuotation(string key)
+        {
+            var list = new List<Instrument>();
+            var url = $"http://hq.sinajs.cn/list={key}";
+            var result = await Get(url, "GBK");
+            if (string.IsNullOrEmpty(result)) throw new Exception();
+
+            var text = result.Match("=\"(.+?)\"");
+            if (string.IsNullOrEmpty(text)) throw new Exception();
+
+           
 
             return list;
         }
