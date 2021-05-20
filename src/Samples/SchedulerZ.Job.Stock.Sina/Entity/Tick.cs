@@ -28,5 +28,13 @@ namespace SchedulerZ.Job.Stock.Sina.Entity
         /// 今日最低价
         /// </summary>
         public double Low { get; set; }
+        /// <summary>
+        /// 交易量
+        /// </summary>
+        public long Volume { get; set; }
+        /// <summary>
+        /// 交易额
+        /// </summary>
+        public double Amount { get; set; }
     }
 }
