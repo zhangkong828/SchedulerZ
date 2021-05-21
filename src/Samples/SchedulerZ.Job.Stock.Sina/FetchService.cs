@@ -89,7 +89,7 @@ namespace SchedulerZ.Job.Stock.Sina
             var text = result.Match("=\"(.+?)\"");
             if (string.IsNullOrEmpty(text)) throw new Exception();
 
-           
+            
 
             return list;
         }
