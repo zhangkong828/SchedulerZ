@@ -36,5 +36,23 @@ namespace SchedulerZ.Job.Stock.Sina.Entity
         /// 交易额
         /// </summary>
         public double Amount { get; set; }
+
+        public long BuyVolume1 { get; set; }
+        public double Buy1 { get; set; }
+
+        public long BuyVolume2 { get; set; }
+        public double Buy2 { get; set; }
+
+        public long BuyVolume3 { get; set; }
+        public double Buy3 { get; set; }
+
+        public long BuyVolume4{ get; set; }
+        public double Buy4 { get; set; }
+
+        public long BuyVolume5 { get; set; }
+        public double Buy5 { get; set; }
+
+        public long SellVolume1 { get; set; }
+        public double Sell1 { get; set; }
     }
 }
