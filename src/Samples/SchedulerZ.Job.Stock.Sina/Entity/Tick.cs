@@ -37,22 +37,46 @@ namespace SchedulerZ.Job.Stock.Sina.Entity
         /// </summary>
         public double Amount { get; set; }
 
-        public long BuyVolume1 { get; set; }
-        public double Buy1 { get; set; }
+        /// <summary>
+        /// 买一量
+        /// </summary>
+        public long BidVolume1 { get; set; }
+        /// <summary>
+        /// 买一价
+        /// </summary>
+        public double Bid1 { get; set; }
 
-        public long BuyVolume2 { get; set; }
-        public double Buy2 { get; set; }
+        public long BidVolume2 { get; set; }
+        public double Bid2 { get; set; }
 
-        public long BuyVolume3 { get; set; }
-        public double Buy3 { get; set; }
+        public long BidVolume3 { get; set; }
+        public double Bid3 { get; set; }
 
-        public long BuyVolume4{ get; set; }
-        public double Buy4 { get; set; }
+        public long BidVolume4{ get; set; }
+        public double Bid4 { get; set; }
 
-        public long BuyVolume5 { get; set; }
-        public double Buy5 { get; set; }
+        public long BidVolume5 { get; set; }
+        public double Bid5 { get; set; }
 
-        public long SellVolume1 { get; set; }
-        public double Sell1 { get; set; }
+        /// <summary>
+        /// 卖一量
+        /// </summary>
+        public long AskVolume1 { get; set; }
+        /// <summary>
+        /// 卖一价
+        /// </summary>
+        public double Ask1 { get; set; }
+
+        public long AskVolume2 { get; set; }
+        public double Ask2 { get; set; }
+
+        public long AskVolume3 { get; set; }
+        public double Ask3 { get; set; }
+
+        public long AskVolume4 { get; set; }
+        public double Ask4 { get; set; }
+
+        public long AskVolume5 { get; set; }
+        public double Ask5 { get; set; }
     }
 }
