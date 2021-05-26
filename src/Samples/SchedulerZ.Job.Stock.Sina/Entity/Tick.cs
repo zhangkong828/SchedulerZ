@@ -78,5 +78,14 @@ namespace SchedulerZ.Job.Stock.Sina.Entity
 
         public long AskVolume5 { get; set; }
         public double Ask5 { get; set; }
+
+        /// <summary>
+        /// 日期
+        /// </summary>
+        public DateTime Date { get; set; }
+        /// <summary>
+        /// 时间
+        /// </summary>
+        public DateTime Time { get; set; }
     }
 }
