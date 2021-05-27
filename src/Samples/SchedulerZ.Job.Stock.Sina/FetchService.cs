@@ -79,9 +79,8 @@ namespace SchedulerZ.Job.Stock.Sina
             return list;
         }
 
-        private async Task<List<Instrument>> QueryStockQuotation(string key)
+        private async Task<Tick> QueryStockQuotation(string key)
         {
-            var list = new List<Instrument>();
             var url = $"http://hq.sinajs.cn/list={key}";
             var result = await Get(url, "GBK");
             if (string.IsNullOrEmpty(result)) throw new Exception();
@@ -89,8 +88,41 @@ namespace SchedulerZ.Job.Stock.Sina
             var text = result.Match("=\"(.+?)\"");
             if (string.IsNullOrEmpty(text)) throw new Exception();
 
-
-            return list;
+            var stk = text.Split(",");
+            var tick = new Tick();
+            tick.Name = stk[0];
+            tick.Open = stk[1].ToDouble();
+            tick.Close = stk[2].ToDouble();
+            tick.Now = stk[3].ToDouble();
+            tick.High = stk[4].ToDouble();
+            tick.Low = stk[5].ToDouble();
+            //竞买价
+            //竞卖价
+            tick.Volume = stk[8].ToLong();
+            tick.Amount = stk[9].ToDouble();
+            tick.BidVolume1 = stk[10].ToLong();
+            tick.Bid1 = stk[11].ToDouble();
+            tick.BidVolume2 = stk[12].ToLong();
+            tick.Bid2 = stk[13].ToDouble();
+            tick.BidVolume3 = stk[14].ToLong();
+            tick.Bid3 = stk[15].ToDouble();
+            tick.BidVolume4 = stk[16].ToLong();
+            tick.Bid4 = stk[17].ToDouble();
+            tick.BidVolume5 = stk[18].ToLong();
+            tick.Bid5 = stk[19].ToDouble();
+            tick.AskVolume1 = stk[20].ToLong();
+            tick.Ask1 = stk[21].ToDouble();
+            tick.AskVolume2 = stk[22].ToLong();
+            tick.Ask2 = stk[23].ToDouble();
+            tick.AskVolume3 = stk[24].ToLong();
+            tick.Ask3 = stk[25].ToDouble();
+            tick.AskVolume4 = stk[26].ToLong();
+            tick.Ask4 = stk[27].ToDouble();
+            tick.AskVolume5 = stk[28].ToLong();
+            tick.Ask5 = stk[29].ToDouble();
+            tick.Date = stk[30].ToDateTime();
+            tick.Time = stk[31].ToDateTime();
+            return tick;
         }
     }
 }
